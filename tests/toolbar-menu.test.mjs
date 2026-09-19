@@ -80,7 +80,6 @@ test('header keeps creation actions inside the settings menu', async () => {
   const iconLibrary = await readFile(new URL('../core/IconLibrary.js', import.meta.url), 'utf8');
   const gridCss = await readFile(new URL('../css/modules/grid.css', import.meta.url), 'utf8');
   const toolbarCss = await readFile(new URL('../css/modules/toolbar.css', import.meta.url), 'utf8');
-  const wallpapersCss = await readFile(new URL('../css/modules/wallpapers.css', import.meta.url), 'utf8');
   const settingsPanel = await readFile(new URL('../components/SettingsPanel.js', import.meta.url), 'utf8');
   const cardCss = await readFile(new URL('../css/modules/card.css', import.meta.url), 'utf8');
   const mainJs = await readFile(new URL('../main.js', import.meta.url), 'utf8');
@@ -116,27 +115,24 @@ test('header keeps creation actions inside the settings menu', async () => {
   assert.match(gridCss, /grid-template-columns:\s*repeat\(auto-fill, minmax\(min\(100%, var\(--card-width\)\), var\(--card-width\)\)\);/);
   assert.match(gridCss, /justify-content:\s*center;/);
 
-  assert.match(menuHtml, /<div class="menu-section-label">页面背景<\/div>/);
+  assert.match(menuHtml, /<div class="menu-section-label">主题<\/div>/);
   assert.match(menuHtml, /<div class="menu-section-label">书签卡片<\/div>/);
   assert.match(menuHtml, /<div class="menu-section-label">顶部栏<\/div>/);
   assert.match(menuHtml, /id="header-opacity"/);
   assert.match(menuHtml, /id="card-size"[^>]*min="80"[^>]*max="200"[^>]*step="20"/);
   assert.match(menuHtml, /id="card-background-strength"/);
-  assert.match(menuHtml, /id="card-text-group"/);
-  assert.doesNotMatch(menuHtml, /壁纸遮罩|id="wallpaper-overlay-opacity"/);
+  assert.match(menuHtml, /id="theme-group"[\s\S]*data-value="light"[\s\S]*data-value="dark"/);
+  // 卡片文字改为悬停展开，设置里的显示/隐藏开关已移除
+  assert.doesNotMatch(menuHtml, /id="card-text-group"/);
+  assert.doesNotMatch(menuHtml, /id="card-text-on"/);
+  // 壁纸入口和控件已整体移除
+  assert.doesNotMatch(menuHtml, /id="wallpaper-grid"|id="wallpaper"|wallpaper-brightness/);
   assert.match(toolbarCss, /--toolbar-alpha/);
-  assert.match(wallpapersCss, /--wallpaper-overlay-alpha/);
   assert.match(settingsPanel, /headerOpacityKey/);
-  assert.match(settingsPanel, /wallpaperOverlayOpacityKey/);
-  assert.match(settingsPanel, /id="wallpaper-brightness"/);
-  assert.match(settingsPanel, /this\.currentWallpaperOverlayOpacity = 100 - brightness/);
   assert.match(settingsPanel, /cardBackgroundStrengthKey/);
   assert.match(settingsPanel, /settings:adjustCardSize/);
+  assert.doesNotMatch(settingsPanel, /wallpaper/i);
   assert.match(cardCss, /--card-background-strength/);
   assert.match(mainJs, /EventBus\.emit\('settings:adjustCardSize', direction\)/);
   assert.match(settingsPanel, /--toolbar-opacity/);
-  assert.match(settingsPanel, /--wallpaper-overlay-opacity/);
-  assert.match(settingsPanel, /silent-index-dawn-2560\.png/);
-  assert.match(settingsPanel, /silent-index-night-2560\.png/);
-  assert.match(settingsPanel, /wp\.type === 'image'/);
 });

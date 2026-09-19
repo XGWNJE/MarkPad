@@ -7,6 +7,7 @@ import { iconSvg } from '../core/IconLibrary.js';
 import { resolveBookmarkIcon } from '../core/icons/IconResolver.js';
 import { isSvgRaw } from '../core/icons/IconSanitizer.js';
 import { validateBitmapDimensions } from '../core/icons/BitmapIconProcessor.js';
+import CardEffects from './CardEffects.js';
 
 /** 将原始 SVG 文本应用到容器元素（注入 DOM，绕过 CSP） */
 function applySvgToElement(el, svgText) {
@@ -15,7 +16,8 @@ function applySvgToElement(el, svgText) {
   el.innerHTML = svgText;
   const svgEl = el.querySelector('svg');
   if (svgEl) {
-    svgEl.style.cssText = 'width:100%;height:100%;display:block;';
+    // 尺寸由 card.css 的 .card-icon svg 统一决定，这里只保证 SVG 以块级元素渲染
+    svgEl.style.cssText = 'display:block;';
   }
 }
 
@@ -66,6 +68,27 @@ function escapeHtml(text) {
   return div.innerHTML;
 }
 
+/**
+ * 触屏没有 hover，无法靠 :hover 展开卡片文字。
+ * 这里只维护“当前被点开的卡片”这一份状态，document 监听只注册一次，避免每张卡片各挂一个。
+ */
+let revealedCard = null;
+let revealDismisserBound = false;
+
+function bindRevealDismisser() {
+  if (revealDismisserBound) return;
+  revealDismisserBound = true;
+  document.addEventListener(
+    'pointerdown',
+    (event) => {
+      if (revealedCard && !revealedCard.element.contains(event.target)) {
+        revealedCard.hideText();
+      }
+    },
+    true
+  );
+}
+
 class BookmarkCard {
   constructor(data, container, options = {}) {
     this.data = data;
@@ -80,6 +103,9 @@ class BookmarkCard {
     this.longPressStart = null;
     this.suppressNextClick = false;
     this.currentDropPosition = null;
+    this.effects = null;
+    this.lastPointerType = null;
+    this.textRevealed = false;
   }
 
   async render() {
@@ -151,8 +177,14 @@ class BookmarkCard {
     this.element.appendChild(info);
 
     this.bindEvents();
+    this.effects = CardEffects.attach(this.element);
 
     return this.element;
+  }
+
+  /** 拖拽排序 / FLIP 动画要自己写 transform，这里先把 gsap 的 transform 交还出去 */
+  releaseEffectsTransform() {
+    this.effects?.releaseTransform();
   }
 
   getDomain(url) {
@@ -176,6 +208,7 @@ class BookmarkCard {
         e.preventDefault();
         return;
       }
+      if (this.revealTextOnTap()) return;
       if (e.ctrlKey || e.metaKey) {
         this.toggleSelect();
       } else {
@@ -299,7 +332,10 @@ class BookmarkCard {
       this.showContextMenu(e.clientX, e.clientY);
     });
 
-    this.element.addEventListener('pointerdown', (e) => this.startLongPress(e));
+    this.element.addEventListener('pointerdown', (e) => {
+      this.lastPointerType = e.pointerType;
+      this.startLongPress(e);
+    });
     this.element.addEventListener('pointermove', (e) => this.handleLongPressMove(e));
     this.element.addEventListener('pointerup', () => this.cancelLongPress());
     this.element.addEventListener('pointercancel', () => this.cancelLongPress());
@@ -314,6 +350,34 @@ class BookmarkCard {
       this.suppressNextClick = true;
       this.showContextMenu(e.clientX, e.clientY);
     }, 550);
+  }
+
+  // ========== 卡片文字展开（悬停 / 键盘聚焦 / 触屏点按） ==========
+
+  /**
+   * 触屏和手写笔没有悬停：第一次点按先把标题展开，再点一次才执行打开或多选。
+   * 鼠标路径由 card.css 的 :hover / :focus-visible 负责，这里不做拦截。
+   * @returns {boolean} 是否消费了这次点击
+   */
+  revealTextOnTap() {
+    if (this.textRevealed) return false;
+    if (this.lastPointerType !== 'touch' && this.lastPointerType !== 'pen') return false;
+    this.revealText();
+    return true;
+  }
+
+  revealText() {
+    if (revealedCard && revealedCard !== this) revealedCard.hideText();
+    bindRevealDismisser();
+    revealedCard = this;
+    this.textRevealed = true;
+    this.element.classList.add('text-revealed');
+  }
+
+  hideText() {
+    if (revealedCard === this) revealedCard = null;
+    this.textRevealed = false;
+    this.element.classList.remove('text-revealed');
   }
 
   handleLongPressMove(e) {
@@ -703,6 +767,9 @@ class BookmarkCard {
     return new Promise((resolve) => {
       this.element.classList.add('deleting');
       setTimeout(() => {
+        this.hideText();
+        this.effects?.destroy();
+        this.effects = null;
         this.element.remove();
         resolve();
       }, 300);

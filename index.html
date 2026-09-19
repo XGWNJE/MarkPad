@@ -4,13 +4,12 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>MarkPad</title>
+  <!-- 在首次绘制前定好 data-theme，避免深色模式闪一下亮色；细节见 theme-init.js -->
+  <script src="theme-init.js"></script>
   <link rel="stylesheet" href="css/main.css">
 </head>
 <body>
   <div id="app">
-    <!-- 背景壁纸层 -->
-    <div id="wallpaper" class="wallpaper"></div>
-
     <!-- 顶部工具栏 -->
     <header id="toolbar" class="toolbar">
       <nav id="breadcrumb" class="breadcrumb">
@@ -69,15 +68,18 @@
       </div>
       <div class="menu-section menu-section-major">
         <div class="menu-section-heading">
-          <div class="menu-section-label">页面背景</div>
-          <p>选择壁纸并调整它在内容下方的呈现方式。</p>
+          <div class="menu-section-label">主题</div>
+          <p>浅色和深色两种配色，深色统一使用中性深灰。</p>
         </div>
-        <div id="wallpaper-grid" class="wallpaper-grid"></div>
+        <div class="menu-toggle-group" id="theme-group">
+          <button class="menu-toggle-btn" data-value="light" id="theme-light">浅色</button>
+          <button class="menu-toggle-btn" data-value="dark" id="theme-dark">深色</button>
+        </div>
       </div>
       <div class="menu-section menu-section-major">
         <div class="menu-section-heading">
           <div class="menu-section-label">书签卡片</div>
-          <p>控制卡片占用空间、文字信息和背景质感。</p>
+          <p>控制卡片占用空间和背景质感；标题在悬停时展开。</p>
         </div>
         <div class="menu-range-stack">
           <label class="menu-range-control">
@@ -90,13 +92,6 @@
             <input type="range" id="card-background-strength" min="40" max="100" step="1" value="100">
             <span class="menu-range-scale"><small>更通透</small><small>更清晰</small></span>
           </label>
-        </div>
-        <div class="menu-setting-row">
-          <span>卡片文字</span>
-          <div class="menu-toggle-group menu-toggle-compact" id="card-text-group">
-            <button class="menu-toggle-btn" data-value="true" id="card-text-on">显示</button>
-            <button class="menu-toggle-btn" data-value="false" id="card-text-off">隐藏</button>
-          </div>
         </div>
       </div>
       <div class="menu-section menu-section-major">
@@ -215,6 +210,8 @@
 
   </div>
 
+  <!-- gsap 的 UMD 发行版必须在严格模式的模块之前用经典脚本加载，详见 vendor/gsap.js -->
+  <script src="vendor/gsap.min.js"></script>
   <script type="module" src="main.js"></script>
 </body>
 </html>

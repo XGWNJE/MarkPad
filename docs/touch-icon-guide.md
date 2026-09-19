@@ -18,13 +18,17 @@ MarkPad 是面向远程平板触控 PC 场景的新标签页书签面板。主�
 
 设置菜单按作用对象分为三个外观区域：
 
-1. `页面背景`：选择内置或自定义壁纸，调整显示方式、壁纸亮度和模糊。
-2. `书签卡片`：调整卡片尺寸、文字显隐和卡片背景强度。
+1. `主题`：浅色或深色。深色统一使用中性深灰，卡片只比背景亮一阶，保持轻度对比。
+2. `书签卡片`：调整卡片尺寸和卡片背景强度。
 3. `顶部栏`：调整导航和工具按钮背后的背景强度。
 
-卡片尺寸支持 80–200 的七档调节，每档必须产生可见的卡片宽度变化；`=` / `-` 快捷键与设置滑块使用同一状态。背景强度数值越高，界面衬底越实；壁纸亮度数值越高，壁纸越亮。
+卡片尺寸支持 80–200 的七档调节，每档必须产生可见的卡片宽度变化；`=` / `-` 快捷键与设置滑块使用同一状态。背景强度数值越高，界面衬底越实。
 
-现有本地偏好 key 保持兼容：`cardSize`、`showCardText`、`cardBackgroundStrength`、`headerOpacity`、`wallpaperId`、`wallpaperFit`、`wallpaperBlur` 和 `wallpaperOverlayOpacity`。其中壁纸亮度是 `wallpaperOverlayOpacity` 的反向界面映射，不迁移旧值。
+卡片标题默认收起，卡片保持正方形。指针悬停或键盘聚焦时文字面板从底部动画展开，覆盖在图标之上，不改变卡片尺寸、不触发网格重排；触屏和手写笔没有悬停，第一次点按先展开文字，再点一次才打开书签，点按卡片以外区域收起。文字展开状态只由 CSS 的 `:hover` / `:focus-visible` / `:focus-within` 和 `.text-revealed` 驱动，没有独立的偏好开关。
+
+主题在首次绘制前由 `theme-init.js` 写入 `<html data-theme>`：`localStorage` 没有 `themeMode` 时按系统深浅色取初值，用户选过之后一直按选择走。配色令牌只存在于 `variables.css` 的 `:root` 和 `:root[data-theme="dark"]`，不再跟随 `prefers-color-scheme` 媒体查询。
+
+现有本地偏好 key：`themeMode`、`cardSize`、`cardBackgroundStrength`、`headerOpacity`、`openMode`。壁纸功能已整体移除，`wallpaperId`、`wallpaperFit`、`wallpaperBlur`、`wallpaperOverlayOpacity` 和 `wallpaperCustomImage` 以及 `showCardText` 都不再读写。
 
 ## Icon Studio
 

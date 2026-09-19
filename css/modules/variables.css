@@ -19,6 +19,7 @@
   --color-danger: #b34040;
   --color-info: #52606d;
   --color-focus: rgba(17, 17, 17, 0.26);
+  color-scheme: light;
 
   /* Legacy aliases kept so older modules remain functional during refactors. */
   --glass-bg: rgba(255, 255, 255, 0.88);
@@ -82,35 +83,49 @@
   --shadow-card-hover: 0 18px 50px rgba(0, 0, 0, 0.06);
   --shadow-dialog: 0 24px 80px rgba(0, 0, 0, 0.12);
 
+  /* Card glow effect (MagicBento style): color follows the theme instead of a fixed purple. */
+  --card-glow-rgb: 17, 17, 17;
+  --card-glow-radius: 300px;
+  --card-glow-border-width: 6px;
+  --card-glow-peak: 0.3;
+  --card-spotlight-blend: multiply;
+  --card-spotlight-peak: 0.35;
+
   --gap: var(--space-7);
   --card-size: 164px;
   --card-width: clamp(116px, calc(var(--card-size) * 1.45), 320px);
   --card-background-strength: 100%;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --color-bg: #181817;
-    --color-bg-rgb: 24 24 23;
-    --color-bg-soft: #20201e;
-    --color-surface: #232321;
-    --color-surface-muted: #1e1e1c;
-    --color-text: #f4f1e8;
-    --color-text-soft: #ded9cc;
-    --color-text-muted: #aaa394;
-    --color-text-faint: #777164;
-    --color-border: #35332d;
-    --color-border-strong: #4a473f;
-    --color-action: #f4f1e8;
-    --color-action-hover: #ffffff;
-    --color-action-text: #111111;
-    --color-focus: rgba(244, 241, 232, 0.28);
+/* 深色模式：中性深灰，卡片只比背景亮一阶，保持轻度对比。 */
+:root[data-theme="dark"] {
+  --color-bg: #141414;
+  --color-bg-rgb: 20 20 20;
+  --color-bg-soft: #1a1a1a;
+  --color-surface: #1e1e1e;
+  --color-surface-muted: #191919;
+  --color-text: #f2f2f2;
+  --color-text-soft: #d8d8d8;
+  --color-text-muted: #a3a3a3;
+  --color-text-faint: #6f6f6f;
+  --color-border: #2e2e2e;
+  --color-border-strong: #3d3d3d;
+  --color-action: #f2f2f2;
+  --color-action-hover: #ffffff;
+  --color-action-text: #141414;
+  --color-focus: rgba(242, 242, 242, 0.24);
 
-    --glass-bg: rgba(35, 35, 33, 0.9);
-    --glass-bg-hover: rgba(43, 43, 40, 0.96);
-    --glass-bg-active: #2f2e2b;
-    --shadow-card: 0 12px 40px rgba(0, 0, 0, 0.18);
-    --shadow-card-hover: 0 18px 50px rgba(0, 0, 0, 0.26);
-    --shadow-dialog: 0 24px 80px rgba(0, 0, 0, 0.42);
-  }
+  --glass-bg: rgba(30, 30, 30, 0.9);
+  --glass-bg-hover: rgba(38, 38, 38, 0.96);
+  --glass-bg-active: #2a2a2a;
+  --shadow-card: 0 12px 40px rgba(0, 0, 0, 0.22);
+  --shadow-card-hover: 0 18px 50px rgba(0, 0, 0, 0.32);
+  --shadow-dialog: 0 24px 80px rgba(0, 0, 0, 0.5);
+
+  --card-glow-rgb: 242, 242, 242;
+  --card-glow-peak: 0.42;
+  --card-spotlight-blend: screen;
+  --card-spotlight-peak: 0.9;
+
+  color-scheme: dark;
 }

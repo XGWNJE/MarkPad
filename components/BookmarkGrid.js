@@ -237,6 +237,10 @@ class BookmarkGrid {
     const target = this.cards.get(targetId)?.element;
     if (!dragged || !target || dragged === target) return;
 
+    // FLIP 动画要自己写 inline transform，先让卡片光效交出 gsap 的 transform，
+    // 否则两边同时改同一个属性会出现跳动。
+    this.cards.forEach((card) => card.releaseEffectsTransform());
+
     const previousRects = new Map();
     this.grid.querySelectorAll('.bookmark-card').forEach(card => {
       previousRects.set(card, card.getBoundingClientRect());

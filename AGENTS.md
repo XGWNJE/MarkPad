@@ -30,6 +30,9 @@
 
 - UI 入口/菜单行为测试：`node --test tests\toolbar-menu.test.mjs tests\context-menu.test.mjs`
 - 版本记录一致性测试：`node --test tests\version-system.test.mjs`
+- 卡片光效接线测试：`node --test tests\card-effects.test.mjs`
+- 卡片文字展开测试：`node --test tests\card-text-reveal.test.mjs`
+- 主题模式测试：`node --test tests\theme-mode.test.mjs`
 - 图标解析/安全/上传测试：`node --test tests\icon-sanitizer.test.mjs tests\icon-storage.test.mjs tests\icon-library-provider.test.mjs tests\icon-resolver.test.mjs tests\icon-component-integration.test.mjs tests\bitmap-icon-upload.test.mjs`
 - JavaScript 语法检查：`node --check <file>`
 - Chrome 扩展清单检查：确认 `manifest.json` JSON 合法且权限与实际功能匹配
@@ -45,14 +48,18 @@
 ```
 MarkPad/
 ├── CHANGELOG.md  # 版本历史和发布变更
-├── assets/          # 内置壁纸与 README 展示资源
+├── assets/          # README 展示资源
 ├── components/     # UI 组件
 ├── core/           # 数据层、事件、路由、应用图标和书签图标解析
 │   └── icons/      # 默认书签图标解析、SVG 清理、位图校验和生成数据
 ├── css/            # main.css 入口 + modules/ 模块
 ├── docs/           # 品牌、触控和图标行为说明
 ├── icons/          # 扩展图标 + export.html
+├── scripts/        # 图标数据与 vendor 文件的生成脚本
+├── tests/          # 轻量 Node 行为测试
+├── vendor/         # 内置的第三方运行时代码（gsap）
 ├── index.html      # 新标签页入口
+├── theme-init.js   # 首次绘制前决定浅色/深色（经典脚本）
 ├── main.js         # 应用装配与全局交互
 └── manifest.json   # Chrome 扩展清单 V3
 ```
@@ -76,19 +83,22 @@ MarkPad/
 - **MoveDialog.js** — 右键菜单“移动到...”目标文件夹弹窗。
 - **QuickFind.js** — 全局模糊搜索浮层（`/` 或 `Ctrl+F`）。
 - **IconStudio.js** — 图标工坊弹窗。提供本地图标候选和外部 SVG 搜索两种模式，支持预览和直接应用；不接入模型 API 或生图功能。
-- **SettingsPanel.js** — 设置菜单中的外观偏好模块，按页面背景、书签卡片和顶部栏组织设置；负责壁纸亮度/模糊/缩放、卡片尺寸/文字/背景强度和顶部栏背景强度。`assets/wallpapers/` 中的内置图使用独立缩略图，避免设置面板同时解码全部原图。
+- **SettingsPanel.js** — 设置菜单里的外观偏好模块，按主题、书签卡片和顶部栏组织设置；负责浅色/深色切换、卡片尺寸/背景强度和顶部栏背景强度。主题只有两种：`theme-init.js` 在首次绘制前写好 `<html data-theme>`，实际配色由 `variables.css` 的 `:root[data-theme="dark"]` 令牌决定；不要再引入跟随系统之外的主题状态、壁纸或自定义背景图片。
+- **CardEffects.js** — 卡片光效控制器，移植自 React Bits 的 MagicBento（原组件为 React + gsap）。单例系统统一跟光标：全局聚光层、每张卡片的边缘光晕强度、粒子、3D 倾斜、磁吸和点击涟漪。`BookmarkCard.render()` 调 `CardEffects.attach(element)` 挂载，删除卡片时 `destroy()`；离场卡片在系统刷新时自动注销。触摸设备、宽度 ≤768px 和 `prefers-reduced-motion` 下自动停用，由 `card.css` 的静态悬停反馈兜底。光效只写 `--glow-*` 变量和 `transform`，颜色一律来自 CSS 令牌。
 
 ## CSS 维护规则
 
 - 先改 `variables.css` 中的 Lumen 风格 token，再映射到组件模块；避免在组件里散落 magic number。
 - 视觉统一只改既有界面的颜色、间距、圆角、阴影、状态和密度；不要新增品牌块、底部栏、说明卡片、装饰图形或额外入口，除非用户明确要求。
-- 书签卡片有两种状态：显示文字和隐藏文字。显示文字时域名/计数一行、名称一行，均不换行；隐藏文字时卡片保持正方形。
+- 卡片文字默认收起，卡片保持正方形；悬停或键盘聚焦时 `.card-info` 从底部动画展开，盖在图标之上，**不能改变卡片尺寸**（否则网格会重排）。触屏和手写笔没有悬停，由 `BookmarkCard.revealTextOnTap()` 用首次点按展开、再次点按才执行打开。文字状态只由 `:hover` / `:focus-visible` / `:focus-within` / `.text-revealed` 驱动，不要再恢复 `showCardText` 一类的显隐开关或 `[data-show-card-text]` 属性。
 - 应用自身图标必须使用 `core/IconLibrary.js` 作为统一入口；新增或替换应用 UI 图标时，最优先使用成熟图标库或现成图标源的路径数据，例如 Lucide、Iconify 或 Material Symbols。
 - 书签默认图标必须走 `core/icons/IconResolver.js`，默认顺序是用户自定义图标、`resolved_icon_cache_v1`、本地品牌图标库、通用工具/信息图标库、首字母兜底。自动匹配保持保守：品牌优先考虑用户标题中的完整品牌/产品短语，再考虑域名和标题 token；Remix、Ant Design 和 Lobe Icons 的全量扩展库只对明确品牌白名单自动命中，其他图标只能作为手动候选；通用 Lucide 图标只对明确词如 database、docs、api、server、calendar、terminal 等回落匹配；不要恢复启动时批量抓取 favicon。用户觉得默认匹配不准时，通过 `图标：匹配本地图标` 打开可解释候选列表并手动应用。
 - 如果本仓库当前没有合适图标，优先评估能否引入或复用成熟图标库；自己绘制 SVG/path 是最后选择项，只能在现成库无法满足、无法引入依赖或用户明确要求定制时使用。
 - 必须手写图标时，先说明原因，并仍然集中放入 `core/IconLibrary.js`；不要重新引入 emoji、字符图标或散落的内联 SVG。
 - 用户自定义图标最高优先级：SVG 可来自本地图标候选或图标工坊搜索，并在保存前清理；位图上传必须用原始解码尺寸校验，宽高都不低于 256px。
 - 触控目标保持不小于 44px；弹窗和图标工坊必须保留粗指针友好布局。
+- 卡片光效颜色只在 `variables.css` 定义：`--card-glow-rgb`、`--card-glow-peak`（描边光晕峰值）、`--card-glow-radius`、`--card-spotlight-blend/peak`（全局聚光）。亮色主题用墨色 + `multiply`，深色主题用中性浅灰 + `screen`，不要再引入独立品牌色或紫色霓虹。改颜色只改令牌，`card.css` 与 `components/CardEffects.js` 都不写死色值。
+- 主题只有浅色和深色两套，令牌分别挂在 `:root` 和 `:root[data-theme="dark"]`；**不要恢复 `@media (prefers-color-scheme: dark)` 里的颜色令牌**，否则会和手动选择打架。深色保持中性深灰且卡片只比背景亮一阶，亮色保持温白，两边都维持轻度对比。
 
 关键模块：
 - `variables.css` — Lumen Index 风格设计令牌。
@@ -96,7 +106,7 @@ MarkPad/
 - `card.css` / `grid.css` — 卡片与网格。
 - `dialog.css` / `quick-find.css` / `icon-studio.css` — 弹窗、搜索、图标工坊。
 - `drag-zones.css` — 左侧移动面板和右侧删除区域。
-- `settings.css` / `wallpapers.css` — 壁纸设置与背景层。
+- `settings.css` — 设置面板与偏好控件。
 
 ## 关键模式
 
@@ -108,13 +118,16 @@ MarkPad/
 
 **图标工坊**：当前只做本地图标候选、SVG 搜索、候选来源/匹配依据标注、预览和直接应用。不新增 API key、模型选择、生图、高清生成或自动批量生成。
 
-**本地偏好**：卡片尺寸、打开方式、卡片文字显隐、卡片背景强度和壁纸偏好保存在 `localStorage`。不要无迁移方案地改 key。
+**本地偏好**：卡片尺寸、打开方式、卡片背景强度、主题和顶部栏背景强度保存在 `localStorage`：`themeMode` 记录 `light` / `dark`，`cardBackgroundStrength` 控制卡片背景强度，`headerOpacity` 控制顶部栏背景强度。不要无迁移方案地改 key。旧 `showCardText` 和壁纸相关 key（`wallpaperId`、`wallpaperFit`、`wallpaperBlur`、`wallpaperOverlayOpacity`、`wallpaperCustomImage`）已随功能移除，不要再读写。
 
-外观强度偏好同样保存在 `localStorage`：`cardBackgroundStrength` 控制卡片背景强度，`headerOpacity` 控制顶部栏背景强度，`wallpaperOverlayOpacity` 保留为底层壁纸遮罩值；界面上的“壁纸亮度”使用 `100 - wallpaperOverlayOpacity` 反向映射。不要无迁移方案地改 key 或直接改变数值方向。
+**卡片 transform 归属**：卡片光效（gsap 倾斜/磁吸）和网格的拖拽 FLIP 排序都会写同一张卡片的 inline `transform`。谁接管前必须显式交接：光效侧统一走 `CardEffect.releaseTransform()`（`gsap.killTweensOf` + `clearProps: 'transform'`），`dragstart` 和 `BookmarkGrid.applyOptimisticReorder()` 开头都会调用。以后新增写卡片 transform 的逻辑时，必须同样先交接，避免 gsap 的 transform 缓存和外部写入值不一致导致跳动。
 
 ## 工程卫生
 
-- 无构建步骤，无 npm 运行依赖。纯 ES Modules 直接由扩展加载；`simple-icons`、`@iconify-json/simple-icons`、`@iconify-json/logos`、`@iconify-json/lucide`、`@iconify-json/ri`、`@iconify-json/ant-design` 和 `@lobehub/icons-static-svg` 只作为生成本地图标数据的 devDependency。
+- 无构建步骤。纯 ES Modules 直接由扩展加载，只有两个刻意保留的经典 `<script>`：
+  - `vendor/gsap.min.js`：它的 UMD 结尾会执行 `(t = t || self).window = t.window || {}`，模块作用域是严格模式，导入它会直接抛 `Cannot set property window`，因此模块侧只能 `import { gsap } from '../vendor/gsap.js'`，不要改回模块导入。`gsap` 与其他图标库一样只作为 devDependency 存在，改版本后运行 `npm run vendor:gsap` 重新生成 `vendor/` 下的两个文件，不要手改生成物。
+  - `theme-init.js`：模块是 deferred 的，等 HTML 解析完才执行，深色模式用户会先看到一帧亮色；经典脚本同步执行，能在首次绘制前写好 `<html data-theme>`，所以它必须在 `index.html` 的 `<head>` 里、且排在 `css/main.css` 和 `main.js` 之前。同理不要在 `index.html` 里内联脚本：MV3 的 CSP 不允许 `unsafe-inline`。
+- `simple-icons`、`@iconify-json/simple-icons`、`@iconify-json/logos`、`@iconify-json/lucide`、`@iconify-json/ri`、`@iconify-json/ant-design`、`@lobehub/icons-static-svg` 和 `gsap` 都只作为生成或内置用的 devDependency，不要变成运行时 `import` 的 npm 包。
 - 做扩展运行态验证时，优先连接用户真实 Chrome profile/session；只有真实 Chrome 不可用或用户明确要求隔离时，才使用临时 profile。
 - `.gitignore` 忽略本地 Agent/工具状态目录（如 `.codex/`、`.agents/`、`.openharness/`）和日志，不要提交本机运行态。
 - `.gitattributes` 固定文本 LF，并把图片资源标记为 binary。

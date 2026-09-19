@@ -6,10 +6,10 @@ MarkPad 会替换 Chrome 新标签页，并直接使用 Chrome 原生书签数�
 
 ## 实际界面
 
-卡片是第一视觉单位，不依赖 hover 才能理解或操作。下面的界面由当前仓库代码与隔离测试书签渲染，不包含真实用户数据。
+卡片是第一视觉单位，图标本身就能认出入口；标题默认收起，指针悬停或键盘聚焦时才从卡片底部展开。下面的界面由当前仓库代码与隔离测试书签渲染，不包含真实用户数据。
 
 <p align="center">
-  <img src="./assets/readme/showcase.png" width="100%" alt="MarkPad 当前界面，展示带本地品牌图标的书签卡片与文件夹卡片">
+  <img src="./assets/readme/showcase.png" width="100%" alt="MarkPad 当前界面：书签卡片默认只显示图标，悬停时展开标题和域名，另有文件夹卡片">
 </p>
 
 ## 为什么是 MarkPad
@@ -17,6 +17,12 @@ MarkPad 会替换 Chrome 新标签页，并直接使用 Chrome 原生书签数�
 ### 大卡片，为低精度输入留出空间
 
 书签和文件夹以卡片网格呈现。主要触控目标不小于 44px，长按与右键使用同一套操作菜单；键盘方向键、触控笔和鼠标也可以继续使用。
+
+标题和域名默认不显示，卡片保持正方形；指针悬停或键盘聚焦时文字面板从底部动画展开，盖在图标之上，卡片尺寸和网格位置都不变。触屏和手写笔没有悬停，第一次点按先展开文字，再点一次才打开书签。
+
+### 指针经过时的卡片光效
+
+鼠标或手写笔进入网格后，卡片边缘的描边光晕、跟随光标的柔光和点击涟漪会指出当前指向的卡片，贴近的卡片一起渐亮。颜色跟随亮色/暗色主题，不引入独立品牌色；触摸设备和系统「减少动效」下自动停用，退回静态边框反馈。
 
 ### 图标清晰，也允许手动纠正
 
@@ -66,8 +72,8 @@ MarkPad 直接读写 `chrome.bookmarks`，不会额外建立一套需要迁移�
 ## 设置与个性化
 
 - 新建、编辑、移动和删除书签或文件夹。
-- 页面背景：选择浅色、深色、6 张“静默索引”内置壁纸或自定义图片，并调整显示方式、亮度和模糊。
-- 书签卡片：调整卡片尺寸、文字显隐和背景强度；尺寸滑块与 `=` / `-` 快捷键保持同步。
+- 主题：浅色和深色两种模式，深色统一使用中性深灰，卡片只比背景亮一阶。
+- 书签卡片：调整卡片尺寸和背景强度；标题与域名默认收起，悬停或键盘聚焦时才展开；尺寸滑块与 `=` / `-` 快捷键保持同步。
 - 顶部栏：调整导航和工具按钮背后的背景强度。
 - 打开行为：选择在新标签页或当前页打开书签。
 - 通过 `/` 或 `Ctrl+F` 打开全局模糊搜索。
@@ -91,18 +97,20 @@ MarkPad 直接读写 `chrome.bookmarks`，不会额外建立一套需要迁移�
 
 ## 开发
 
-MarkPad 使用原生 JavaScript、按模块拆分的 CSS 和 Chrome Extensions Manifest V3。扩展运行没有构建步骤；npm 依赖只用于生成本地图标数据和执行测试。
+MarkPad 使用原生 JavaScript、按模块拆分的 CSS 和 Chrome Extensions Manifest V3。扩展运行没有构建步骤；唯一的运行时第三方文件是内置的 `vendor/gsap.min.js`（卡片光效动画），npm 依赖只用于生成本地图标数据、内置 gsap 和执行测试。
 
 ```text
 MarkPad/
-├── assets/           内置壁纸与 README 展示资源
+├── assets/           README 展示资源
 ├── components/       UI 组件
 ├── core/             书签数据、路由、事件和图标解析
 │   └── icons/        图标匹配、清理、存储和生成数据
 ├── css/              样式入口与模块
 ├── docs/             品牌和专题设计文档
 ├── icons/            扩展图标与导出工具
+├── scripts/          图标数据与 vendor 文件的生成脚本
 ├── tests/            轻量 Node 行为测试
+├── vendor/           内置的第三方运行时文件（gsap）
 ├── index.html        新标签页入口
 ├── main.js           应用装配与全局交互
 └── manifest.json     Chrome 扩展清单
@@ -114,6 +122,7 @@ MarkPad/
 npm test
 node --check main.js
 node --test tests\version-system.test.mjs
+npm run vendor:gsap
 node -e "JSON.parse(require('fs').readFileSync('manifest.json', 'utf8'))"
 git diff --check
 ```
