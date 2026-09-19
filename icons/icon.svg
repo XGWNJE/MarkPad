@@ -1,41 +1,10 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" fill="none">
-  <defs>
-    <!-- 主渐变 - 果冻绿到蓝 -->
-    <linearGradient id="mainGrad" x1="0" y1="0" x2="128" y2="128" gradientUnits="userSpaceOnUse">
-      <stop offset="0%" stop-color="#6ee7b7"/>
-      <stop offset="50%" stop-color="#3b82f6"/>
-      <stop offset="100%" stop-color="#8b5cf6"/>
-    </linearGradient>
-    <!-- 高光渐变 -->
-    <linearGradient id="shineGrad" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0%" stop-color="#ffffff" stop-opacity="0.6"/>
-      <stop offset="100%" stop-color="#ffffff" stop-opacity="0"/>
-    </linearGradient>
-    <!-- 内阴影 -->
-    <linearGradient id="innerShadow" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0%" stop-color="#000000" stop-opacity="0.15"/>
-      <stop offset="100%" stop-color="#000000" stop-opacity="0"/>
-    </linearGradient>
-  </defs>
-
-  <!-- 背景圆角方形 -->
-  <rect x="12" y="12" width="104" height="104" rx="28" fill="url(#mainGrad)"/>
-
-  <!-- 顶部高光 -->
-  <rect x="12" y="12" width="104" height="52" rx="28" fill="url(#shineGrad)"/>
-
-  <!-- 书签图标 -->
-  <path d="M64 28L40 44V92C40 94.2091 41.7909 96 44 96H84C86.2091 96 88 94.2091 88 92V44L64 28Z"
-        fill="white"
-        fill-opacity="0.95"
-        stroke="white"
-        stroke-width="2"
-        stroke-linejoin="round"/>
-
-  <!-- 书签顶部小三角阴影 -->
-  <path d="M64 28L40 44H88L64 28Z" fill="url(#innerShadow)"/>
-
-  <!-- 书签内部装饰线 -->
-  <rect x="52" y="58" width="24" height="4" rx="2" fill="url(#mainGrad)" fill-opacity="0.4"/>
-  <rect x="52" y="68" width="16" height="4" rx="2" fill="url(#mainGrad)" fill-opacity="0.3"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" width="128" height="128" fill="none">
+  <!-- MarkPad 应用图标：温白底板 + 2×2 卡片网格，左上角一格墨色实心表示当前选中，其余三格中灰实心。
+       未选中格用实心而不是描边：描边在 16px 下只剩 0.6 物理像素，会退化成灰环。 -->
+  <rect width="128" height="128" rx="30" fill="#FAFAF7"/>
+  <rect x="1" y="1" width="126" height="126" rx="29" fill="none" stroke="#E7E5DC" stroke-width="2"/>
+  <rect x="29" y="29" width="30" height="30" rx="9" fill="#111111"/>
+  <rect x="69" y="29" width="30" height="30" rx="9" fill="#C6C3B7"/>
+  <rect x="29" y="69" width="30" height="30" rx="9" fill="#C6C3B7"/>
+  <rect x="69" y="69" width="30" height="30" rx="9" fill="#C6C3B7"/>
 </svg>
