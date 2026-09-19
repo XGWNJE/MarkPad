@@ -5,7 +5,7 @@
 ## 项目边界
 
 - 产品名已确定为 **MarkPad**。用户可见位置必须使用 MarkPad，包括 `manifest.json`、`index.html` title、README、图标导出页和发布说明。
-- 仓库目录仍为 `D:\ObjectCode\BookmarkTab`，内部类名如 `BookmarkStore`、`BookmarkCard` 表示书签领域对象，不作为产品品牌。不要为了品牌统一批量重命名文件、类、事件或存储 key，除非用户明确要求迁移。
+- 仓库目录为 `C:\Users\xgwnj\Documents\XGWNJE\MarkPad`（由旧目录 `BookmarkTab` 迁入）；内部类名如 `BookmarkStore`、`BookmarkCard` 表示书签领域对象，不作为产品品牌。不要为了品牌统一批量重命名文件、类、事件或存储 key，除非用户明确要求迁移。
 - 当前视觉规范优先参考 `D:\ObjectCode\visual-rules-collection\rules\lumen-index-ui-system.md`：温白/深灰背景、黑白骨架、轻边框、低阴影、克制密度。
 - 品牌方向见 `docs/markpad-brand-visual-guide.md`；当前触控与图标行为见 `docs/touch-icon-guide.md`。
 - `CLAUDE.md` 只是旧工具兼容入口，不再维护独立规则内容。
@@ -43,7 +43,7 @@
 ## 架构
 
 ```
-BookmarkTab/
+MarkPad/
 ├── CHANGELOG.md  # 版本历史和发布变更
 ├── assets/          # 内置壁纸与 README 展示资源
 ├── components/     # UI 组件
