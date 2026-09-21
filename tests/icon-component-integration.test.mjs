@@ -48,6 +48,19 @@ test('website icon backgrounds are stored as display preferences, not custom ico
   assert.match(grid, /siteIcon:backgroundPreview/);
 });
 
+test('icon studio persists scale and card rendering applies it without changing the card boundary', async () => {
+  const studio = await read('components/IconStudio.js');
+  const card = await read('components/BookmarkCard.js');
+  const cardCss = await read('css/modules/card.css');
+
+  assert.match(studio, /class="icon-scale-input"/);
+  assert.match(studio, /setIconScale\(scale\)/);
+  assert.match(studio, /scale: this\.iconScale/);
+  assert.match(studio, /scale: this\.iconScale \}/);
+  assert.match(card, /--icon-content-scale/);
+  assert.match(cardCss, /transform:\s*scale\(var\(--icon-content-scale, 1\)\);/);
+});
+
 test('background editor previews the actual card and does not use a native color input as its primary control', async () => {
   const studio = await read('components/IconStudio.js');
   const css = await read('css/modules/icon-studio.css');
@@ -68,6 +81,17 @@ test('BookmarkGrid starts website-icon visibility observation only after each ca
 
   assert.match(loadFolderBlock, /this\.grid\.appendChild\(element\);\s*this\.cards\.set\(child\.id, card\);\s*\/\/[^\n]*\n\s*card\.resolveSiteIconWhenVisible\(\);/);
   assert.doesNotMatch(loadFolderBlock, /BookmarkStore\.resolveSiteIcon\(/);
+});
+
+test('website icon cache remains valid until the user manually requests a refresh', async () => {
+  const store = await read('core/BookmarkStore.js');
+  const card = await read('components/BookmarkCard.js');
+
+  const cacheBlock = store.match(/getSiteIconEntry\(url\) \{[\s\S]*?\n  \}/)?.[0] || '';
+  assert.doesNotMatch(cacheBlock, /TTL|checkedAt|Date\.now/);
+  assert.match(cacheBlock, /return this\.siteIcons\.get\(key\) \|\| null;/);
+  assert.match(card, /label: '图标：重新获取网站图标'/);
+  assert.match(card, /BookmarkStore\.clearSiteIcon\(this\.data\.url\)/);
 });
 
 test('applying a saved custom-icon record re-resolves it before assigning image source', async () => {

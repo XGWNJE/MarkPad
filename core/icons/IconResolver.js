@@ -1,6 +1,7 @@
 import { findLibraryIcon, ICON_MATCHER_VERSION } from './IconLibraryProvider.js';
 import { isSvgRaw } from './IconSanitizer.js';
 import { normalizeIconBackground } from './IconBackground.js';
+import { normalizeIconScale } from './IconUploadProcessor.js';
 
 function customIconToModel(iconData) {
   const record = typeof iconData === 'string'
@@ -13,6 +14,7 @@ function customIconToModel(iconData) {
     type: record.kind || (isSvgRaw(value) ? 'svg' : 'image'),
     value,
     background: normalizeIconBackground(record.background),
+    scale: normalizeIconScale(record.scale),
     source: 'custom',
     sourceLabel: isSvgRaw(value) ? '自定义 SVG' : '自定义图片',
     matchReason: 'user-selected'

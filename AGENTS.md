@@ -67,7 +67,7 @@ MarkPad/
 
 ### 核心层（./core/）
 
-- **BookmarkStore.js** — 数据层，封装 `chrome.bookmarks` API。负责增删改查、自定义图标存储、网站声明图标缓存、网站图标背景偏好、书签树查询和文件夹子项数量统计。网站图标以完整书签 URL 缓存，背景以书签 ID 保存，优先写入 `chrome.storage.local` 并兼容已有 `localStorage` 数据；根文件夹 ID 必须经 `getRootFolderIds()` 动态解析，禁止硬编码。
+- **BookmarkStore.js** — 数据层，封装 `chrome.bookmarks` API。负责增删改查、自定义图标存储、网站声明图标缓存、网站图标背景偏好、书签树查询和文件夹子项数量统计。网站图标以完整书签 URL 永久缓存（包括失败结果），背景以书签 ID 保存，优先写入 `chrome.storage.local` 并兼容已有 `localStorage` 数据；只有用户在右键菜单手动选择「图标：重新获取网站图标」才能清除并重新请求，禁止用 TTL、加载、刷新扩展或浏览器重启触发更新；根文件夹 ID 必须经 `getRootFolderIds()` 动态解析，禁止硬编码。
 - **IconLibrary.js** — 本地应用图标库。应用自身图标统一由这里输出线性 SVG；书签默认图标不经过这里。
 - **core/icons/** — 书签图标域。`IconResolver.js` 只同步解析用户自定义图标和按书签名称匹配的内置库；无匹配时返回空，由卡片可见后再调用 `SiteIconResolver.js` 读取网站声明的 `icon`、Apple Touch、Manifest 或同源 favicon。`IconLibraryProvider.js` 的内置库初始为空，只能在版本更新中人工加入审核后的 SVG 与名称关键词，禁止读取 URL、域名或路径做自动匹配。`IconUploadProcessor.js` 保留 GIF/APNG 和 SVG 动画的原始内容，纯色背景只保存为显示元数据；`IconSanitizer.js` 负责 SVG 安全清理；`BitmapIconProcessor.js` 要求上传位图原始尺寸至少 256×256。
 - **Router.js** — 导航层，管理文件夹层级与浏览器历史集成。
@@ -82,7 +82,7 @@ MarkPad/
 - **EditDialog.js** — 新建/编辑书签或文件夹弹窗。
 - **MoveDialog.js** — 右键菜单“移动到...”目标文件夹弹窗。
 - **QuickFind.js** — 全局模糊搜索浮层（`/` 或 `Ctrl+F`）。
-- **IconStudio.js** — 图标工坊弹窗。提供仅按书签名称命中的内置候选、SVG/图片上传，以及同一套背景编辑器：原样、自动融合、黑、白、自定义色轮/HEX/屏幕取色；编辑时预览实际卡片，网站图标背景只存为显示偏好，不接入外部 SVG 搜索、模型 API 或生图功能。
+- **IconStudio.js** — 图标工坊弹窗。提供仅按书签名称命中的内置候选、SVG/图片上传，以及同一套背景与缩放编辑器：原样、自动融合、黑、白、自定义色轮/HEX/屏幕取色和 40%–400% 图标缩放；编辑时预览实际卡片，网站图标背景与缩放只存为显示偏好，不接入外部 SVG 搜索、模型 API 或生图功能。
 - **SettingsPanel.js** — 设置菜单里的外观偏好模块，按主题、背景光效、书签卡片、文字和顶部栏组织设置；负责浅色/深色切换、背景光效开关与强度、卡片尺寸/圆角、卡片文字字体/字号/字重/字距和顶部栏背景强度。主题只有两种：`theme-init.js` 在首次绘制前写好 `<html data-theme>`，实际配色由 `variables.css` 的 `:root[data-theme="dark"]` 令牌决定；不要再引入跟随系统之外的主题状态、壁纸或自定义背景图片。
 - **BackgroundEffect.js** — 背景光效控制器，移植自 React Bits 的 MoltenMetal（原组件是 React + ogl）。只把 ogl 的 Renderer/Program/Mesh 换成原生 WebGL2（全屏三角形 + 片元着色器 + rAF），**不引入 ogl，也不新增运行时依赖**；着色器与参数语义（speed/scale/detail/glow/coreSize/swirl/fold/blackPoint/brightness/grain）保持等价。挂在 `index.html` 的 `#background-effect-layer` 上（固定全屏层、`z-index: -1`、`pointer-events: none`，样式在 `css/modules/background-effect.css`），由 `SettingsPanel` 按 `backgroundEffect` 偏好建实例或 `destroy()`。浅色走着色器自铺底的混色路径，深色走透明加色路径，配色只来自 `variables.css` 的 `--background-effect-*` 令牌（浅深各一套）；主题切换时 `SettingsPanel.applyTheme()` 调 `setTheme()` 立即换画面。性能与降级：投影上限 1.5、`IntersectionObserver` + `visibilitychange` 暂停 rAF、`prefers-reduced-motion: reduce` 只渲染静态一帧、WebGL2 不可用或初始化失败时整体放弃并保持纯色背景。
 - **CardEffects.js** — 卡片光效控制器，移植自 React Bits 的 MagicBento（原组件为 React + gsap）。单例系统统一跟光标，但**所有光都只画在卡片内部**：卡面光照（`.bookmark-card::before`）与描边光晕（`::after`）都靠卡片自身的 `position: relative` + `overflow: hidden` 收边，没有页面级全局聚光层，光不会溢到卡片之间的背景。`BookmarkCard.render()` 调 `CardEffects.attach(element)` 挂载，删除卡片时 `destroy()`；离场卡片在系统刷新时自动注销。只有指针落在某张卡片上时才给光（`pointInRect`），离开立刻归零；`glowIntensity()` 把强度压在 0.6-1 之间并在柔化距离外归零，避免出现一圈硬光。触摸设备、宽度 ≤768px 和 `prefers-reduced-motion` 下自动停用，由 `card.css` 的静态悬停反馈兜底。光效只写 `--glow-*` 变量和 `transform`，颜色一律来自 CSS 令牌。
@@ -93,10 +93,10 @@ MarkPad/
 - 视觉统一只改既有界面的颜色、间距、圆角、阴影、状态和密度；不要新增品牌块、底部栏、说明卡片、装饰图形或额外入口，除非用户明确要求。
 - 卡片文字默认收起，卡片保持正方形；悬停或键盘聚焦时 `.card-info` 从底部动画展开，盖在图标之上，**不能改变卡片尺寸**（否则网格会重排）。触屏和手写笔没有悬停，由 `BookmarkCard.revealTextOnTap()` 用首次点按展开、再次点按才执行打开。文字状态只由 `:hover` / `:focus-visible` / `:focus-within` / `.text-revealed` 驱动，不要再恢复 `showCardText` 一类的显隐开关或 `[data-show-card-text]` 属性。
 - 应用自身图标必须使用 `core/IconLibrary.js` 作为统一入口；新增或替换应用 UI 图标时，最优先使用成熟图标库或现成图标源的路径数据，例如 Lucide、Iconify 或 Material Symbols。
-- 书签默认图标必须走 `core/icons/IconResolver.js`：用户上传图标优先，其次是仅按书签名称命中的内置图标库，再由可见卡片按需解析网站声明资源，最后保持无图标状态。禁止首字母、emoji、通用占位图标、URL/域名/路径匹配、外部图标搜索及启动时批量请求。网站图标只允许 `http(s)` 页面声明的资源，按完整书签 URL 缓存；不要恢复 Chrome `_favicon` 或 Google 回退。远程 SVG 不得通过 `innerHTML` 注入页面；使用受限图片元素加载。
+- 书签默认图标必须走 `core/icons/IconResolver.js`：用户上传图标优先，其次是仅按书签名称命中的内置图标库，再由可见卡片按需解析网站声明资源，最后保持无图标状态。禁止首字母、emoji、通用占位图标、URL/域名/路径匹配、外部图标搜索及启动时批量请求。网站图标只允许 `http(s)` 页面声明的资源，按完整书签 URL 永久缓存（包括失败结果）；重新获取只允许经用户手动菜单，禁止 TTL 或生命周期事件自动更新。不要恢复 Chrome `_favicon` 或 Google 回退。远程 SVG 不得通过 `innerHTML` 注入页面；使用受限图片元素加载。
 - 如果本仓库当前没有合适图标，优先评估能否引入或复用成熟图标库；自己绘制 SVG/path 是最后选择项，只能在现成库无法满足、无法引入依赖或用户明确要求定制时使用。
 - 必须手写图标时，先说明原因，并仍然集中放入 `core/IconLibrary.js`；不要重新引入 emoji、字符图标或散落的内联 SVG。
-- 用户自定义图标最高优先级：上传 SVG 保存前必须清理，允许安全 SMIL 动画；PNG/APNG、GIF、JPG 与 WebP 保留原始数据，位图原始解码尺寸不低于 256px。上传和已获取的网站图标都可选择原样、自动融合、黑、白或自定义背景；自动融合只读取首帧边缘颜色，不能用 Canvas 重编码动图。网站图标背景按书签保存，不能把网站图标资源复制为自定义图标。
+- 用户自定义图标最高优先级：上传 SVG 保存前必须清理，允许安全 SMIL 动画；PNG/APNG、GIF、JPG 与 WebP 保留原始数据，位图原始解码尺寸不低于 256px。静态文件不超过 1MB，GIF、APNG、动态 WebP 与 SVG 动画不超过 10MB；超限静态 PNG/WebP 必须识别后拒绝，不能用格式名绕过限制。上传和已获取的网站图标都可选择原样、自动融合、黑、白或自定义背景，并可保存 40%–400% 缩放；缩放只改变图标内容，不得改变卡片边界。自动融合只读取首帧边缘颜色，不能用 Canvas 重编码动图。网站图标背景与缩放按书签保存，不能把网站图标资源复制为自定义图标。
 - 触控目标保持不小于 44px；弹窗和图标工坊必须保留粗指针友好布局。
 - 卡片光效颜色只在 `variables.css` 定义：`--card-glow-rgb`、`--card-glow-peak`（描边光晕峰值）、`--card-glow-radius`、`--card-spotlight-blend/peak`（卡片内侧跟随光标的光斑峰值与混合模式）。亮色主题用墨色 + `multiply`，深色主题用中性浅灰 + `screen`，不要再引入独立品牌色或紫色霓虹。改颜色/强度只改令牌，`card.css` 与 `components/CardEffects.js` 都不写死色值；光只允许画在卡片内部，不要再加页面级的全局聚光层。
 - 主题只有浅色和深色两套，令牌分别挂在 `:root` 和 `:root[data-theme="dark"]`；**不要恢复 `@media (prefers-color-scheme: dark)` 里的颜色令牌**，否则会和手动选择打架。深色保持中性深灰且卡片只比背景亮一阶，亮色保持温白，两边都维持轻度对比。

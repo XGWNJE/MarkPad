@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
 
-import { backgroundCssValue, iconTextColor, normalizeIconBackground } from '../core/icons/IconBackground.js';
+import { backgroundCssValue, getIconScale, iconTextColor, normalizeIconBackground } from '../core/icons/IconBackground.js';
 import { analyzeIconEdgePixels } from '../core/icons/IconBackgroundAnalyzer.js';
 
 test('icon backgrounds support only raw, automatic, and explicit solid display strategies', () => {
@@ -24,4 +24,10 @@ test('automatic complex-edge backgrounds render as gradients and choose a stable
   assert.match(backgroundCssValue(background), /linear-gradient\(135deg/);
   assert.equal(iconTextColor(background), '#ffffff');
   assert.equal(iconTextColor({ mode: 'solid', color: '#ffffff' }), '#111111');
+});
+
+test('icon background metadata carries only a non-default display scale', () => {
+  assert.deepEqual(normalizeIconBackground({ mode: 'raw', scale: 0.63 }), { mode: 'raw', scale: 0.65 });
+  assert.equal(getIconScale({ mode: 'solid', color: '#ffffff', scale: 9 }), 4);
+  assert.equal(getIconScale({ mode: 'raw' }), 1);
 });

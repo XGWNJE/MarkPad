@@ -6,7 +6,8 @@ import BookmarkStore from '../core/BookmarkStore.js';
 import { iconSvg } from '../core/IconLibrary.js';
 import { resolveBookmarkIcon } from '../core/icons/IconResolver.js';
 import { isSvgRaw } from '../core/icons/IconSanitizer.js';
-import { backgroundCssValue, iconTextColor, normalizeIconBackground } from '../core/icons/IconBackground.js';
+import { backgroundCssValue, getIconScale, iconTextColor, normalizeIconBackground } from '../core/icons/IconBackground.js';
+import { normalizeIconScale } from '../core/icons/IconUploadProcessor.js';
 import { analyzeIconBackground } from '../core/icons/IconBackgroundAnalyzer.js';
 import CardEffects from './CardEffects.js';
 
@@ -38,6 +39,7 @@ function applyDefaultFolderIcon(el) {
   el.innerHTML = iconSvg('folder', { className: 'app-icon card-folder-svg' });
   el.style.backgroundImage = '';
   el.style.backgroundSize = '';
+  el.style.removeProperty('--icon-content-scale');
 }
 
 function clearIconElement(el) {
@@ -45,6 +47,7 @@ function clearIconElement(el) {
   el.style.backgroundImage = 'none';
   el.style.backgroundSize = '';
   el.style.background = '';
+  el.style.removeProperty('--icon-content-scale');
 }
 
 function applyIconModelToElement(el, model) {
@@ -54,6 +57,7 @@ function applyIconModelToElement(el, model) {
   }
 
   const background = normalizeIconBackground(model.background);
+  const scale = normalizeIconScale(model.scale ?? getIconScale(background));
 
   if (model.type === 'svg') {
     applySvgToElement(el, model.value);
@@ -64,6 +68,7 @@ function applyIconModelToElement(el, model) {
   }
   const cssBackground = backgroundCssValue(background);
   el.style.background = cssBackground;
+  el.style.setProperty('--icon-content-scale', String(scale));
   const card = el.closest('.bookmark-card');
   if (card) {
     const textColor = iconTextColor(background);
@@ -571,7 +576,7 @@ class BookmarkCard {
         });
       }
       items.push({
-        label: '图标：刷新网站图标',
+        label: '图标：重新获取网站图标',
         action: () => this.refreshWebsiteIcon()
       });
     }
@@ -726,7 +731,7 @@ class BookmarkCard {
   async resolveAutoSiteBackground(iconData) {
     const result = await analyzeIconBackground({ kind: iconData.type, value: iconData.value });
     if (!result.ok || !this.element?.isConnected || this.siteIconModel?.value !== iconData.value) return;
-    const background = { mode: 'auto', result: result.result, sourceValue: iconData.value };
+    const background = { mode: 'auto', result: result.result, sourceValue: iconData.value, scale: getIconScale(BookmarkStore.getSiteIconBackground(this.data.id)) };
     BookmarkStore.setSiteIconBackground(this.data.id, background);
     this.updateIcon(iconData);
   }

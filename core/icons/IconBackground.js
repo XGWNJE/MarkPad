@@ -1,9 +1,14 @@
-import { isValidHexColor } from './IconUploadProcessor.js';
+import { isValidHexColor, normalizeIconScale } from './IconUploadProcessor.js';
 
 const RAW_BACKGROUND = Object.freeze({ mode: 'raw' });
 
 function normalizeColor(value) {
   return isValidHexColor(value) ? String(value).toLowerCase() : null;
+}
+
+function withScale(background, value) {
+  const scale = normalizeIconScale(value);
+  return scale === 1 ? background : { ...background, scale };
 }
 
 function normalizeGradient(result) {
@@ -19,14 +24,18 @@ export function normalizeIconBackground(background) {
   const mode = background?.mode;
   if (mode === 'solid') {
     const color = normalizeColor(background.color);
-    return color ? { mode, color } : RAW_BACKGROUND;
+    return color ? withScale({ mode, color }, background.scale) : RAW_BACKGROUND;
   }
   if (mode === 'auto') {
     const result = normalizeAutoBackgroundResult(background.result);
     const sourceValue = typeof background.sourceValue === 'string' ? background.sourceValue : undefined;
-    return result ? { mode, result, ...(sourceValue ? { sourceValue } : {}) } : { mode };
+    return result ? withScale({ mode, result, ...(sourceValue ? { sourceValue } : {}) }, background.scale) : withScale({ mode }, background.scale);
   }
-  return RAW_BACKGROUND;
+  return withScale(RAW_BACKGROUND, background?.scale);
+}
+
+export function getIconScale(background) {
+  return normalizeIconScale(background?.scale);
 }
 
 export function normalizeAutoBackgroundResult(result) {

@@ -77,6 +77,7 @@
 .card-icon svg {
   width: 62%;
   height: 62%;
+  transform: scale(var(--icon-content-scale, 1));
 }
 
 .card-icon-image {
@@ -84,6 +85,7 @@
   height: 44%;
   display: block;
   object-fit: contain;
+  transform: scale(var(--icon-content-scale, 1));
   pointer-events: none;
 }
 

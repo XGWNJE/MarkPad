@@ -23,6 +23,7 @@ test('custom SVG has highest priority and keeps a selected solid background', ()
   assert.equal(model.source, 'custom');
   assert.equal(model.type, 'svg');
   assert.deepEqual(model.background, { mode: 'solid', color: '#123456' });
+  assert.equal(model.scale, 1);
 });
 
 test('legacy custom image records migrate to the raw display mode without changing stored data', () => {

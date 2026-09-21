@@ -19,7 +19,7 @@ test('context menu groups edit, icon, and destructive actions with clearer label
   assert.match(menuSource, /图标：编辑自定义图标/);
   assert.match(menuSource, /图标：选择或上传/);
   assert.match(menuSource, /label: '图标：设置网站图标背景'/);
-  assert.match(menuSource, /label: '图标：刷新网站图标'/);
+  assert.match(menuSource, /label: '图标：重新获取网站图标'/);
   assert.match(menuSource, /label: '删除'/);
   assert.match(menuSource, /className: 'danger'/);
   assert.match(menuSource, /type: 'separator'/);

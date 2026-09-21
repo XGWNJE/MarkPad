@@ -72,6 +72,16 @@ test('toolbar uses menu action items for creation and icon search trigger', asyn
   ]);
 });
 
+test('new tab explicitly declares MarkPad tab-icon assets', async () => {
+  const indexHtml = await readFile(new URL('../index.html', import.meta.url), 'utf8');
+  const manifest = JSON.parse(await readFile(new URL('../manifest.json', import.meta.url), 'utf8'));
+
+  assert.match(indexHtml, /<link rel="icon" type="image\/svg\+xml" sizes="any" href="icons\/tab-icon\.svg">/);
+  assert.match(indexHtml, /<link rel="icon" type="image\/png" sizes="48x48" href="icons\/icon48\.png">/);
+  assert.equal(manifest.icons['16'], 'icons/icon16.png');
+  assert.equal(manifest.icons['48'], 'icons/icon48.png');
+});
+
 test('header keeps creation actions inside the settings menu', async () => {
   const html = await readFile(new URL('../index.html', import.meta.url), 'utf8');
   const headerHtml = html.match(/<header[\s\S]*?<\/header>/)?.[0] || '';

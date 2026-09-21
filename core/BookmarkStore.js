@@ -6,11 +6,9 @@ import { resolveSiteIcon as resolveSiteIconResource } from './icons/SiteIconReso
 import { normalizeIconBackground } from './icons/IconBackground.js';
 
 const CUSTOM_ICON_STORAGE_KEY = 'custom_icon_cache';
-// v2 从卡片挂载后才开始读取网站资源；不复用 v1 的失败记录，保证更新后立即重试。
+// v2 从卡片挂载后才开始读取网站资源；网站图标的更新只能由用户手动触发。
 const SITE_ICON_STORAGE_KEY = 'site_icon_cache_v2';
 const SITE_ICON_BACKGROUND_STORAGE_KEY = 'site_icon_background_cache_v1';
-const SITE_ICON_SUCCESS_TTL = 30 * 24 * 60 * 60 * 1000;
-const SITE_ICON_FAILURE_TTL = 24 * 60 * 60 * 1000;
 
 class BookmarkStore {
   constructor() {
@@ -291,11 +289,9 @@ class BookmarkStore {
     const key = this.getSiteIconCacheKey(url);
     if (!key) return null;
     this._loadSiteIcons();
-    const entry = this.siteIcons.get(key);
-    if (!entry || Date.now() - entry.checkedAt > (entry.model ? SITE_ICON_SUCCESS_TTL : SITE_ICON_FAILURE_TTL)) {
-      return null;
-    }
-    return entry;
+    // 命中缓存（包括“没有可用网站图标”的结果）时一律复用，避免每次刷新
+    // 新标签页或重启浏览器都再次访问网站。重新获取只能由 clearSiteIcon() 发起。
+    return this.siteIcons.get(key) || null;
   }
 
   getSiteIcon(url) {
@@ -325,7 +321,7 @@ class BookmarkStore {
     if (!bookmarkId) return;
     this._loadSiteIconBackgrounds();
     const normalized = normalizeIconBackground(background);
-    if (normalized.mode === 'raw') {
+    if (normalized.mode === 'raw' && normalized.scale === undefined) {
       this.siteIconBackgrounds.delete(bookmarkId);
     } else {
       this.siteIconBackgrounds.set(bookmarkId, normalized);
