@@ -50,6 +50,13 @@ test('sanitizeSvg removes unsafe style attributes', () => {
   assert.match(clean, /<path\b/);
 });
 
+test('sanitizeSvg preserves safe SMIL animation elements', () => {
+  const clean = sanitizeSvg('<svg viewBox="0 0 24 24"><circle r="4"><animate attributeName="r" values="2;4;2" dur="1s" repeatCount="indefinite"/></circle></svg>');
+
+  assert.match(clean, /<animate\b/);
+  assert.match(clean, /attributeName="r"/);
+});
+
 test('isSvgRaw only accepts raw SVG strings', () => {
   assert.equal(isSvgRaw('<svg></svg>'), true);
   assert.equal(isSvgRaw('  <svg></svg>'), true);

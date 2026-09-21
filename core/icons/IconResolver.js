@@ -1,25 +1,20 @@
-import IconStorage from './IconStorage.js';
 import { findLibraryIcon, ICON_MATCHER_VERSION } from './IconLibraryProvider.js';
 import { isSvgRaw } from './IconSanitizer.js';
-
-function getHostname(url) {
-  try {
-    return new URL(url).hostname.replace(/^www\./, '');
-  } catch {
-    return '';
-  }
-}
-
-function firstCharacter(value) {
-  return Array.from(String(value || '').trim())[0] || '?';
-}
+import { normalizeIconBackground } from './IconBackground.js';
 
 function customIconToModel(iconData) {
+  const record = typeof iconData === 'string'
+    ? { data: iconData, background: { mode: 'transparent' } }
+    : iconData;
+  const value = record?.data;
+  if (!value) return null;
+
   return {
-    type: isSvgRaw(iconData) ? 'svg' : 'image',
-    value: iconData,
+    type: record.kind || (isSvgRaw(value) ? 'svg' : 'image'),
+    value,
+    background: normalizeIconBackground(record.background),
     source: 'custom',
-    sourceLabel: isSvgRaw(iconData) ? 'Custom SVG' : 'Custom bitmap',
+    sourceLabel: isSvgRaw(value) ? '自定义 SVG' : '自定义图片',
     matchReason: 'user-selected'
   };
 }
@@ -35,47 +30,20 @@ function libraryIconToModel(icon) {
   };
 }
 
-function isCurrentResolvedIcon(model) {
-  return model?.matcherVersion === ICON_MATCHER_VERSION;
-}
-
-export function getInitialFallback(bookmark) {
-  const value = firstCharacter(bookmark?.title) !== '?'
-    ? firstCharacter(bookmark.title)
-    : firstCharacter(getHostname(bookmark?.url));
-
-  return {
-    type: 'initial',
-    value: value.toUpperCase(),
-    source: 'fallback',
-    sourceLabel: 'Initial fallback',
-    matchReason: 'no-library-match'
-  };
-}
-
+/**
+ * Resolves only synchronous local sources. Site-declared image resources are
+ * deliberately loaded later, once the card enters the viewport.
+ */
 export function resolveBookmarkIcon(bookmark, options = {}) {
-  const storage = options.storage || IconStorage;
+  const storage = options.storage;
   const libraryLookup = options.findLibraryIcon || findLibraryIcon;
   const bookmarkId = bookmark?.id;
 
   if (bookmarkId && storage?.getCustomIcon) {
-    const customIcon = storage.getCustomIcon(bookmarkId);
-    if (customIcon) return customIconToModel(customIcon);
-  }
-
-  if (bookmarkId && storage?.getResolvedIcon) {
-    const resolvedIcon = storage.getResolvedIcon(bookmarkId);
-    if (isCurrentResolvedIcon(resolvedIcon)) return resolvedIcon;
+    const customIcon = customIconToModel(storage.getCustomIcon(bookmarkId));
+    if (customIcon) return customIcon;
   }
 
   const libraryIcon = libraryLookup(bookmark);
-  if (libraryIcon) {
-    const model = libraryIconToModel(libraryIcon);
-    if (bookmarkId && storage?.setResolvedIcon) {
-      storage.setResolvedIcon(bookmarkId, model);
-    }
-    return model;
-  }
-
-  return getInitialFallback(bookmark);
+  return libraryIcon ? libraryIconToModel(libraryIcon) : null;
 }

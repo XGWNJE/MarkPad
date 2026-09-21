@@ -1,170 +1,58 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
 
-import { ICON_MATCHER_VERSION } from '../core/icons/IconLibraryProvider.js';
-import { getInitialFallback, resolveBookmarkIcon } from '../core/icons/IconResolver.js';
+import { resolveBookmarkIcon } from '../core/icons/IconResolver.js';
 
-function createStorage({ custom = null, resolved = null } = {}) {
-  return {
-    getCustomIcon() {
-      return custom;
-    },
-    getResolvedIcon() {
-      return resolved;
-    },
-    setResolvedIcon(_id, model) {
-      resolved = model;
-    }
-  };
+function storage(custom = null) {
+  return { getCustomIcon: () => custom };
 }
 
-test('resolveBookmarkIcon returns user custom SVG first', () => {
-  const model = resolveBookmarkIcon(
-    { id: '1', title: 'GitHub', url: 'https://github.com' },
-    {
-      storage: createStorage({ custom: '<svg viewBox="0 0 1 1"></svg>' }),
-      findLibraryIcon() {
-        throw new Error('library should not be called when custom icon exists');
-      }
+test('custom SVG has highest priority and keeps a selected solid background', () => {
+  const model = resolveBookmarkIcon({ id: '1', title: 'GitHub' }, {
+    storage: storage({
+      version: 2,
+      kind: 'svg',
+      data: '<svg viewBox="0 0 1 1"></svg>',
+      background: { mode: 'solid', color: '#123456' }
+    }),
+    findLibraryIcon: () => {
+      throw new Error('library must not run for a custom icon');
     }
-  );
+  });
 
-  assert.equal(model.type, 'svg');
   assert.equal(model.source, 'custom');
-  assert.equal(model.matchReason, 'user-selected');
+  assert.equal(model.type, 'svg');
+  assert.deepEqual(model.background, { mode: 'solid', color: '#123456' });
 });
 
-test('resolveBookmarkIcon returns user custom bitmap first', () => {
-  const model = resolveBookmarkIcon(
-    { id: '1', title: 'GitHub', url: 'https://github.com' },
-    {
-      storage: createStorage({ custom: 'data:image/png;base64,abc' })
-    }
-  );
+test('legacy custom image records migrate to the raw display mode without changing stored data', () => {
+  const model = resolveBookmarkIcon({ id: '1', title: 'Image' }, {
+    storage: storage('data:image/gif;base64,animated'),
+    findLibraryIcon: () => null
+  });
 
   assert.equal(model.type, 'image');
-  assert.equal(model.source, 'custom');
+  assert.equal(model.value, 'data:image/gif;base64,animated');
+  assert.deepEqual(model.background, { mode: 'raw' });
 });
 
-test('resolveBookmarkIcon returns cached resolved library icon before searching', () => {
-  const cached = {
-    type: 'svg',
-    value: '<svg viewBox="0 0 24 24"></svg>',
-    source: 'simple-icons',
-    sourceLabel: 'Simple Icons',
-    matchReason: 'domain:github.com',
-    matcherVersion: ICON_MATCHER_VERSION
-  };
-  const model = resolveBookmarkIcon(
-    { id: '1', title: 'GitHub', url: 'https://github.com' },
-    {
-      storage: createStorage({ resolved: cached }),
-      findLibraryIcon() {
-        throw new Error('library should not be called when resolved cache exists');
-      }
-    }
-  );
-
-  assert.deepEqual(model, cached);
-});
-
-test('resolveBookmarkIcon ignores stale resolved cache after matcher changes', () => {
-  let cached = {
-    type: 'initial',
-    value: '数',
-    source: 'fallback',
-    sourceLabel: 'Initial fallback',
-    matchReason: 'no-library-match'
-  };
-  const storage = {
-    getCustomIcon: () => null,
-    getResolvedIcon: () => cached,
-    setResolvedIcon: (_id, model) => {
-      cached = model;
-    }
-  };
-
-  const model = resolveBookmarkIcon(
-    { id: '1', title: '数据库备份', url: 'http://192.168.31.12/' },
-    {
-      storage,
-      findLibraryIcon() {
-        return {
-          title: 'Database',
-          type: 'svg',
-          svg: '<svg viewBox="0 0 24 24"></svg>',
-          source: 'generic-icons',
-          sourceLabel: 'Lucide Icons',
-          matchReason: 'generic:title:数据库'
-        };
-      }
-    }
-  );
-
-  assert.equal(model.source, 'generic-icons');
-  assert.equal(model.matchReason, 'generic:title:数据库');
-  assert.equal(cached, model);
-  assert.equal(cached.matcherVersion, ICON_MATCHER_VERSION);
-});
-
-test('resolveBookmarkIcon returns and caches fresh library match', () => {
-  let cached = null;
-  const storage = {
-    getCustomIcon: () => null,
-    getResolvedIcon: () => cached,
-    setResolvedIcon: (_id, model) => {
-      cached = model;
-    }
-  };
-
-  const model = resolveBookmarkIcon(
-    { id: '1', title: 'GitHub', url: 'https://github.com' },
-    {
-      storage,
-      findLibraryIcon() {
-        return {
-          title: 'GitHub',
-          type: 'svg',
-          svg: '<svg viewBox="0 0 24 24"></svg>',
-          source: 'simple-icons',
-          sourceLabel: 'Simple Icons',
-          matchReason: 'domain:github.com'
-        };
-      }
-    }
-  );
-
-  assert.equal(model.type, 'svg');
-  assert.equal(model.source, 'simple-icons');
-  assert.equal(cached, model);
-});
-
-test('resolveBookmarkIcon returns initial fallback without favicon dependency', () => {
-  let faviconCalled = false;
-  const model = resolveBookmarkIcon(
-    { id: '1', title: 'Internal Tool', url: 'http://192.168.31.12' },
-    {
-      storage: createStorage(),
-      findLibraryIcon: () => null,
-      fetchFavicon: () => {
-        faviconCalled = true;
-      }
-    }
-  );
-
-  assert.equal(model.type, 'initial');
-  assert.equal(model.value, 'I');
-  assert.equal(model.source, 'fallback');
-  assert.equal(model.matchReason, 'no-library-match');
-  assert.equal(faviconCalled, false);
-});
-
-test('getInitialFallback uses hostname when title is empty', () => {
-  assert.deepEqual(getInitialFallback({ title: '', url: 'https://github.com/repo' }), {
-    type: 'initial',
-    value: 'G',
-    source: 'fallback',
-    sourceLabel: 'Initial fallback',
-    matchReason: 'no-library-match'
+test('a name-library match is used when no custom icon exists', () => {
+  const model = resolveBookmarkIcon({ id: '1', title: 'Example' }, {
+    storage: storage(),
+    findLibraryIcon: () => ({
+      type: 'svg', svg: '<svg viewBox="0 0 1 1"></svg>', source: 'curated-library', sourceLabel: '内置图标库', matchReason: 'title:Example'
+    })
   });
+
+  assert.equal(model.source, 'curated-library');
+  assert.equal(model.matchReason, 'title:Example');
+});
+
+test('no local match returns the documented empty state instead of an initial', () => {
+  const model = resolveBookmarkIcon({ id: '1', title: 'Unknown', url: 'https://example.com' }, {
+    storage: storage(),
+    findLibraryIcon: () => null
+  });
+
+  assert.equal(model, null);
 });

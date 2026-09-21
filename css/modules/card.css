@@ -8,9 +8,9 @@
   min-height: 0;
   aspect-ratio: 1;
   overflow: hidden;
-  background: color-mix(in srgb, var(--color-surface) var(--card-background-strength, 100%), transparent);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-lg);
+  background: transparent;
+  border: 0;
+  border-radius: var(--card-radius);
   cursor: pointer;
   /* 光效变量：由 components/CardEffects.js 在指针移动时改写 */
   --glow-x: 50%;
@@ -18,9 +18,7 @@
   --glow-intensity: 0;
   --glow-radius: var(--card-glow-radius);
   transition:
-    border-color var(--transition-base),
-    box-shadow var(--transition-base),
-    background var(--transition-base);
+    transform var(--transition-base);
 }
 
 .bookmark-card[data-drop-position] {
@@ -32,26 +30,19 @@
   z-index: 2;
 }
 
-/* 无指针悬停或用户要求减少动效时，退回轻量的边框反馈。 */
-@media (hover: none), (prefers-reduced-motion: reduce) {
-  .bookmark-card:hover {
-    border-color: var(--color-border-strong);
-    box-shadow: var(--shadow-card-hover);
-  }
-}
-
 .bookmark-card:focus {
   outline: none;
 }
 
 .bookmark-card.selected,
 .bookmark-card:focus-visible {
-  border-color: var(--color-action);
-  box-shadow: 0 0 0 3px var(--color-focus);
+  outline: 3px solid var(--color-focus);
+  outline-offset: 2px;
 }
 
 .card-icon-wrapper {
   position: relative;
+  z-index: 1;
   width: 100%;
   height: 100%;
   aspect-ratio: auto;
@@ -59,7 +50,7 @@
   align-items: center;
   justify-content: center;
   overflow: hidden;
-  background: color-mix(in srgb, var(--color-bg-soft) var(--card-background-strength, 100%), transparent);
+  background: transparent;
   border: 0;
   border-radius: inherit;
 }
@@ -88,11 +79,12 @@
   height: 62%;
 }
 
-.card-icon.favicon {
-  background-color: var(--color-surface-muted);
-  background-size: 44%;
-  background-position: center;
-  background-repeat: no-repeat;
+.card-icon-image {
+  width: 44%;
+  height: 44%;
+  display: block;
+  object-fit: contain;
+  pointer-events: none;
 }
 
 .card-icon.folder-default {
@@ -130,14 +122,8 @@
   gap: var(--space-1);
   padding: 12px 14px 14px;
   text-align: left;
-  /* 盖在图标上的文字面板：底色收在下方，向上渐隐，保证文字可读 */
-  background: linear-gradient(
-    to top,
-    color-mix(in srgb, var(--color-surface) var(--card-background-strength, 100%), transparent) 0%,
-    color-mix(in srgb, var(--color-surface) var(--card-background-strength, 100%), transparent) 62%,
-    transparent 100%
-  );
-  border-radius: 0 0 var(--radius-lg) var(--radius-lg);
+  background: transparent;
+  border-radius: 0 0 var(--card-radius) var(--card-radius);
   opacity: 0;
   transform: translateY(10px);
   pointer-events: none;
@@ -158,11 +144,15 @@
 
 .card-title {
   width: 100%;
-  color: var(--text-primary);
-  font-size: 16px;
-  font-weight: 580;
+  color: var(--icon-text-color, var(--text-primary));
+  font-family: var(--card-font-family, var(--font-family));
+  font-size: var(--card-title-size, 16px);
+  font-weight: var(--card-title-weight, 500);
   line-height: 24px;
-  letter-spacing: 0;
+  letter-spacing: var(--card-title-tracking, 0.01em);
+  -webkit-font-smoothing: antialiased;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -183,11 +173,15 @@
   width: 100%;
   min-height: 18px;
   display: block;
-  color: var(--text-tertiary);
-  font-size: var(--font-size-xs);
-  font-weight: 520;
+  color: var(--icon-text-color, var(--text-secondary));
+  font-family: var(--card-font-family, var(--font-family));
+  font-size: var(--card-meta-size, var(--font-size-xs));
+  font-weight: 400;
   line-height: 18px;
-  letter-spacing: 0;
+  letter-spacing: 0.01em;
+  -webkit-font-smoothing: antialiased;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -195,13 +189,13 @@
 }
 
 .bookmark-card.new-card {
-  border: 1px dashed var(--color-border-strong);
+  outline: 1px dashed var(--color-border-strong);
   background: transparent;
 }
 
 .bookmark-card.new-card:hover {
-  border-color: var(--color-action);
-  background: color-mix(in srgb, var(--color-surface) var(--card-background-strength, 100%), transparent);
+  outline-color: var(--color-action);
+  background: transparent;
 }
 
 .bookmark-card.new-card .card-icon {
@@ -262,36 +256,13 @@
 }
 
 .bookmark-card.drag-over {
-  border-color: var(--color-action);
-  background: color-mix(in srgb, var(--color-info) 8%, var(--color-surface));
+  outline: 2px solid var(--color-action);
+  outline-offset: 2px;
   transform: translateY(-2px);
 }
 
 .bookmark-card.is-dragging {
   opacity: 0.45;
-}
-
-.favicon-fallback {
-  position: absolute;
-  inset: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 1;
-  background: color-mix(in srgb, var(--color-surface) 40%, var(--color-bg-soft));
-}
-
-.favicon-initial {
-  width: 56px;
-  height: 56px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: var(--text-primary);
-  font-size: 32px;
-  font-weight: 650;
-  line-height: 1;
-  user-select: none;
 }
 
 .context-menu {
@@ -318,7 +289,7 @@
 }
 
 .context-menu-item {
-  min-height: 36px;
+  min-height: 44px;
   display: flex;
   align-items: center;
   padding: 0 var(--space-3);
@@ -353,95 +324,4 @@
   .card-title {
     font-size: var(--font-size-md);
   }
-}
-
-/* ============================================================
-   Card glow effect (ported from React Bits MagicBento)
-   颜色统一走 variables.css 的 --card-glow-* 令牌，
-   位置与强度由 components/CardEffects.js 写 --glow-* 变量。
-   ============================================================ */
-
-/* 边框光晕：用 mask 合成抠出描边层，光斑跟着光标在边缘上游走 */
-.bookmark-card.card-effect-active::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  z-index: 4;
-  padding: var(--card-glow-border-width);
-  border-radius: inherit;
-  background: radial-gradient(
-    var(--glow-radius) circle at var(--glow-x) var(--glow-y),
-    rgba(var(--card-glow-rgb), calc(var(--glow-intensity) * var(--card-glow-peak))) 0%,
-    rgba(var(--card-glow-rgb), calc(var(--glow-intensity) * var(--card-glow-peak) * 0.42)) 30%,
-    transparent 62%
-  );
-  -webkit-mask:
-    linear-gradient(#fff 0 0) content-box,
-    linear-gradient(#fff 0 0);
-  -webkit-mask-composite: xor;
-  mask:
-    linear-gradient(#fff 0 0) content-box,
-    linear-gradient(#fff 0 0);
-  mask-composite: exclude;
-  pointer-events: none;
-}
-
-/* 粒子星点：hover 时在卡片内随机飘动 */
-.card-particle {
-  position: absolute;
-  width: 4px;
-  height: 4px;
-  border-radius: 50%;
-  background: rgb(var(--card-glow-rgb));
-  box-shadow: 0 0 6px rgba(var(--card-glow-rgb), 0.6);
-  pointer-events: none;
-  z-index: 3;
-}
-
-.card-particle::before {
-  content: '';
-  position: absolute;
-  inset: -2px;
-  z-index: -1;
-  border-radius: 50%;
-  background: rgba(var(--card-glow-rgb), 0.2);
-}
-
-/* 点击涟漪：从落点扩散一圈光 */
-.card-ripple {
-  position: absolute;
-  border-radius: 50%;
-  pointer-events: none;
-  z-index: 5;
-  background: radial-gradient(
-    circle,
-    rgba(var(--card-glow-rgb), 0.34) 0%,
-    rgba(var(--card-glow-rgb), 0.16) 30%,
-    transparent 70%
-  );
-}
-
-/* 全局聚光：跟随光标的一团柔光，按到最近卡片的距离淡入淡出 */
-.card-spotlight {
-  position: fixed;
-  left: 0;
-  top: 0;
-  width: 800px;
-  height: 800px;
-  margin: -400px 0 0 -400px;
-  border-radius: 50%;
-  pointer-events: none;
-  opacity: 0;
-  z-index: 60;
-  mix-blend-mode: var(--card-spotlight-blend);
-  background: radial-gradient(
-    circle,
-    rgba(var(--card-glow-rgb), 0.15) 0%,
-    rgba(var(--card-glow-rgb), 0.08) 15%,
-    rgba(var(--card-glow-rgb), 0.04) 25%,
-    rgba(var(--card-glow-rgb), 0.02) 40%,
-    rgba(var(--card-glow-rgb), 0.01) 65%,
-    transparent 70%
-  );
-  will-change: transform, opacity;
 }

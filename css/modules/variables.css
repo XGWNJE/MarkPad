@@ -83,18 +83,28 @@
   --shadow-card-hover: 0 18px 50px rgba(0, 0, 0, 0.06);
   --shadow-dialog: 0 24px 80px rgba(0, 0, 0, 0.12);
 
-  /* Card glow effect (MagicBento style): color follows the theme instead of a fixed purple. */
+  /* Card glow effect (MagicBento style): color follows the theme instead of a fixed purple.
+     光效只作用在卡片自身：--card-glow-peak 控描边光晕，--card-spotlight-peak 控卡片内跟随光标的光斑。 */
   --card-glow-rgb: 17, 17, 17;
   --card-glow-radius: 300px;
   --card-glow-border-width: 6px;
-  --card-glow-peak: 0.3;
+  --card-glow-peak: 0.18;
   --card-spotlight-blend: multiply;
-  --card-spotlight-peak: 0.35;
+  --card-spotlight-peak: 0.1;
+
+  /* 背景光效（移植自 React Bits 的 MoltenMetal）：只有配色走令牌，
+     参数在 components/BackgroundEffect.js。浅色是暖白底的淡墨丝线。 */
+  --background-effect-bg: #fafaf7;
+  --background-effect-color1: #e2e0d6;
+  --background-effect-color2: #8f8b7c;
+  --background-effect-color3: #ffffff;
 
   --gap: var(--space-7);
+  --card-gap: var(--gap);
   --card-size: 164px;
   --card-width: clamp(116px, calc(var(--card-size) * 1.45), 320px);
-  --card-background-strength: 100%;
+  --card-radius: 18px;
+  --grid-page-margin: 24px;
 }
 
 /* 深色模式：中性深灰，卡片只比背景亮一阶，保持轻度对比。 */
@@ -123,9 +133,15 @@
   --shadow-dialog: 0 24px 80px rgba(0, 0, 0, 0.5);
 
   --card-glow-rgb: 242, 242, 242;
-  --card-glow-peak: 0.42;
+  --card-glow-peak: 0.26;
   --card-spotlight-blend: screen;
-  --card-spotlight-peak: 0.9;
+  --card-spotlight-peak: 0.24;
+
+  /* 深色用碳黑底 + 靛蓝丝线 + 白色高光；暗部保持透明，只让丝线发亮。 */
+  --background-effect-bg: #141414;
+  --background-effect-color1: #3a3f5c;
+  --background-effect-color2: #6366f1;
+  --background-effect-color3: #ffffff;
 
   color-scheme: dark;
 }

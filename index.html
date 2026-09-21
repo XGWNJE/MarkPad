@@ -9,6 +9,9 @@
   <link rel="stylesheet" href="css/main.css">
 </head>
 <body>
+  <!-- 背景光效层：canvas 由 components/BackgroundEffect.js 挂载，层级见 background-effect.css -->
+  <div id="background-effect-layer" class="background-effect-layer" aria-hidden="true"></div>
+
   <div id="app">
     <!-- 顶部工具栏 -->
     <header id="toolbar" class="toolbar">
@@ -79,18 +82,65 @@
       <div class="menu-section menu-section-major">
         <div class="menu-section-heading">
           <div class="menu-section-label">书签卡片</div>
-          <p>控制卡片占用空间和背景质感；标题在悬停时展开。</p>
+          <p>控制卡片占用空间、圆角与文字排版；标题在悬停时展开。</p>
         </div>
         <div class="menu-range-stack">
-          <label class="menu-range-control">
-            <span>卡片尺寸 <strong id="card-size-value">120px</strong></span>
-            <input type="range" id="card-size" min="80" max="200" step="20" value="120">
-            <span class="menu-range-scale"><small>紧凑</small><small>宽松</small></span>
+            <label class="menu-range-control">
+              <span>卡片尺寸 <strong id="card-size-value">120px</strong></span>
+              <input type="range" id="card-size" min="80" max="200" step="20" value="120">
+              <span class="menu-range-scale"><small>紧凑</small><small>宽松</small></span>
+            </label>
+            <label class="menu-range-control">
+              <span>卡片圆角 <strong id="card-radius-value">18px</strong></span>
+              <input type="range" id="card-radius" min="0" max="87" step="1" value="18">
+              <span class="menu-range-scale"><small>直角</small><small>圆形</small></span>
+            </label>
+            <label class="menu-range-control">
+              <span>卡片容器边距 <strong id="grid-page-margin-value">24px</strong></span>
+              <input type="range" id="grid-page-margin" min="12" max="160" step="4" value="24">
+              <span class="menu-range-scale"><small>紧凑</small><small>留白</small></span>
+            </label>
+            <label class="menu-range-control">
+              <span>卡片间距 <strong id="card-gap-value">28px</strong></span>
+              <input type="range" id="card-gap" min="8" max="64" step="4" value="28">
+              <span class="menu-range-scale"><small>紧凑</small><small>舒展</small></span>
+            </label>
+        </div>
+      </div>
+      <div class="menu-section menu-section-major">
+        <div class="menu-section-heading">
+          <div class="menu-section-label">文字</div>
+          <p>调整卡片标题与域名的字体、字重、字号和字距。</p>
+        </div>
+        <div class="menu-range-stack">
+          <label class="menu-select-control">
+            <span>字体</span>
+            <select id="card-font-family">
+              <option value="system">系统清晰</option>
+              <option value="pingfang">苹方</option>
+              <option value="yahei">微软雅黑</option>
+              <option value="noto">思源黑体</option>
+              <option value="serif">思源宋体</option>
+            </select>
           </label>
           <label class="menu-range-control">
-            <span>卡片背景强度 <strong id="card-background-strength-value">100%</strong></span>
-            <input type="range" id="card-background-strength" min="40" max="100" step="1" value="100">
-            <span class="menu-range-scale"><small>更通透</small><small>更清晰</small></span>
+            <span>标题字号 <strong id="card-title-size-value">16px</strong></span>
+            <input type="range" id="card-title-size" min="14" max="20" step="1" value="16">
+            <span class="menu-range-scale"><small>紧凑</small><small>醒目</small></span>
+          </label>
+          <label class="menu-select-control">
+            <span>标题字重</span>
+            <select id="card-title-weight">
+              <option value="400">常规</option>
+              <option value="500">中等</option>
+              <option value="600">半粗</option>
+              <option value="700">加粗</option>
+            </select>
+          </label>
+          <label class="menu-range-control">
+            <span>标题字距 <strong id="card-title-tracking-value">0.01em</strong></span>
+            <input type="range" id="card-title-tracking" min="-2" max="8" step="1" value="1">
+            <span class="menu-range-scale"><small>紧凑</small><small>舒展</small></span>
           </label>
         </div>
       </div>
@@ -104,6 +154,23 @@
             <span>顶部栏背景强度 <strong id="header-opacity-value">94%</strong></span>
             <input type="range" id="header-opacity" min="55" max="100" step="1" value="94">
             <span class="menu-range-scale"><small>更通透</small><small>更清晰</small></span>
+          </label>
+        </div>
+      </div>
+      <div class="menu-section menu-section-major">
+        <div class="menu-section-heading">
+          <div class="menu-section-label">背景光效</div>
+          <p>卡片后面的熔融金属流光；浅色和深色各自配色，可单独关闭。</p>
+        </div>
+        <div class="menu-toggle-group" id="background-effect-group">
+          <button class="menu-toggle-btn" data-value="on" id="background-effect-on" type="button">开启</button>
+          <button class="menu-toggle-btn" data-value="off" id="background-effect-off" type="button">关闭</button>
+        </div>
+        <div class="menu-range-stack">
+          <label class="menu-range-control">
+            <span>光效强度 <strong id="background-effect-strength-value">70%</strong></span>
+            <input type="range" id="background-effect-strength" min="20" max="100" step="5" value="70">
+            <span class="menu-range-scale"><small>克制</small><small>强烈</small></span>
           </label>
         </div>
       </div>
@@ -158,7 +225,6 @@
           <div class="form-group">
             <label for="edit-url">网址</label>
             <input type="url" id="edit-url" class="form-input" placeholder="https://example.com" autocomplete="off">
-            <div id="favicon-preview" class="favicon-preview"></div>
           </div>
         </div>
         <div class="dialog-footer">

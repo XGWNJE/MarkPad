@@ -62,6 +62,21 @@ class BookmarkGrid {
       }
     });
 
+    EventBus.on('siteIcon:backgroundApplied', ({ id }) => {
+      const card = this.cards.get(id);
+      if (card?.siteIconModel) {
+        card.siteBackgroundPreview = null;
+        card.updateIcon(card.siteIconModel);
+      }
+    });
+
+    EventBus.on('siteIcon:backgroundPreview', ({ id, background }) => {
+      const card = this.cards.get(id);
+      if (!card?.siteIconModel) return;
+      card.siteBackgroundPreview = background;
+      card.updateIcon(card.siteIconModel);
+    });
+
     EventBus.on('card:select', ({ id, selected }) => {
       if (selected) {
         this.selectedCards.add(id);
@@ -162,6 +177,8 @@ class BookmarkGrid {
           element.classList.add('loaded');
           this.grid.appendChild(element);
           this.cards.set(child.id, card);
+          // 网站图标只在卡片实际进入文档、且接近可视区时读取。
+          card.resolveSiteIconWhenVisible();
         }
       }
     } catch (err) {

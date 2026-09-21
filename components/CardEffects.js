@@ -3,11 +3,10 @@
  *
  * 视觉效果移植自 React Bits 的 MagicBento（原组件为 React + gsap），
  * 这里保留同样的视觉参数，改成在现有 DOM 上直接挂载：
- *   - 边缘光晕：卡片描边上的光斑跟着光标游走（mask 合成，纯 CSS 渲染）
- *   - 全局聚光：跟随光标的一团柔光，按到最近卡片的距离淡入淡出
- *   - 粒子星点：hover 时卡片内随机飘出光点
  *   - 3D 倾斜 + 磁吸：hover 时按光标位置做小幅旋转与位移（gsap 驱动 transform）
- *   - 点击涟漪：点击时从落点扩散一圈光
+ *
+ * 所有光效都只画在卡片自身内部（卡片 overflow: hidden，没有全局聚光层），
+ * 不会往卡片之间的背景上打光。
  *
  * 颜色一律不在这里写死，由 css/modules/variables.css 的 --card-glow-* 令牌控制；
  * 本模块只负责写 --glow-x / --glow-y / --glow-intensity / --glow-radius 和 transform。
@@ -17,18 +16,18 @@
 import { gsap } from '../vendor/gsap.js';
 
 const MOBILE_BREAKPOINT = 768;
-const SECTION_MARGIN = 80;
 const RECT_TTL = 500;
 
 export const CARD_EFFECT_DEFAULTS = {
-  enableStars: true,
-  enableSpotlight: true,
-  enableBorderGlow: true,
+  enableStars: false,
+  /** 已移除描边与卡面光照；保留字段仅让现有调用保持兼容。 */
+  enableBorderGlow: false,
   enableTilt: true,
   enableMagnetism: true,
-  clickEffect: true,
+  clickEffect: false,
   disableAnimations: false,
-  spotlightRadius: null,
+  /** 覆盖光照半径（px），null 时用 --card-glow-radius 令牌 */
+  glowRadius: null,
   particleCount: 12
 };
 
@@ -134,6 +133,7 @@ class CardEffect {
 
     if (this.options.enableTilt) {
       gsap.to(this.element, {
+        scale: 1.02,
         rotateX: 5,
         rotateY: 5,
         duration: 0.3,
@@ -155,6 +155,7 @@ class CardEffect {
     if (enableTilt) {
       vars.rotateX = 0;
       vars.rotateY = 0;
+      vars.scale = 1;
     }
     if (enableMagnetism) {
       vars.x = 0;
@@ -305,14 +306,13 @@ class CardEffect {
   }
 }
 
-/** 全局控制器：聚光层 + 所有卡片的光晕强度计算 */
+/** 全局控制器：统一跟光标，计算每张卡片的光照强度（光只画在卡片内部） */
 class CardEffectSystem {
   constructor() {
     this.options = { ...CARD_EFFECT_DEFAULTS };
     this.effects = new Map();
     this.enabled = false;
     this.tracking = false;
-    this.spotlight = null;
     this.grid = null;
     this.rects = new Map();
     this.glowState = new WeakMap();
@@ -320,14 +320,14 @@ class CardEffectSystem {
     this.rectStamp = 0;
     this.pointer = null;
     this.frame = 0;
-    this.tokens = { radius: 300, spotlightPeak: 0.8 };
+    this.tokens = { radius: 300, fillPeak: 0.1 };
 
     this.handlePointerMove = this.handlePointerMove.bind(this);
     this.handleDocumentLeave = this.handleDocumentLeave.bind(this);
     this.handleLayoutChange = this.handleLayoutChange.bind(this);
     this.handleViewportChange = this.handleViewportChange.bind(this);
 
-    // 主题切换只改 <html data-theme>，聚光峰值要跟着重新读取（光晕颜色由 CSS 令牌自己跟随）
+    // 主题切换只改 <html data-theme>，光照峰值要跟着重新读取（光晕颜色由 CSS 令牌自己跟随）
     this.themeObserver = new MutationObserver(() => this.readTokens());
     this.themeObserver.observe(document.documentElement, {
       attributes: true,
@@ -376,8 +376,9 @@ class CardEffectSystem {
       window.innerWidth <= MOBILE_BREAKPOINT;
     const next = !disabled;
 
-    if (next && !this.tracking) this.startTracking();
-    if (!next && this.tracking) this.stopTracking();
+    const shouldTrackGlow = next && this.options.enableBorderGlow;
+    if (shouldTrackGlow && !this.tracking) this.startTracking();
+    if (!shouldTrackGlow && this.tracking) this.stopTracking();
     if (next === this.enabled) return;
 
     this.enabled = next;
@@ -396,7 +397,6 @@ class CardEffectSystem {
     window.addEventListener('scroll', this.handleLayoutChange, { passive: true, capture: true });
     window.addEventListener('resize', this.handleViewportChange, { passive: true });
 
-    if (this.options.enableSpotlight) this.createSpotlight();
     this.rectsDirty = true;
   }
 
@@ -414,7 +414,6 @@ class CardEffectSystem {
       this.frame = 0;
     }
     this.pointer = null;
-    this.destroySpotlight();
     this.resetGlow();
   }
 
@@ -422,24 +421,9 @@ class CardEffectSystem {
     if (typeof window === 'undefined' || !document.documentElement) return;
     const styles = getComputedStyle(document.documentElement);
     const radius = Number.parseFloat(styles.getPropertyValue('--card-glow-radius'));
-    const peak = Number.parseFloat(styles.getPropertyValue('--card-spotlight-peak'));
+    const fillPeak = Number.parseFloat(styles.getPropertyValue('--card-spotlight-peak'));
     this.tokens.radius = Number.isFinite(radius) ? radius : 300;
-    this.tokens.spotlightPeak = Number.isFinite(peak) ? peak : 0.8;
-  }
-
-  createSpotlight() {
-    if (this.spotlight || !this.options.enableSpotlight) return;
-    const spotlight = document.createElement('div');
-    spotlight.className = 'card-spotlight';
-    document.body.appendChild(spotlight);
-    this.spotlight = spotlight;
-  }
-
-  destroySpotlight() {
-    if (!this.spotlight) return;
-    gsap.killTweensOf(this.spotlight);
-    this.spotlight.remove();
-    this.spotlight = null;
+    this.tokens.fillPeak = Number.isFinite(fillPeak) ? fillPeak : 0.1;
   }
 
   handlePointerMove(event) {
@@ -502,56 +486,41 @@ class CardEffectSystem {
       this.rectsDirty = false;
     }
 
-    const section = grid.getBoundingClientRect();
     const { x, y } = this.pointer;
-    const insideSection =
-      x >= section.left - SECTION_MARGIN &&
-      x <= section.right + SECTION_MARGIN &&
-      y >= section.top - SECTION_MARGIN &&
-      y <= section.bottom + SECTION_MARGIN;
+    const radius = this.options.glowRadius || this.tokens.radius;
 
-    if (!insideSection) {
+    // 指针必须真的落在某张卡片上才有光照，卡片之间的空隙和网格外都不打光
+    let overAnyCard = false;
+    cards.forEach((card) => {
+      if (this.rects.has(card) && pointInRect(x, y, this.rects.get(card))) overAnyCard = true;
+    });
+
+    if (!overAnyCard) {
       this.resetGlow();
       return;
     }
 
-    const radius = this.options.spotlightRadius || this.tokens.radius;
-    const proximity = radius * 0.5;
-    const fadeDistance = radius * 0.75;
     const withBorderGlow = this.options.enableBorderGlow;
-    let minDistance = Infinity;
+    // 卡片外围的柔化距离：越靠近光标越亮，最亮处封顶 0.6，避免出现"一圈硬光"
+    const fadeDistance = glowFadeDistance(radius);
 
     cards.forEach((card) => {
       const rect = this.rects.get(card);
       if (!rect || !rect.width || !rect.height) return;
 
-      const distance = Math.max(
-        0,
-        Math.hypot(x - (rect.left + rect.width / 2), y - (rect.top + rect.height / 2)) -
-          Math.max(rect.width, rect.height) / 2
-      );
-      if (distance < minDistance) minDistance = distance;
-
-      if (!withBorderGlow) return;
-
-      let intensity = 0;
-      if (distance <= proximity) {
-        intensity = 1;
-      } else if (distance <= fadeDistance) {
-        intensity = (fadeDistance - distance) / (fadeDistance - proximity);
-      }
-      this.applyGlow(card, rect, x, y, intensity, radius);
+      const distanceToEdge = distanceToRectEdge(x, y, rect);
+      const intensity = glowIntensity(distanceToEdge, fadeDistance);
+      if (withBorderGlow) this.applyGlow(card, rect, x, y, intensity, radius);
     });
-
-    this.updateSpotlight(x, y, minDistance, proximity, fadeDistance);
   }
 
   applyGlow(card, rect, pointerX, pointerY, intensity, radius) {
     const state = this.glowState.get(card) || { intensity: -1 };
     if (intensity === 0 && state.intensity === 0) return;
 
-    card.style.setProperty('--glow-x', `${(((pointerX - rect.left) / rect.width) * 100).toFixed(1)}%`);
-    card.style.setProperty('--glow-y', `${(((pointerY - rect.top) / rect.height) * 100).toFixed(1)}%`);
+    const { width, height } = this.elementSize(card, rect);
+    card.style.setProperty('--glow-x', `${(clampPercent((pointerX - rect.left) / width) * 100).toFixed(1)}%`);
+    card.style.setProperty('--glow-y', `${(clampPercent((pointerY - rect.top) / height) * 100).toFixed(1)}%`);
     card.style.setProperty('--glow-radius', `${radius}px`);
 
     if (state.intensity !== intensity) {
@@ -561,41 +530,66 @@ class CardEffectSystem {
     }
   }
 
-  updateSpotlight(x, y, minDistance, proximity, fadeDistance) {
-    if (!this.spotlight) return;
+  /**
+   * 卡片倾斜后 getBoundingClientRect 是外接矩形，尺寸用 offsetWidth/Height 更稳，
+   * 否则光斑位置会随着倾斜角度漂移。
+   */
+  elementSize(card, rect) {
+    return {
+      width: card.offsetWidth || rect.width,
+      height: card.offsetHeight || rect.height
+    };
+  }
 
-    gsap.to(this.spotlight, { x, y, duration: 0.1, ease: 'power2.out', overwrite: 'auto' });
+  /** 指针不在任何卡片上时把光照收回 0；没有全局层需要淡出 */
+  resetGlow() {
+    if (!this.options.enableBorderGlow) return;
 
-    const peak = this.tokens.spotlightPeak;
-    const target =
-      minDistance <= proximity
-        ? peak
-        : minDistance <= fadeDistance
-          ? ((fadeDistance - minDistance) / (fadeDistance - proximity)) * peak
-          : 0;
-
-    gsap.to(this.spotlight, {
-      opacity: target,
-      duration: target > 0 ? 0.2 : 0.5,
-      ease: 'power2.out',
-      overwrite: 'auto'
+    this.effects.forEach((effect, card) => {
+      const state = this.glowState.get(card);
+      if (state && state.intensity === 0) return;
+      card.style.setProperty('--glow-intensity', '0');
+      if (state) state.intensity = 0;
     });
   }
+}
 
-  resetGlow() {
-    if (this.options.enableBorderGlow) {
-      this.effects.forEach((effect, card) => {
-        const state = this.glowState.get(card);
-        if (state && state.intensity === 0) return;
-        card.style.setProperty('--glow-intensity', '0');
-        if (state) state.intensity = 0;
-      });
-    }
+/** 点是否落在矩形内（触控目标小，不做额外容差） */
+function pointInRect(x, y, rect) {
+  return x >= rect.left && x <= rect.right && y >= rect.top && y <= rect.bottom;
+}
 
-    if (this.spotlight) {
-      gsap.to(this.spotlight, { opacity: 0, duration: 0.3, ease: 'power2.out', overwrite: 'auto' });
-    }
-  }
+/** 光斑位置换算成百分比时收在 0-1，卡片倾斜时不会把光斑推到卡片外 */
+function clampPercent(value) {
+  if (!Number.isFinite(value)) return 0.5;
+  return Math.min(1, Math.max(0, value));
+}
+
+/** 光标到矩形最近边的距离，矩形内部为 0 */
+export function distanceToRectEdge(x, y, rect) {
+  return Math.max(
+    0,
+    Math.hypot(x - (rect.left + rect.width / 2), y - (rect.top + rect.height / 2)) -
+      Math.max(rect.width, rect.height) / 2
+  );
+}
+
+/** 卡片外围的柔化距离：至少 80px，避免小卡片之外突然变亮 */
+export function glowFadeDistance(radius) {
+  const value = Number(radius);
+  const safe = Number.isFinite(value) && value > 0 ? value : 300;
+  return Math.max(safe * 0.3, 80);
+}
+
+/**
+ * 光照强度曲线：0 在卡片边缘附近，1 在卡片中心。
+ * 压到 0.6-1 之间：边缘不会突然点亮，中心也不会一路顶到满。
+ * 超出柔化距离直接归零，所以只有指针附近的卡片会亮。
+ */
+export function glowIntensity(distanceToEdge, fadeDistance) {
+  if (!Number.isFinite(distanceToEdge) || distanceToEdge >= fadeDistance) return 0;
+  const falloff = 1 - Math.max(0, distanceToEdge) / fadeDistance;
+  return 0.6 + 0.4 * falloff * falloff;
 }
 
 const CardEffects = new CardEffectSystem();

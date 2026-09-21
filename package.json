@@ -3,18 +3,10 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "generate:icons": "node scripts/generate-brand-icons.mjs",
     "vendor:gsap": "node scripts/vendor-gsap.mjs",
     "test": "node --test"
   },
   "devDependencies": {
-    "@iconify-json/ant-design": "^1.2.8",
-    "@iconify-json/logos": "^1.2.11",
-    "@iconify-json/lucide": "^1.2.116",
-    "@iconify-json/ri": "^1.2.10",
-    "@iconify-json/simple-icons": "^1.2.89",
-    "@lobehub/icons-static-svg": "^1.91.0",
-    "gsap": "^3.15.0",
-    "simple-icons": "^16.25.0"
+    "gsap": "^3.15.0"
   }
 }

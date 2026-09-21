@@ -10,7 +10,6 @@ class EditDialog {
     this.dialog = document.getElementById('edit-dialog');
     this.titleInput = document.getElementById('edit-title');
     this.urlInput = document.getElementById('edit-url');
-    this.faviconPreview = document.getElementById('favicon-preview');
     this.dialogTitle = document.getElementById('edit-dialog-title');
     this.confirmBtn = document.getElementById('edit-dialog-confirm');
     this.isEditMode = false;
@@ -32,11 +31,6 @@ class EditDialog {
 
     // 确认
     this.confirmBtn.addEventListener('click', () => this.confirm());
-
-    // URL 输入获取 favicon
-    this.urlInput.addEventListener('input', () => {
-      this.updateFaviconPreview();
-    });
 
     // 键盘
     document.addEventListener('keydown', (e) => {
@@ -62,7 +56,6 @@ class EditDialog {
     this.titleInput.value = '';
     this.urlInput.value = '';
     this.urlInput.parentElement.style.display = 'block';
-    this.faviconPreview.innerHTML = '';
     this.currentId = null;
     this.currentParentId = Router.getCurrent().id;
 
@@ -81,26 +74,6 @@ class EditDialog {
 
     this.dialog.classList.remove('hidden');
     this.titleInput.focus();
-  }
-
-  updateFaviconPreview() {
-    const url = this.urlInput.value.trim();
-    if (!url) {
-      this.faviconPreview.innerHTML = '';
-      return;
-    }
-
-    try {
-      const origin = new URL(url).origin;
-      const faviconUrl = `chrome-extension://${chrome.runtime.id}/_favicon/?pageUrl=${encodeURIComponent(origin)}&size=64`;
-
-      this.faviconPreview.innerHTML = `
-        <img src="${faviconUrl}" alt="" onerror="this.style.display='none'">
-        <span class="url-text">${origin}</span>
-      `;
-    } catch {
-      this.faviconPreview.innerHTML = '';
-    }
   }
 
   async confirm() {

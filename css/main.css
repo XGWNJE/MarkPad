@@ -1,5 +1,6 @@
 @import './modules/variables.css';
 @import './modules/base.css';
+@import './modules/background-effect.css';
 @import './modules/animations.css';
 @import './modules/toolbar.css';
 @import './modules/breadcrumb.css';

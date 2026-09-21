@@ -25,9 +25,9 @@ MarkPad 替换 Chrome 的新标签页，直接读取和修改 Chrome 原生书�
 书签与文件夹 | 新建、编辑、移动、删除、拖拽排序；文件夹可逐层进入，面包屑和浏览器返回键都能回退。
 卡片操作 | 卡片保持方形，标题和域名在悬停或键盘聚焦时显示；触屏首次点按先看名称，再点一次打开。
 多种输入 | 支持鼠标右键、触控长按、键盘方向键、快捷键和 Ctrl+点击多选；主要触控目标不小于 44px。
-图标 | 默认从本地图标库保守匹配；可查看匹配依据、手动选择本地图标、搜索 SVG，或上传原始尺寸至少 256 × 256 的位图。
+图标 | 用户可上传动态 SVG、PNG/APNG、GIF、JPG 或 WebP，保留原始动画；背景可选原样、自动融合、黑、白或自定义色。默认按名称匹配内置图标库，未命中时按需显示网站声明资源，网站图标也可独立设置同一背景策略。
 搜索 | 用 `/` 或 `Ctrl+F` 搜索全部书签和文件夹。
-外观 | 浅色、深色两种主题；可调整卡片大小和背景强度、顶部栏背景强度，以及背景光效开关和强度。
+外观 | 浅色、深色两种主题；可调整卡片大小、圆角、容器边距、卡片间距、字体与文字参数、顶部栏背景强度，以及背景光效开关和强度。
 背景光效 | 基于原生 WebGL2；页面不可见时暂停，系统要求减少动效时只绘制静态画面，WebGL2 不可用时保留纯色背景。
 
 ---
@@ -46,11 +46,7 @@ MarkPad 替换 Chrome 的新标签页，直接读取和修改 Chrome 原生书�
   <img src="./assets/readme/background-effect.png" width="100%" alt="MarkPad 的深色和浅色背景光效">
 </p>
 
-图标工坊把自动匹配和手动选择分开。手动候选会标出标题、URL、域名、路径片段和命中依据；外部 SVG 在保存前经过清理。
-
-<p align="center">
-  <img src="./assets/readme/icon-pipeline.svg" width="100%" alt="MarkPad 图标解析顺序：自定义图标、解析缓存、本地图标库、首字母兜底">
-</p>
+图标工坊只提供内置候选和文件上传。内置库初始为空，后续随版本人工筛选加入；自动匹配只读取书签名称。网站图标仅在卡片显示时解析 `icon`、Apple Touch、Manifest 或同源 favicon，不做启动批量请求。
 
 ---
 
@@ -90,18 +86,15 @@ MarkPad 替换 Chrome 的新标签页，直接读取和修改 Chrome 原生书�
 权限 | 用途
 --- | ---
 `bookmarks` | 读取、创建、编辑、移动和删除 Chrome 书签
-`storage` | 保存本地偏好、自定义图标和解析缓存
-`favicon` | 显示图标预览，并兼容已有 favicon 缓存
-`tabs` | 按用户设置打开书签，并复用 iconfont 辅助页面
-`scripting` | 从与当前搜索词对应的 iconfont 页面提取 SVG
-
-扩展还会连接 iconfont、Iconify 和 SVG API，仅用于图标工坊的 SVG 搜索和预览。
+`storage` | 保存本地偏好、自定义图标和网站图标缓存
+`tabs` | 按用户设置在新标签页或当前标签页打开书签
+`<all_urls>` | 在书签卡片可见时读取对应网站的图标声明和图标资源；不在启动时批量请求
 
 ---
 
 ## 版本
 
-当前版本：`0.2.0`。这一版收起了卡片文字，统一为浅色和深色主题，并移除了壁纸功能；完整记录见 [完整变更记录](CHANGELOG.md)。
+当前版本：`0.3.0`。这一版重做图标系统与背景编辑，简化卡片视觉，并新增文字、圆角和间距设置；完整记录见 [完整变更记录](CHANGELOG.md)。
 
 ---
 
@@ -132,7 +125,6 @@ MarkPad/
 npm test
 node --check main.js
 node --test tests\version-system.test.mjs
-npm run generate:icons
 npm run vendor:gsap
 node -e "JSON.parse(require('fs').readFileSync('manifest.json', 'utf8'))"
 git diff --check

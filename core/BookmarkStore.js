@@ -2,10 +2,15 @@
  * BookmarkStore - 数据层：封装 chrome.bookmarks API + 事件监听
  */
 import EventBus from './EventBus.js';
-import { CUSTOM_ICON_STORAGE_KEY, RESOLVED_ICON_STORAGE_KEY } from './icons/IconStorage.js';
+import { resolveSiteIcon as resolveSiteIconResource } from './icons/SiteIconResolver.js';
+import { normalizeIconBackground } from './icons/IconBackground.js';
 
-// Favicon 缓存状态标记
-const FAVICON_FAILED = '__FAILED__';
+const CUSTOM_ICON_STORAGE_KEY = 'custom_icon_cache';
+// v2 从卡片挂载后才开始读取网站资源；不复用 v1 的失败记录，保证更新后立即重试。
+const SITE_ICON_STORAGE_KEY = 'site_icon_cache_v2';
+const SITE_ICON_BACKGROUND_STORAGE_KEY = 'site_icon_background_cache_v1';
+const SITE_ICON_SUCCESS_TTL = 30 * 24 * 60 * 60 * 1000;
+const SITE_ICON_FAILURE_TTL = 24 * 60 * 60 * 1000;
 
 class BookmarkStore {
   constructor() {
@@ -13,18 +18,17 @@ class BookmarkStore {
     this.cache = new Map();
     this.tree = null;
 
-    // Favicon 缓存：内存 + localStorage 双层
-    this.faviconCache = null; // 延迟加载
-    this.faviconStorageKey = 'favicon_cache_v2';
+    // 网站声明图标缓存：按完整书签 URL 缓存，避免同域页面串图标。
+    this.siteIcons = null;
+    this.siteIconStorageKey = SITE_ICON_STORAGE_KEY;
+    // 网站图标的显示背景按书签保存，不会把网站图标转换为自定义图标。
+    this.siteIconBackgrounds = null;
+    this.siteIconBackgroundStorageKey = SITE_ICON_BACKGROUND_STORAGE_KEY;
     // 用户自定义图标缓存
     this.customIconStorageKey = CUSTOM_ICON_STORAGE_KEY;
     this.customIcons = null; // 延迟加载
-    // 自动解析的图标库缓存，和用户自定义图标分开保存
-    this.resolvedIconStorageKey = RESOLVED_ICON_STORAGE_KEY;
-    this.resolvedIcons = null; // 延迟加载
     this.storageInitialized = false;
-    // 正在获取中的 favicon 请求去重
-    this.faviconPending = new Map();
+    this.siteIconPending = new Map();
 
     // 监听 Chrome 书签变更
     this.setupListeners();
@@ -32,9 +36,9 @@ class BookmarkStore {
 
   async initStorage() {
     if (this.storageInitialized) return;
-    this.faviconCache = await this._loadMapFromStorage(this.faviconStorageKey);
+    this.siteIcons = await this._loadMapFromStorage(this.siteIconStorageKey);
+    this.siteIconBackgrounds = await this._loadMapFromStorage(this.siteIconBackgroundStorageKey);
     this.customIcons = await this._loadMapFromStorage(this.customIconStorageKey);
-    this.resolvedIcons = await this._loadMapFromStorage(this.resolvedIconStorageKey);
     this.storageInitialized = true;
   }
 
@@ -202,52 +206,6 @@ class BookmarkStore {
     }
   }
 
-  // ========== Favicon 缓存系统 ==========
-
-  /**
-   * 初始化 favicon 内存缓存（从 localStorage 一次性加载）
-   */
-  _loadFaviconCache() {
-    if (this.faviconCache !== null) return;
-    this.faviconCache = new Map();
-    const stored = this._readLocalStorageObject(this.faviconStorageKey);
-    if (stored) {
-      for (const [key, value] of Object.entries(stored)) {
-        this.faviconCache.set(key, value);
-      }
-    }
-  }
-
-  /**
-   * 持久化 favicon 缓存到 localStorage
-   */
-  _saveFaviconCache() {
-    const obj = Object.fromEntries(this.faviconCache);
-    this._writeChromeStorageObject(this.faviconStorageKey, obj);
-    try {
-      localStorage.setItem(this.faviconStorageKey, JSON.stringify(obj));
-    } catch {
-      // localStorage 满了，清理失败项
-      this._cleanupFaviconCache();
-    }
-  }
-
-  /**
-   * 清理失败项释放空间
-   */
-  _cleanupFaviconCache() {
-    for (const [key, value] of this.faviconCache) {
-      if (value === FAVICON_FAILED) {
-        this.faviconCache.delete(key);
-      }
-    }
-    try {
-      const obj = Object.fromEntries(this.faviconCache);
-      this._writeChromeStorageObject(this.faviconStorageKey, obj);
-      localStorage.setItem(this.faviconStorageKey, JSON.stringify(obj));
-    } catch {}
-  }
-
   // ========== 自定义图标系统 ==========
 
   /**
@@ -267,11 +225,11 @@ class BookmarkStore {
   /**
    * 设置书签自定义图标
    * @param {string} bookmarkId - 书签 ID
-   * @param {string} dataUrl - PNG 图片的 data URL
+   * @param {string|object} iconData - 原始 SVG/图片，或包含纯色背景的图标记录
    */
-  setCustomIcon(bookmarkId, dataUrl) {
+  setCustomIcon(bookmarkId, iconData) {
     this._loadCustomIcons();
-    this.customIcons.set(bookmarkId, dataUrl);
+    this.customIcons.set(bookmarkId, iconData);
     const obj = Object.fromEntries(this.customIcons);
     this._writeChromeStorageObject(this.customIconStorageKey, obj);
     try {
@@ -303,226 +261,103 @@ class BookmarkStore {
     return this.customIcons.get(bookmarkId) || null;
   }
 
-  // ========== 自动解析图标缓存 ==========
+  // ========== 网站声明图标缓存 ==========
 
-  _loadResolvedIcons() {
-    if (this.resolvedIcons !== null) return;
-    this.resolvedIcons = new Map();
-    const stored = this._readLocalStorageObject(this.resolvedIconStorageKey);
-    if (stored) {
-      for (const [key, value] of Object.entries(stored)) {
-        this.resolvedIcons.set(key, value);
-      }
-    }
-  }
-
-  setResolvedIcon(bookmarkId, iconModel) {
-    this._loadResolvedIcons();
-    this.resolvedIcons.set(bookmarkId, iconModel);
-    const obj = Object.fromEntries(this.resolvedIcons);
-    this._writeChromeStorageObject(this.resolvedIconStorageKey, obj);
+  getSiteIconCacheKey(url) {
     try {
-      localStorage.setItem(this.resolvedIconStorageKey, JSON.stringify(obj));
-    } catch {}
-  }
-
-  clearResolvedIcon(bookmarkId) {
-    this._loadResolvedIcons();
-    this.resolvedIcons.delete(bookmarkId);
-    const obj = Object.fromEntries(this.resolvedIcons);
-    this._writeChromeStorageObject(this.resolvedIconStorageKey, obj);
-    try {
-      localStorage.setItem(this.resolvedIconStorageKey, JSON.stringify(obj));
-    } catch {}
-  }
-
-  getResolvedIcon(bookmarkId) {
-    this._loadResolvedIcons();
-    return this.resolvedIcons.get(bookmarkId) || null;
-  }
-
-  // ========== Favicon 获取 ==========
-
-  /**
-   * 从 URL 提取域名
-   */
-  getDomainFromUrl(url) {
-    try {
-      return new URL(url).origin;
+      const parsed = new URL(url);
+      if (parsed.protocol !== 'http:' && parsed.protocol !== 'https:') return null;
+      parsed.hash = '';
+      return parsed.href;
     } catch {
       return null;
     }
   }
 
-  /**
-   * 同步获取已缓存的 favicon（不触发网络请求）
-   * @param {string} url - 书签 URL
-   * @returns {string|null} favicon URL/dataURL，或 null（未缓存），或 FAVICON_FAILED（获取失败）
-   */
-  getFavicon(url) {
-    const domain = this.getDomainFromUrl(url);
-    if (!domain) return null;
-
-    this._loadFaviconCache();
-    const cached = this.faviconCache.get(domain);
-    if (cached === FAVICON_FAILED) return null;
-    return cached || null;
+  _loadSiteIcons() {
+    if (this.siteIcons !== null) return;
+    this.siteIcons = new Map(Object.entries(this._readLocalStorageObject(this.siteIconStorageKey) || {}));
   }
 
-  /**
-   * 检查 favicon 是否已确认失败（避免重复请求）
-   */
-  isFaviconFailed(url) {
-    const domain = this.getDomainFromUrl(url);
-    if (!domain) return true;
-    this._loadFaviconCache();
-    return this.faviconCache.get(domain) === FAVICON_FAILED;
-  }
-
-  /**
-   * 保存 favicon 到缓存
-   * @param {string} url - 书签 URL
-   * @param {string} faviconUrl - favicon URL 或 data URL
-   */
-  saveFavicon(url, faviconUrl) {
-    const domain = this.getDomainFromUrl(url);
-    if (!domain) return;
-
-    this._loadFaviconCache();
-    this.faviconCache.set(domain, faviconUrl);
-    this._saveFaviconCache();
-  }
-
-  /**
-   * 标记 favicon 获取失败
-   */
-  markFaviconFailed(url) {
-    const domain = this.getDomainFromUrl(url);
-    if (!domain) return;
-
-    this._loadFaviconCache();
-    this.faviconCache.set(domain, FAVICON_FAILED);
-    this._saveFaviconCache();
-  }
-
-  /**
-   * 清除单个 favicon 缓存（用于刷新）
-   */
-  clearFavicon(url) {
-    const domain = this.getDomainFromUrl(url);
-    if (!domain) return;
-    this._loadFaviconCache();
-    this.faviconCache.delete(domain);
-    this._saveFaviconCache();
-  }
-
-  /**
-   * 异步获取 favicon（带去重、缓存和失败标记）
-   * @param {string} url - 书签 URL
-   * @returns {Promise<string|null>} favicon URL 或 null
-   */
-  async fetchFavicon(url) {
-    const domain = this.getDomainFromUrl(url);
-    if (!domain) return null;
-
-    this._loadFaviconCache();
-
-    // 已缓存（包括失败标记）
-    const cached = this.faviconCache.get(domain);
-    if (cached) {
-      return cached === FAVICON_FAILED ? null : cached;
-    }
-
-    // 请求去重：如果已经在获取中，复用同一个 Promise
-    if (this.faviconPending.has(domain)) {
-      return this.faviconPending.get(domain);
-    }
-
-    const promise = this._doFetchFavicon(url, domain);
-    this.faviconPending.set(domain, promise);
-
+  _saveSiteIcons() {
+    const value = Object.fromEntries(this.siteIcons);
+    this._writeChromeStorageObject(this.siteIconStorageKey, value);
     try {
-      return await promise;
-    } finally {
-      this.faviconPending.delete(domain);
-    }
-  }
-
-  /**
-   * 实际的 favicon 获取逻辑
-   */
-  async _doFetchFavicon(url, domain) {
-    // 方式1：使用 Chrome 内置 _favicon API
-    try {
-      const chromeUrl = `chrome-extension://${chrome.runtime.id}/_favicon/?pageUrl=${encodeURIComponent(url)}&size=256`;
-
-      const result = await new Promise((resolve, reject) => {
-        const img = new Image();
-        img.onload = () => {
-          // 检查是否为有效图标（非默认的 1x1 空白）
-          if (img.naturalWidth > 1 && img.naturalHeight > 1) {
-            // 转为 data URL 方便缓存
-            try {
-              const canvas = document.createElement('canvas');
-              canvas.width = img.naturalWidth;
-              canvas.height = img.naturalHeight;
-              const ctx = canvas.getContext('2d');
-              ctx.drawImage(img, 0, 0);
-              const dataUrl = canvas.toDataURL('image/png');
-              resolve(dataUrl);
-            } catch {
-              // canvas tainted, 直接用 chrome URL
-              resolve(chromeUrl);
-            }
-          } else {
-            reject(new Error('Invalid favicon'));
-          }
-        };
-        img.onerror = reject;
-        // 超时 5 秒
-        setTimeout(() => reject(new Error('Timeout')), 5000);
-        img.src = chromeUrl;
-      });
-
-      this.saveFavicon(url, result);
-      return result;
+      localStorage.setItem(this.siteIconStorageKey, JSON.stringify(value));
     } catch {}
+  }
 
-    // 方式2：Google Favicon API 回退
+  getSiteIconEntry(url) {
+    const key = this.getSiteIconCacheKey(url);
+    if (!key) return null;
+    this._loadSiteIcons();
+    const entry = this.siteIcons.get(key);
+    if (!entry || Date.now() - entry.checkedAt > (entry.model ? SITE_ICON_SUCCESS_TTL : SITE_ICON_FAILURE_TTL)) {
+      return null;
+    }
+    return entry;
+  }
+
+  getSiteIcon(url) {
+    return this.getSiteIconEntry(url)?.model || null;
+  }
+
+  _loadSiteIconBackgrounds() {
+    if (this.siteIconBackgrounds !== null) return;
+    this.siteIconBackgrounds = new Map(Object.entries(this._readLocalStorageObject(this.siteIconBackgroundStorageKey) || {}));
+  }
+
+  _saveSiteIconBackgrounds() {
+    const value = Object.fromEntries(this.siteIconBackgrounds);
+    this._writeChromeStorageObject(this.siteIconBackgroundStorageKey, value);
     try {
-      const googleUrl = `https://www.google.com/s2/favicons?domain=${encodeURIComponent(domain)}&sz=256`;
-
-      const result = await new Promise((resolve, reject) => {
-        const img = new Image();
-        img.crossOrigin = 'anonymous';
-        img.onload = () => {
-          if (img.naturalWidth > 1 && img.naturalHeight > 1) {
-            try {
-              const canvas = document.createElement('canvas');
-              canvas.width = 256;
-              canvas.height = 256;
-              const ctx = canvas.getContext('2d');
-              ctx.drawImage(img, 0, 0, 256, 256);
-              resolve(canvas.toDataURL('image/png'));
-            } catch {
-              resolve(googleUrl);
-            }
-          } else {
-            reject(new Error('Invalid favicon'));
-          }
-        };
-        img.onerror = reject;
-        setTimeout(() => reject(new Error('Timeout')), 5000);
-        img.src = googleUrl;
-      });
-
-      this.saveFavicon(url, result);
-      return result;
+      localStorage.setItem(this.siteIconBackgroundStorageKey, JSON.stringify(value));
     } catch {}
+  }
 
-    // 全部失败 → 标记
-    this.markFaviconFailed(url);
-    return null;
+  getSiteIconBackground(bookmarkId) {
+    if (!bookmarkId) return { mode: 'raw' };
+    this._loadSiteIconBackgrounds();
+    return normalizeIconBackground(this.siteIconBackgrounds.get(bookmarkId));
+  }
+
+  setSiteIconBackground(bookmarkId, background) {
+    if (!bookmarkId) return;
+    this._loadSiteIconBackgrounds();
+    const normalized = normalizeIconBackground(background);
+    if (normalized.mode === 'raw') {
+      this.siteIconBackgrounds.delete(bookmarkId);
+    } else {
+      this.siteIconBackgrounds.set(bookmarkId, normalized);
+    }
+    this._saveSiteIconBackgrounds();
+  }
+
+  clearSiteIcon(url) {
+    const key = this.getSiteIconCacheKey(url);
+    if (!key) return;
+    this._loadSiteIcons();
+    this.siteIcons.delete(key);
+    this._saveSiteIcons();
+  }
+
+  async resolveSiteIcon(url) {
+    const key = this.getSiteIconCacheKey(url);
+    if (!key) return null;
+    const cached = this.getSiteIconEntry(key);
+    if (cached) return cached.model || null;
+    if (this.siteIconPending.has(key)) return await this.siteIconPending.get(key);
+
+    const request = resolveSiteIconResource(key).then(model => {
+      this._loadSiteIcons();
+      this.siteIcons.set(key, { model, checkedAt: Date.now() });
+      this._saveSiteIcons();
+      return model;
+    }).finally(() => {
+      this.siteIconPending.delete(key);
+    });
+    this.siteIconPending.set(key, request);
+    return await request;
   }
 
   /**

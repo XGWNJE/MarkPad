@@ -36,6 +36,7 @@ class App {
     new MoveDialog();
     new QuickFind();
     new IconStudio();
+    // SettingsPanel 同时负责 #background-effect-layer 上的背景光效（含浅深配色与开关）
     new SettingsPanel();
     renderIcons(document);
 

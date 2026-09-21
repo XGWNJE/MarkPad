@@ -110,8 +110,9 @@ test('header keeps creation actions inside the settings menu', async () => {
   assert.doesNotMatch(gridCss, /-webkit-mask-image:\s*linear-gradient/);
   assert.doesNotMatch(gridCss.match(/\.content\s*\{[\s\S]*?\}/)?.[0] || '', /padding-top/);
   assert.doesNotMatch(gridCss.match(/@media \(max-width: 768px\)\s*\{[\s\S]*?\.content\s*\{[\s\S]*?\}/)?.[0] || '', /padding-top/);
-  assert.match(gridCss, /\.grid-scroll-inner\s*\{[\s\S]*?padding:\s*calc\(64px \+ var\(--space-6\)\) 0 var\(--space-24\);/);
-  assert.match(gridCss, /@media \(max-width: 768px\)\s*\{[\s\S]*?\.grid-scroll-inner\s*\{[\s\S]*?padding-top:\s*calc\(60px \+ var\(--space-4\)\);/);
+  assert.match(gridCss, /\.grid-scroll\s*\{[\s\S]*?box-sizing:\s*border-box;[\s\S]*?padding:\s*calc\(64px \+ var\(--grid-page-margin\)\) var\(--grid-page-margin\) var\(--grid-page-margin\);/);
+  assert.match(gridCss, /\.grid-scroll-inner\s*\{[\s\S]*?width:\s*min\(100%, 1200px\);/);
+  assert.match(gridCss, /@media \(max-width: 768px\)\s*\{[\s\S]*?\.grid-scroll\s*\{[\s\S]*?padding-top:\s*calc\(60px \+ var\(--grid-page-margin\)\);/);
   assert.match(gridCss, /grid-template-columns:\s*repeat\(auto-fill, minmax\(min\(100%, var\(--card-width\)\), var\(--card-width\)\)\);/);
   assert.match(gridCss, /justify-content:\s*center;/);
 
@@ -120,7 +121,13 @@ test('header keeps creation actions inside the settings menu', async () => {
   assert.match(menuHtml, /<div class="menu-section-label">顶部栏<\/div>/);
   assert.match(menuHtml, /id="header-opacity"/);
   assert.match(menuHtml, /id="card-size"[^>]*min="80"[^>]*max="200"[^>]*step="20"/);
-  assert.match(menuHtml, /id="card-background-strength"/);
+  assert.match(menuHtml, /id="card-radius"/);
+  assert.match(menuHtml, /id="grid-page-margin"/);
+  assert.match(menuHtml, /id="card-gap"[^>]*min="8"[^>]*max="64"[^>]*step="4"/);
+  assert.match(menuHtml, /id="card-font-family"/);
+  assert.match(menuHtml, /id="card-title-size"/);
+  assert.match(menuHtml, /id="card-title-weight"/);
+  assert.match(menuHtml, /id="card-title-tracking"/);
   assert.match(menuHtml, /id="theme-group"[\s\S]*data-value="light"[\s\S]*data-value="dark"/);
   // 卡片文字改为悬停展开，设置里的显示/隐藏开关已移除
   assert.doesNotMatch(menuHtml, /id="card-text-group"/);
@@ -129,10 +136,22 @@ test('header keeps creation actions inside the settings menu', async () => {
   assert.doesNotMatch(menuHtml, /id="wallpaper-grid"|id="wallpaper"|wallpaper-brightness/);
   assert.match(toolbarCss, /--toolbar-alpha/);
   assert.match(settingsPanel, /headerOpacityKey/);
-  assert.match(settingsPanel, /cardBackgroundStrengthKey/);
+  assert.match(settingsPanel, /cardRadiusKey/);
+  assert.match(settingsPanel, /cardFontFamilyKey/);
+  assert.match(settingsPanel, /gridPageMarginKey/);
+  assert.match(settingsPanel, /setGridPageMargin/);
+  assert.match(settingsPanel, /cardGapKey/);
+  assert.match(settingsPanel, /setCardGap/);
+  assert.match(gridCss, /gap:\s*var\(--card-gap\);/);
+  assert.match(settingsPanel, /applyCardTypography/);
+  assert.match(settingsPanel, /getCardRadiusLimit\(\)/);
+  assert.match(settingsPanel, /getBoundingClientRect\(\)\.width/);
   assert.match(settingsPanel, /settings:adjustCardSize/);
   assert.doesNotMatch(settingsPanel, /wallpaper/i);
-  assert.match(cardCss, /--card-background-strength/);
+  assert.match(cardCss, /--card-radius/);
+  assert.match(cardCss, /--card-font-family/);
+  assert.match(cardCss, /-webkit-font-smoothing: antialiased/);
+  assert.match(cardCss, /font-synthesis: none/);
   assert.match(mainJs, /EventBus\.emit\('settings:adjustCardSize', direction\)/);
   assert.match(settingsPanel, /--toolbar-opacity/);
 });

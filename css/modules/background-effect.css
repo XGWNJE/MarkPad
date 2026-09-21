@@ -1,0 +1,21 @@
+/**
+ * 背景光效层（components/BackgroundEffect.js 挂载的 canvas）
+ *
+ * 覆盖整个视口，但永远在内容之下：
+ * - 浅色主题下着色器会自己铺一层底色，所以用 z-index: -1 压在页面背景之上、卡片之下。
+ * - 深色主题下画面是透明的，只叠一层加色的丝线光晕。
+ * 颜色只来自 variables.css 的 --background-effect-* 令牌，这里不写死色值。
+ */
+.background-effect-layer {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.background-effect-canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+}

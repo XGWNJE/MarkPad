@@ -16,10 +16,10 @@ test('context menu groups edit, icon, and destructive actions with clearer label
 
   assert.match(menuSource, /label: '编辑名称'/);
   assert.match(menuSource, /label: '移动到文件夹...'/);
-  assert.match(menuSource, /label: '图标：搜索 SVG'/);
-  assert.match(menuSource, /label: '图标：匹配本地图标'/);
-  assert.match(menuSource, /label: '图标：上传高清图片'/);
-  assert.match(menuSource, /label: '图标：重新匹配默认图标'/);
+  assert.match(menuSource, /图标：编辑自定义图标/);
+  assert.match(menuSource, /图标：选择或上传/);
+  assert.match(menuSource, /label: '图标：设置网站图标背景'/);
+  assert.match(menuSource, /label: '图标：刷新网站图标'/);
   assert.match(menuSource, /label: '删除'/);
   assert.match(menuSource, /className: 'danger'/);
   assert.match(menuSource, /type: 'separator'/);
@@ -27,7 +27,8 @@ test('context menu groups edit, icon, and destructive actions with clearer label
   assert.doesNotMatch(menuSource, /label: '自定义图标\.\.\.'/);
   assert.doesNotMatch(menuSource, /label: '更换图标\.\.\.'/);
   assert.doesNotMatch(menuSource, /label: '选择 SVG 图标'/);
-  assert.doesNotMatch(menuSource, /label: '刷新默认图标'/);
+  assert.doesNotMatch(menuSource, /label: '图标：搜索 SVG'/);
+  assert.doesNotMatch(menuSource, /label: '图标：匹配本地图标'/);
 });
 
 test('context menu no longer opens a secondary custom icon picker menu', async () => {

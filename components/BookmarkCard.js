@@ -6,7 +6,8 @@ import BookmarkStore from '../core/BookmarkStore.js';
 import { iconSvg } from '../core/IconLibrary.js';
 import { resolveBookmarkIcon } from '../core/icons/IconResolver.js';
 import { isSvgRaw } from '../core/icons/IconSanitizer.js';
-import { validateBitmapDimensions } from '../core/icons/BitmapIconProcessor.js';
+import { backgroundCssValue, iconTextColor, normalizeIconBackground } from '../core/icons/IconBackground.js';
+import { analyzeIconBackground } from '../core/icons/IconBackgroundAnalyzer.js';
 import CardEffects from './CardEffects.js';
 
 /** 将原始 SVG 文本应用到容器元素（注入 DOM，绕过 CSP） */
@@ -21,13 +22,16 @@ function applySvgToElement(el, svgText) {
   }
 }
 
-/** 将 background-image 图标应用到容器元素 */
+/** 以受限图片元素展示远程或位图图标，保留浏览器原生动画播放。 */
 function applyImageToElement(el, url) {
   el.innerHTML = '';
-  el.style.backgroundImage = `url(${url})`;
-  el.style.backgroundSize = 'contain';
-  el.style.backgroundPosition = 'center';
-  el.style.backgroundRepeat = 'no-repeat';
+  el.style.backgroundImage = '';
+  const image = document.createElement('img');
+  image.className = 'card-icon-image';
+  image.src = url;
+  image.alt = '';
+  image.referrerPolicy = 'no-referrer';
+  el.appendChild(image);
 }
 
 function applyDefaultFolderIcon(el) {
@@ -36,36 +40,36 @@ function applyDefaultFolderIcon(el) {
   el.style.backgroundSize = '';
 }
 
-function applyInitialToElement(el, value) {
+function clearIconElement(el) {
   el.innerHTML = '';
   el.style.backgroundImage = 'none';
   el.style.backgroundSize = '';
-  const fallbackIcon = document.createElement('div');
-  fallbackIcon.className = 'favicon-fallback';
-  fallbackIcon.innerHTML = `<div class="favicon-initial">${escapeHtml(value || '?')}</div>`;
-  fallbackIcon.style.display = 'flex';
-  el.appendChild(fallbackIcon);
+  el.style.background = '';
 }
 
 function applyIconModelToElement(el, model) {
   if (!model) {
-    applyInitialToElement(el, '?');
+    clearIconElement(el);
     return;
   }
+
+  const background = normalizeIconBackground(model.background);
 
   if (model.type === 'svg') {
     applySvgToElement(el, model.value);
   } else if (model.type === 'image') {
     applyImageToElement(el, model.value);
   } else {
-    applyInitialToElement(el, model.value);
+    clearIconElement(el);
   }
-}
-
-function escapeHtml(text) {
-  const div = document.createElement('div');
-  div.textContent = text;
-  return div.innerHTML;
+  const cssBackground = backgroundCssValue(background);
+  el.style.background = cssBackground;
+  const card = el.closest('.bookmark-card');
+  if (card) {
+    const textColor = iconTextColor(background);
+    if (textColor) card.style.setProperty('--icon-text-color', textColor);
+    else card.style.removeProperty('--icon-text-color');
+  }
 }
 
 /**
@@ -106,6 +110,8 @@ class BookmarkCard {
     this.effects = null;
     this.lastPointerType = null;
     this.textRevealed = false;
+    this.siteIconModel = null;
+    this.siteBackgroundPreview = null;
   }
 
   async render() {
@@ -131,18 +137,15 @@ class BookmarkCard {
       icon.classList.add('folder');
       const customIcon = BookmarkStore.getCustomIcon(this.data.id);
       if (customIcon) {
-        if (isSvgRaw(customIcon)) {
-          applySvgToElement(icon, customIcon);
-        } else {
-          applyImageToElement(icon, customIcon);
-        }
+        applyIconModelToElement(icon, resolveBookmarkIcon(this.data, { storage: BookmarkStore }));
       } else {
         icon.classList.add('folder-default');
         applyDefaultFolderIcon(icon);
       }
     } else {
       icon.classList.add('favicon');
-      applyIconModelToElement(icon, resolveBookmarkIcon(this.data, { storage: BookmarkStore }));
+      const iconModel = resolveBookmarkIcon(this.data, { storage: BookmarkStore });
+      applyIconModelToElement(icon, iconModel);
     }
 
     iconWrapper.appendChild(icon);
@@ -182,6 +185,39 @@ class BookmarkCard {
     return this.element;
   }
 
+  resolveSiteIconWhenVisible() {
+    // 只能在卡片挂入页面后观察；在 render() 内观察脱离文档的节点，
+    // Chrome 不会稳定地产生首个可见性交叉事件，结果就是网站图标永远不请求。
+    if (!this.element?.isConnected || this.isFolder || !this.data.url || this.siteIconObserver || (this.siteIconLoading && this.siteIconRequestedUrl === this.data.url)) return;
+    const load = async () => {
+      this.siteIconLoading = true;
+      const requestedUrl = this.data.url;
+      this.siteIconRequestedUrl = requestedUrl;
+      try {
+        // Custom and curated title icons can appear while this card waits.
+        if (resolveBookmarkIcon(this.data, { storage: BookmarkStore })) return;
+        const icon = await BookmarkStore.resolveSiteIcon(requestedUrl);
+        if (icon && this.element?.isConnected && this.data.url === requestedUrl && !resolveBookmarkIcon(this.data, { storage: BookmarkStore })) {
+          this.updateIcon(icon);
+        }
+      } finally {
+        if (this.siteIconRequestedUrl === requestedUrl) this.siteIconLoading = false;
+      }
+    };
+
+    if (!('IntersectionObserver' in window)) {
+      void load();
+      return;
+    }
+    this.siteIconObserver = new IntersectionObserver(entries => {
+      if (!entries.some(entry => entry.isIntersecting)) return;
+      this.siteIconObserver.disconnect();
+      this.siteIconObserver = null;
+      void load();
+    }, { rootMargin: '160px' });
+    this.siteIconObserver.observe(this.element);
+  }
+
   /** 拖拽排序 / FLIP 动画要自己写 transform，这里先把 gsap 的 transform 交还出去 */
   releaseEffectsTransform() {
     this.effects?.releaseTransform();
@@ -193,10 +229,6 @@ class BookmarkCard {
     } catch {
       return url;
     }
-  }
-
-  escapeHtml(text) {
-    return escapeHtml(text);
   }
 
   bindEvents() {
@@ -518,32 +550,29 @@ class BookmarkCard {
         action: () => EventBus.emit('card:move', { id: this.data.id })
       },
       { type: 'separator' },
-      ...(!this.isFolder ? [{
-        label: '图标：重新匹配默认图标',
-        action: () => this.refreshDefaultIcon()
-      }] : []),
       {
-        label: '图标：匹配本地图标',
-        action: () => EventBus.emit('iconStudio:openLocal', {
-          bookmark: this.data
-        })
-      },
-      {
-        label: '图标：搜索 SVG',
+        label: hasCustomIcon ? '图标：编辑自定义图标' : '图标：选择或上传',
         action: () => EventBus.emit('iconStudio:open', {
           bookmark: this.data
         })
-      },
-      {
-        label: '图标：上传高清图片',
-        action: () => this.uploadBitmapIcon()
       },
     ];
 
     if (hasCustomIcon) {
       items.push({
-        label: '图标：恢复默认',
+        label: '图标：恢复网站图标',
         action: () => this.removeCustomIcon()
+      });
+    } else if (!this.isFolder) {
+      if (this.siteIconModel) {
+        items.push({
+          label: '图标：设置网站图标背景',
+          action: () => EventBus.emit('iconStudio:openSiteBackground', { bookmark: this.data })
+        });
+      }
+      items.push({
+        label: '图标：刷新网站图标',
+        action: () => this.refreshWebsiteIcon()
       });
     }
 
@@ -605,89 +634,6 @@ class BookmarkCard {
     }, 0);
   }
 
-  /** 上传自定义位图图标 */
-  uploadBitmapIcon() {
-    const input = document.createElement('input');
-    input.type = 'file';
-    input.accept = 'image/png,image/jpeg,image/webp,image/gif,image/avif,image/x-icon';
-
-    input.addEventListener('change', () => {
-      const file = input.files[0];
-      if (!file) return;
-      if (file.size > 1024 * 1024) {
-        this._showToast('图标文件不能超过 1MB');
-        return;
-      }
-      if (file.size < 1024) {
-        this._showToast('图标文件不能小于 1KB');
-        return;
-      }
-
-      const reader = new FileReader();
-      reader.onload = () => {
-        const img = new Image();
-        img.onload = () => {
-          const validation = validateBitmapDimensions(img.naturalWidth, img.naturalHeight);
-          if (!validation.ok) {
-            this._showToast(validation.reason);
-            return;
-          }
-          const canvas = document.createElement('canvas');
-          const size = 256;
-          canvas.width = size; canvas.height = size;
-          const ctx = canvas.getContext('2d');
-          const scale = Math.min(size / img.width, size / img.height);
-          const w = img.width * scale, h = img.height * scale;
-          ctx.drawImage(img, (size - w) / 2, (size - h) / 2, w, h);
-          const dataUrl = canvas.toDataURL('image/png');
-          BookmarkStore.setCustomIcon(this.data.id, dataUrl);
-          this.updateIcon(dataUrl);
-        };
-        img.src = reader.result;
-      };
-      reader.readAsDataURL(file);
-    });
-
-    input.click();
-  }
-
-  /**
-   * 显示临时提示
-   */
-  _showToast(message, duration = 2000) {
-    const existing = document.querySelector('.bookmark-card-toast');
-    if (existing) existing.remove();
-
-    const toast = document.createElement('div');
-    toast.className = 'bookmark-card-toast';
-    toast.textContent = message;
-    toast.style.cssText = `
-      position: fixed;
-      bottom: 80px;
-      left: 50%;
-      transform: translateX(-50%);
-      background: rgba(0,0,0,0.8);
-      color: #fff;
-      padding: 8px 16px;
-      border-radius: 6px;
-      font-size: 13px;
-      z-index: 9999;
-      pointer-events: none;
-      animation: bookmarkCardToastIn 0.2s ease;
-    `;
-    document.body.appendChild(toast);
-
-    // 复用已存在的 toast 样式，避免每次创建新的 <style> 元素
-    if (!document.getElementById('bookmark-card-toast-styles')) {
-      const style = document.createElement('style');
-      style.id = 'bookmark-card-toast-styles';
-      style.textContent = '@keyframes bookmarkCardToastIn{from{opacity:0;transform:translateX(-50%) translateY(8px)}to{opacity:1;transform:translateX(-50%) translateY(0)}}';
-      document.head.appendChild(style);
-    }
-
-    setTimeout(() => toast.remove(), duration);
-  }
-
   /**
    * 移除自定义图标，恢复默认
    */
@@ -697,21 +643,20 @@ class BookmarkCard {
       // 文件夹：恢复默认 SVG
       this.updateIcon(null);
     } else {
-      this.updateIcon(resolveBookmarkIcon(this.data, { storage: BookmarkStore }));
+      const iconModel = resolveBookmarkIcon(this.data, { storage: BookmarkStore });
+      this.updateIcon(iconModel);
+      if (!iconModel) this.resolveSiteIconWhenVisible();
     }
   }
 
-  /**
-   * 重新匹配默认图标（清除自动解析缓存后重新匹配图标库）
-   */
-  async refreshDefaultIcon() {
+  async refreshWebsiteIcon() {
     const iconEl = this.element.querySelector('.card-icon');
-
     if (iconEl) iconEl.style.opacity = '0';
-
-    BookmarkStore.clearResolvedIcon(this.data.id);
-
+    BookmarkStore.clearSiteIcon(this.data.url);
+    const background = BookmarkStore.getSiteIconBackground(this.data.id);
+    if (background.mode === 'auto') BookmarkStore.setSiteIconBackground(this.data.id, { mode: 'auto' });
     this.updateIcon(resolveBookmarkIcon(this.data, { storage: BookmarkStore }));
+    this.resolveSiteIconWhenVisible();
     if (iconEl) {
       iconEl.style.transition = 'opacity 0.15s';
       iconEl.style.opacity = '1';
@@ -726,13 +671,28 @@ class BookmarkCard {
     const iconEl = this.element.querySelector('.card-icon');
     if (!iconEl) return;
 
+    // 图标工坊保存的是 { kind, data, background } 记录，不是可直接赋给
+    // <img src> 的渲染模型。先走解析器，避免浏览器把对象字符串化成
+    // "[object Object]"，导致关闭弹窗后出现破图、刷新才恢复。
+    if (iconData && typeof iconData === 'object' && !iconData.type && iconData.data) {
+      this.updateIcon(resolveBookmarkIcon(this.data, { storage: BookmarkStore }));
+      return;
+    }
+
     if (iconData && typeof iconData === 'object' && iconData.type) {
+      const displayIcon = iconData.source === 'site'
+        ? { ...iconData, background: this.siteBackgroundPreview || BookmarkStore.getSiteIconBackground(this.data.id) }
+        : iconData;
+      if (iconData.source === 'site') this.siteIconModel = iconData;
       if (this.isFolder && iconData.type === 'initial') {
         iconEl.classList.add('folder-default');
         applyDefaultFolderIcon(iconEl);
       } else {
         iconEl.classList.remove('folder-default');
-        applyIconModelToElement(iconEl, iconData);
+        applyIconModelToElement(iconEl, displayIcon);
+        if (iconData.source === 'site' && displayIcon.background?.mode === 'auto' && (!displayIcon.background.result || displayIcon.background.sourceValue !== iconData.value)) {
+          void this.resolveAutoSiteBackground(iconData);
+        }
       }
       return;
     }
@@ -761,6 +721,14 @@ class BookmarkCard {
         applyIconModelToElement(iconEl, resolveBookmarkIcon(this.data, { storage: BookmarkStore }));
       }
     }
+  }
+
+  async resolveAutoSiteBackground(iconData) {
+    const result = await analyzeIconBackground({ kind: iconData.type, value: iconData.value });
+    if (!result.ok || !this.element?.isConnected || this.siteIconModel?.value !== iconData.value) return;
+    const background = { mode: 'auto', result: result.result, sourceValue: iconData.value };
+    BookmarkStore.setSiteIconBackground(this.data.id, background);
+    this.updateIcon(iconData);
   }
 
   animateDelete() {
