@@ -1,12 +1,16 @@
-# <img src="icons/icon.svg" alt="" width="32" height="32"> MarkPad
+<div align="center">
 
-面向触控操作的 Chrome 新标签页书签面板：把现有 Chrome 书签直接排成可点击、可整理的方形卡片。
+<h1><img src="icons/icon.svg" alt="" width="32" height="32"> MarkPad</h1>
 
-适合在触控屏、平板式 PC 或桌面浏览器上，用更大的操作目标访问和整理常用书签。MarkPad 直接读写 Chrome 原生书签，不创建第二套书签库，因此不需要导入、同步或迁移。
+<p>面向触控操作的 Chrome 新标签页书签面板：把现有 Chrome 书签直接排成可点击、可整理的方形卡片。</p>
 
-`v0.3.1` · Chrome Extension Manifest V3
+<p>适合在触控屏、平板式 PC 或桌面浏览器上，用更大的操作目标访问和整理常用书签。MarkPad 直接读写 Chrome 原生书签，不创建第二套书签库，因此不需要导入、同步或迁移。</p>
 
-[安装](#安装) · [使用方式](#使用方式) · [快捷键](#快捷键) · [权限与数据](#权限与数据) · [开发与验证](#开发与验证)
+<p><code>v0.3.1</code> · Chrome Extension Manifest V3</p>
+
+<p><a href="#安装">安装</a> · <a href="#使用方式">使用方式</a> · <a href="#快捷键">快捷键</a> · <a href="#权限与数据">权限与数据</a> · <a href="#开发与验证">开发与验证</a></p>
+
+</div>
 
 ## 预览
 
