@@ -1,4 +1,4 @@
-# MarkPad
+# <img src="icons/icon.svg" alt="" width="32" height="32"> MarkPad
 
 MarkPad 把 Chrome 书签栏显示为适合鼠标和触控操作的方形卡片，并接管新标签页。它直接读取和修改 Chrome 原生书签，适合想在桌面 Chrome 中用大卡片打开、整理常用网站的人。
 
