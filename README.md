@@ -9,7 +9,7 @@
 
 [功能](#功能) · [安装](#安装) · [使用](#使用) · [快捷键](#快捷键) · [项目结构](#项目结构) · [验证](#验证) · [权限与数据](#权限与数据)
 
-[![版本：0.4.0](https://img.shields.io/badge/version-0.4.0-444444)](CHANGELOG.md) [![平台：桌面版 Chrome](https://img.shields.io/badge/platform-Chrome-444444)](#安装) [![扩展格式：Manifest V3](https://img.shields.io/badge/Manifest-V3-444444)](manifest.json)
+[![版本：0.4.0](https://img.shields.io/badge/version-0.4.0-444444)](manifest.json) [![平台：桌面版 Chrome](https://img.shields.io/badge/platform-Chrome-444444)](#安装) [![扩展格式：Manifest V3](https://img.shields.io/badge/Manifest-V3-444444)](manifest.json)
 
 </div>
 
@@ -20,7 +20,7 @@
 - **触控操作**：点按展开卡片文字，长按打开操作菜单；也支持鼠标和键盘。
 - **调整外观**：切换浅色／深色，调整卡片大小、圆角、间距、全局字体、标题排版、顶部栏和背景光效；上传图标并调整背景与缩放。
 
-当前版本：`0.4.0`。新建入口位于网格末尾，标题通过弹窗编辑，网站图标由后台获取；此版本已移除书签搜索。详见[完整变更记录](CHANGELOG.md)。
+当前版本：`0.4.0`，以 [manifest.json](manifest.json) 为准。
 
 ## 安装
 
@@ -45,9 +45,7 @@
 | 更换或调整图标 | 在卡片菜单中打开图标工坊，上传本地文件，或调整已获取的网站图标背景与缩放。 |
 | 调整外观与打开方式 | 打开顶部设置菜单，修改主题、卡片、文字、顶部栏、背景光效及打开行为。 |
 
-书签优先显示用户上传的图标，再匹配内置库，最后在卡片可见时获取网站图标。当前内置书签图标库为空，找不到图标时保留标题与域名。网站图标及未找到图标的结果会持续缓存；需要重试时，在卡片菜单选择「图标：重新获取网站图标」。
-
-上传格式、大小限制、动画保留和背景编辑细则见[触控与图标说明](docs/touch-icon-guide.md)；配色与界面约定见[品牌与视觉规范](docs/markpad-brand-visual-guide.md)。
+卡片文字、网站图标缓存、上传限制及背景编辑见[触控与图标说明](docs/touch-icon-guide.md)；配色与界面约定见[品牌与视觉规范](docs/markpad-brand-visual-guide.md)。
 
 ## 快捷键
 
@@ -74,9 +72,9 @@
 | [core/](core/)、[background.js](background.js) | 书签数据、导航、图标解析与后台抓取 |
 | [icons/](icons/)、[vendor/](vendor/) | 应用图标与内置第三方代码 |
 | [tests/](tests/)、[scripts/](scripts/) | 行为测试与资源生成脚本 |
-| [docs/](docs/)、[CHANGELOG.md](CHANGELOG.md) | 专题说明与版本历史 |
+| [docs/](docs/) | 当前行为、视觉与工程专题说明 |
 
-文件职责、维护边界和按模块选择的验证命令见 [AGENTS.md](AGENTS.md)。
+详细文件职责、数据边界及运行资源见[工程指南](docs/engineering-guide.md)；Agent 协作规则见 [AGENTS.md](AGENTS.md)。
 
 ## 验证
 
@@ -86,13 +84,7 @@
 npm test
 ```
 
-预期结果是 Node 行为测试全部通过。修改 README 版本摘要、扩展版本或变更记录时，单独检查版本一致性：
-
-```powershell
-node --test tests/version-system.test.mjs
-```
-
-修改触控、弹窗、拖拽、图标或 Chrome API 后，还需重新加载扩展并在新标签页验收实际交互。仅在升级内置 GSAP 时需要安装开发依赖并重新生成文件，步骤见 [AGENTS.md](AGENTS.md)。
+预期结果是 Node 行为测试全部通过。按模块选择的检查、版本一致性测试和 Chrome 运行态验收要求见[工程指南的验证清单](docs/engineering-guide.md#验证)。
 
 ## 权限与数据
 
