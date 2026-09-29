@@ -40,6 +40,15 @@
   outline-offset: 2px;
 }
 
+.card-surface {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  border-radius: inherit;
+  /* 图标和遮罩先合成，再统一裁圆角，避免底图从两层的抗锯齿边缘漏出。 */
+  clip-path: inset(0 round var(--card-radius));
+}
+
 .card-icon-wrapper {
   position: relative;
   z-index: 1;
@@ -52,7 +61,15 @@
   overflow: hidden;
   background: transparent;
   border: 0;
-  border-radius: inherit;
+  transition: filter var(--transition-base);
+}
+
+/* 图标在卡片挂载后才加载时，也直接模糊底图，保证文字层的磨砂效果。 */
+.bookmark-card:hover .card-icon-wrapper,
+.bookmark-card:focus-visible .card-icon-wrapper,
+.bookmark-card:focus-within .card-icon-wrapper,
+.bookmark-card.text-revealed .card-icon-wrapper {
+  filter: blur(var(--card-overlay-blur));
 }
 
 .card-icon {
@@ -113,44 +130,46 @@
 
 .card-info {
   position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 0;
+  inset: 0;
   z-index: 2;
-  display: grid;
-  min-height: 72px;
-  grid-template-rows: 18px 24px;
-  align-content: center;
-  gap: var(--space-1);
-  padding: 12px 14px 14px;
-  text-align: left;
-  background: transparent;
-  border-radius: 0 0 var(--card-radius) var(--card-radius);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-3);
+  text-align: center;
+  color: var(--card-overlay-text);
+  background: var(--card-overlay-bg);
+  -webkit-backdrop-filter: blur(var(--card-overlay-blur));
+  backdrop-filter: blur(var(--card-overlay-blur));
+  /* 保持矩形覆盖，圆角仅由共同的 .card-surface 裁切。 */
   opacity: 0;
-  transform: translateY(10px);
+  visibility: hidden;
   pointer-events: none;
   transition:
     opacity var(--transition-base),
-    transform var(--transition-base);
+    visibility var(--transition-base);
 }
 
 /* 默认藏起文字：指针悬停、键盘聚焦，或在触屏上点开（.text-revealed）时动画展开 */
 .bookmark-card:hover .card-info,
 .bookmark-card:focus-visible .card-info,
 .bookmark-card:focus-within .card-info,
-.bookmark-card.text-revealed .card-info {
+.bookmark-card.text-revealed .card-info,
+.bookmark-card.iconless .card-info {
   opacity: 1;
-  transform: translateY(0);
+  visibility: visible;
   pointer-events: auto;
 }
 
 .card-title {
   width: 100%;
-  color: var(--icon-text-color, var(--text-primary));
+  color: var(--card-overlay-text);
   font-family: var(--card-font-family, var(--font-family));
   font-size: var(--card-title-size, 16px);
-  font-weight: var(--card-title-weight, 500);
-  line-height: 24px;
+  font-weight: var(--card-overlay-title-weight);
+  line-height: 1.4;
   letter-spacing: var(--card-title-tracking, 0.01em);
   -webkit-font-smoothing: antialiased;
   font-synthesis: none;
@@ -161,21 +180,11 @@
   word-break: normal;
 }
 
-.card-title[contenteditable="true"] {
-  padding: 2px 4px;
-  border-radius: var(--radius-xs);
-  background: var(--color-bg-soft);
-  box-shadow: inset 0 0 0 1px var(--color-border-strong);
-  overflow-x: auto;
-  text-overflow: clip;
-  white-space: nowrap;
-}
-
 .card-meta {
   width: 100%;
   min-height: 18px;
   display: block;
-  color: var(--icon-text-color, var(--text-secondary));
+  color: var(--card-overlay-text);
   font-family: var(--card-font-family, var(--font-family));
   font-size: var(--card-meta-size, var(--font-size-xs));
   font-weight: 400;

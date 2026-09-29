@@ -40,7 +40,10 @@ test('the card retains clipping for rounded icon backgrounds without a visual su
   assert.match(cardBlock, /overflow: hidden;/);
   const wrapper = cardCss.match(/\.card-icon-wrapper \{[\s\S]*?\n\}/)?.[0] || '';
   assert.match(wrapper, /overflow: hidden;/);
-  assert.match(wrapper, /border-radius: inherit;/);
+  assert.doesNotMatch(wrapper, /border-radius:/);
+  const surface = cardCss.match(/\.card-surface \{[\s\S]*?\n\}/)?.[0] || '';
+  assert.match(surface, /border-radius: inherit;/);
+  assert.match(surface, /overflow: hidden;/);
 });
 
 test('CardEffects keeps card tilt and scale wiring but disables removed visuals', async () => {

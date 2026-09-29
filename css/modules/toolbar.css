@@ -3,7 +3,10 @@
   top: 0;
   left: 0;
   right: 0;
-  height: 64px;
+  height: var(--toolbar-height);
+  font-family: var(--font-family-ui);
+  font-weight: var(--ui-font-weight);
+  font-synthesis: none;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -65,9 +68,7 @@
 }
 
 .menu-trigger.active,
-.menu-trigger.active:hover,
-.search-trigger.active,
-.search-trigger.active:hover {
+.menu-trigger.active:hover {
   background: var(--color-action);
   border-color: var(--color-action);
   color: var(--color-action-text);
@@ -109,14 +110,12 @@
   z-index: 200;
 }
 
-.menu-trigger.active:hover::after,
-.search-trigger.active:hover::after {
+.menu-trigger.active:hover::after {
   content: none;
 }
 
-@media (max-width: 760px) {
+@media (max-width: 768px) {
   .toolbar {
-    height: 60px;
     padding-inline: var(--space-4);
     gap: var(--space-2);
   }

@@ -1,4 +1,4 @@
-// Search/settings path data is copied from Lucide @lucide/icons v1.23.0 (ISC).
+// Settings path data is copied from Lucide @lucide/icons v1.23.0 (ISC).
 const ICONS = {
   'bookmark-plus': [
     '<path d="M7 4.75A2.25 2.25 0 0 1 9.25 2.5h5.5A2.25 2.25 0 0 1 17 4.75v15.5l-5-3-5 3V4.75Z"/>',
@@ -9,10 +9,6 @@ const ICONS = {
     '<path d="M3.5 7.25A2.25 2.25 0 0 1 5.75 5h4l2 2.25h6.5a2.25 2.25 0 0 1 2.25 2.25v7.75a2.25 2.25 0 0 1-2.25 2.25H5.75a2.25 2.25 0 0 1-2.25-2.25v-10Z"/>',
     '<path d="M12 11v5"/>',
     '<path d="M9.5 13.5h5"/>'
-  ],
-  search: [
-    '<path d="m21 21-4.34-4.34"/>',
-    '<circle cx="11" cy="11" r="8"/>'
   ],
   menu: [
     '<path d="M5 7h14"/>',

@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
 
-import { backgroundCssValue, getIconScale, iconTextColor, normalizeIconBackground } from '../core/icons/IconBackground.js';
+import { backgroundCssValue, getIconScale, normalizeIconBackground } from '../core/icons/IconBackground.js';
 import { analyzeIconEdgePixels } from '../core/icons/IconBackgroundAnalyzer.js';
 
 test('icon backgrounds support only raw, automatic, and explicit solid display strategies', () => {
@@ -19,11 +19,9 @@ test('automatic blending produces a solid or gradient from readable edge pixels'
   });
 });
 
-test('automatic complex-edge backgrounds render as gradients and choose a stable text contrast', () => {
+test('automatic complex-edge backgrounds render as gradients', () => {
   const background = { mode: 'auto', result: { type: 'gradient', colors: ['#111111', '#333333', '#222222'], angle: 135 } };
   assert.match(backgroundCssValue(background), /linear-gradient\(135deg/);
-  assert.equal(iconTextColor(background), '#ffffff');
-  assert.equal(iconTextColor({ mode: 'solid', color: '#ffffff' }), '#111111');
 });
 
 test('icon background metadata carries only a non-default display scale', () => {

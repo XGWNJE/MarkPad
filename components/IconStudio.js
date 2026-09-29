@@ -4,7 +4,7 @@ import { iconSvg } from '../core/IconLibrary.js';
 import { getLibraryIconCandidates } from '../core/icons/IconLibraryProvider.js';
 import { createCustomIconRecord, isValidHexColor, normalizeIconScale, readIconUpload } from '../core/icons/IconUploadProcessor.js';
 import { analyzeIconBackground } from '../core/icons/IconBackgroundAnalyzer.js';
-import { backgroundCssValue, cloneIconBackground, getIconScale, iconTextColor } from '../core/icons/IconBackground.js';
+import { backgroundCssValue, cloneIconBackground, getIconScale } from '../core/icons/IconBackground.js';
 import { isSvgRaw } from '../core/icons/IconSanitizer.js';
 
 function hsvToHex(hue, saturation, value) {
@@ -55,7 +55,7 @@ class IconStudio {
           </section>
           <label class="icon-scale-control hidden"><span>图标缩放 <strong class="icon-scale-value">100%</strong></span><input class="icon-scale-input" type="range" min="40" max="400" step="5" value="100"><span class="icon-scale-hint">缩小</span><span class="icon-scale-hint">放大</span></label>
           <div class="icon-studio-status" role="status"></div>
-          <section class="icon-studio-preview hidden"><div class="icon-studio-preview-card bookmark-card"><div class="card-icon-wrapper"><div class="card-icon"></div></div><div class="card-info"><div class="card-meta"></div><div class="card-title"></div></div></div><div class="icon-studio-preview-source"></div></section>
+          <section class="icon-studio-preview hidden"><div class="icon-studio-preview-card bookmark-card" tabindex="0"><div class="card-surface"><div class="card-icon-wrapper"><div class="card-icon"></div></div><div class="card-info"><div class="card-title"></div><div class="card-meta"></div></div></div></div><div class="icon-studio-preview-source"></div></section>
         </div><div class="dialog-footer icon-studio-footer"><button class="btn btn-secondary" data-action="close">取消</button><button class="btn btn-primary" data-action="apply" disabled>应用图标</button></div>
       </div>`;
     document.body.appendChild(this.dialog); this.bindDialogEvents();
@@ -164,7 +164,7 @@ class IconStudio {
   renderPreview(current) {
     const preview = this.dialog.querySelector('.icon-studio-preview'); const card = preview.querySelector('.icon-studio-preview-card'); const icon = card.querySelector('.card-icon'); if (!current) { preview.classList.add('hidden'); return; }
     preview.classList.remove('hidden'); icon.innerHTML = ''; icon.style.background = backgroundCssValue(this.background); icon.style.setProperty('--icon-content-scale', String(this.iconScale)); if (current.kind === 'svg') icon.innerHTML = current.value; else { const image = document.createElement('img'); image.className = 'card-icon-image'; image.src = current.value; image.alt = ''; icon.appendChild(image); }
-    card.style.setProperty('--icon-text-color', iconTextColor(this.background)); card.querySelector('.card-title').textContent = this.bookmark.title || '未命名书签'; card.querySelector('.card-meta').textContent = this.mode === 'site-background' ? this.domain() : '上传图标'; preview.querySelector('.icon-studio-preview-source').textContent = this.mode === 'site-background' ? '来源：网站声明图标（临时预览同步到原卡片）' : '来源：上传图标（应用前不写入）';
+    card.querySelector('.card-title').textContent = this.bookmark.title || '未命名书签'; card.querySelector('.card-meta').textContent = this.mode === 'site-background' ? this.domain() : '上传图标'; preview.querySelector('.icon-studio-preview-source').textContent = this.mode === 'site-background' ? '来源：网站声明图标（临时预览同步到原卡片）' : '来源：上传图标（应用前不写入）';
   }
 
   domain() { try { return new URL(this.bookmark.url).hostname; } catch { return ''; } }

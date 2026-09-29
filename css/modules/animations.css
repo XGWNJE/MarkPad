@@ -1,15 +1,36 @@
-.bookmark-card.loaded {
-  animation: cardFadeIn 260ms var(--ease-lumen);
+.page-enter-pending .toolbar,
+.page-enter-pending .grid-scroll-inner {
+  visibility: hidden;
 }
 
-@keyframes cardFadeIn {
+.page-entering .toolbar {
+  animation: pageFadeIn var(--page-enter-duration) var(--ease-lumen) backwards;
+}
+
+.page-entering .grid-scroll-inner {
+  animation: pageContentIn var(--page-enter-duration) var(--ease-lumen) backwards;
+}
+
+@keyframes pageFadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes pageContentIn {
   from {
     opacity: 0;
-    transform: translateY(16px);
+    transform: translateY(var(--page-enter-offset));
   }
   to {
     opacity: 1;
     transform: translateY(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .page-entering .toolbar,
+  .page-entering .grid-scroll-inner {
+    animation: none;
   }
 }
 

@@ -426,12 +426,7 @@
   width: 100%;
   max-width: 220px;
   justify-self: center;
-  pointer-events: none;
-}
-
-.icon-studio-preview-card .card-info {
-  opacity: 1;
-  transform: translateY(0);
+  cursor: default;
 }
 
 .icon-studio-footer .btn[disabled] {

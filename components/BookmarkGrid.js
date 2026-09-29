@@ -15,7 +15,7 @@ class BookmarkGrid {
     this.isLoading = false;
     this.suppressNextMoveRefresh = false;
 
-    this.init();
+    this.ready = this.init();
   }
 
   init() {
@@ -132,7 +132,7 @@ class BookmarkGrid {
     });
 
     // 初始加载（根节点 ID 启动时已由 Router 解析）
-    this.loadFolder(Router.getRootId());
+    return this.loadFolder(Router.getRootId());
   }
 
   async loadFolder(folderId) {
@@ -164,23 +164,18 @@ class BookmarkGrid {
         : new Map();
 
       // 渲染
-      if (children.length === 0) {
-        this.renderEmpty();
-      } else {
-        for (let index = 0; index < children.length; index++) {
-          const child = children[index];
-          const card = new BookmarkCard(child, this.grid, {
-            childCount: folderChildCounts.get(child.id)
-          });
-          const element = await card.render();
-          element.style.animationDelay = `${index * 30}ms`;
-          element.classList.add('loaded');
-          this.grid.appendChild(element);
-          this.cards.set(child.id, card);
-          // 网站图标只在卡片实际进入文档、且接近可视区时读取。
-          card.resolveSiteIconWhenVisible();
-        }
+      for (let index = 0; index < children.length; index++) {
+        const child = children[index];
+        const card = new BookmarkCard(child, this.grid, {
+          childCount: folderChildCounts.get(child.id)
+        });
+        const element = await card.render();
+        this.grid.appendChild(element);
+        this.cards.set(child.id, card);
+        // 网站图标只在卡片实际进入文档、且接近可视区时读取。
+        card.resolveSiteIconWhenVisible();
       }
+      this.renderCreateActions();
     } catch (err) {
       console.error('loadFolder failed:', err);
     } finally {
@@ -208,15 +203,25 @@ class BookmarkGrid {
     await this.loadFolder(current.id);
   }
 
-  renderEmpty() {
-    const empty = document.createElement('div');
-    empty.className = 'empty-state';
-    empty.innerHTML = `
-      <div class="empty-icon">${iconSvg('folder')}</div>
-      <div class="empty-text">文件夹为空</div>
-      <div class="empty-hint">点击"新建书签"添加第一个书签</div>
-    `;
-    this.grid.appendChild(empty);
+  renderCreateActions() {
+    const actions = [
+      { kind: 'bookmark', icon: 'bookmark-plus', label: '新建书签', event: 'toolbar:newBookmark' },
+      { kind: 'folder', icon: 'folder-plus', label: '新建文件夹', event: 'toolbar:newFolder' }
+    ];
+
+    for (const { kind, icon, label, event } of actions) {
+      const button = document.createElement('button');
+      button.type = 'button';
+      button.className = 'grid-create-card';
+      button.dataset.createKind = kind;
+      button.draggable = false;
+      button.innerHTML = `
+        <span class="grid-create-icon" aria-hidden="true">${iconSvg(icon)}</span>
+        <span class="grid-create-label">${label}</span>
+      `;
+      button.addEventListener('click', () => EventBus.emit(event));
+      this.grid.appendChild(button);
+    }
   }
 
   async createBookmark(parentId, title, url) {

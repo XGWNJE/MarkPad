@@ -190,20 +190,6 @@ class BookmarkStore {
     return counts;
   }
 
-  /**
-   * 全局搜索
-   * @param {string} query - 搜索词
-   */
-  async search(query) {
-    if (!query) return [];
-    try {
-      return await chrome.bookmarks.search(query);
-    } catch (err) {
-      console.error('Search failed:', err);
-      return [];
-    }
-  }
-
   // ========== 自定义图标系统 ==========
 
   /**

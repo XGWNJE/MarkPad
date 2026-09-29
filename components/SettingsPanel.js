@@ -25,7 +25,6 @@ class SettingsPanel {
     this.cardRadiusKey = 'cardRadius';
     this.cardFontFamilyKey = 'cardFontFamily';
     this.cardTitleSizeKey = 'cardTitleSize';
-    this.cardTitleWeightKey = 'cardTitleWeight';
     this.cardTitleTrackingKey = 'cardTitleTracking';
     this.gridPageMarginKey = 'gridPageMargin';
     this.cardGapKey = 'cardGap';
@@ -45,7 +44,6 @@ class SettingsPanel {
     this.currentCardRadius = this.readNumber(this.cardRadiusKey, 18, 0, 999);
     this.currentCardFontFamily = this.readChoice(this.cardFontFamilyKey, 'system', CARD_FONT_FAMILIES);
     this.currentCardTitleSize = this.readNumber(this.cardTitleSizeKey, 16, 14, 20);
-    this.currentCardTitleWeight = this.readNumber(this.cardTitleWeightKey, 500, 400, 700);
     this.currentCardTitleTracking = this.readNumber(this.cardTitleTrackingKey, 1, -2, 8);
     this.currentGridPageMargin = this.readNumber(this.gridPageMarginKey, 24, 12, 160);
     this.currentCardGap = this.readNumber(this.cardGapKey, 28, 8, 64);
@@ -269,7 +267,6 @@ class SettingsPanel {
 
   bindCardTypographyControls() {
     const family = document.getElementById('card-font-family');
-    const weight = document.getElementById('card-title-weight');
     const size = document.getElementById('card-title-size');
     const sizeValue = document.getElementById('card-title-size-value');
     const tracking = document.getElementById('card-title-tracking');
@@ -280,15 +277,6 @@ class SettingsPanel {
       family.addEventListener('change', () => {
         this.currentCardFontFamily = Object.hasOwn(CARD_FONT_FAMILIES, family.value) ? family.value : 'system';
         localStorage.setItem(this.cardFontFamilyKey, this.currentCardFontFamily);
-        this.applyCardTypography();
-      });
-    }
-    if (weight) {
-      weight.value = String(this.currentCardTitleWeight);
-      weight.addEventListener('change', () => {
-        const next = Number(weight.value);
-        this.currentCardTitleWeight = [400, 500, 600, 700].includes(next) ? next : 500;
-        localStorage.setItem(this.cardTitleWeightKey, String(this.currentCardTitleWeight));
         this.applyCardTypography();
       });
     }
@@ -371,10 +359,9 @@ class SettingsPanel {
 
   applyCardTypography() {
     const root = document.documentElement;
-    root.style.setProperty('--card-font-family', CARD_FONT_FAMILIES[this.currentCardFontFamily]);
+    root.style.setProperty('--font-family', CARD_FONT_FAMILIES[this.currentCardFontFamily]);
     root.style.setProperty('--card-title-size', `${this.currentCardTitleSize}px`);
     root.style.setProperty('--card-meta-size', `${Math.max(11, this.currentCardTitleSize - 4)}px`);
-    root.style.setProperty('--card-title-weight', String(this.currentCardTitleWeight));
     root.style.setProperty('--card-title-tracking', `${(this.currentCardTitleTracking / 100).toFixed(2)}em`);
   }
 }

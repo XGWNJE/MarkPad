@@ -6,10 +6,8 @@ import Router from './core/Router.js';
 import { iconSvg, renderIcons } from './core/IconLibrary.js';
 import BookmarkGrid from './components/BookmarkGrid.js';
 import Breadcrumb from './components/Breadcrumb.js';
-import Toolbar from './components/Toolbar.js';
 import EditDialog from './components/EditDialog.js';
 import MoveDialog from './components/MoveDialog.js';
-import QuickFind from './components/QuickFind.js';
 import IconStudio from './components/IconStudio.js';
 import BookmarkStore from './core/BookmarkStore.js';
 import SettingsPanel from './components/SettingsPanel.js';
@@ -17,7 +15,10 @@ import SettingsPanel from './components/SettingsPanel.js';
 class App {
   constructor() {
     this.grid = null;
-    this.init();
+    this.init().finally(() => {
+      // 首屏就绪后统一入场；初始化失败也释放隐藏状态，保留错误日志。
+      document.getElementById('app').classList.replace('page-enter-pending', 'page-entering');
+    });
   }
 
   async init() {
@@ -31,10 +32,8 @@ class App {
     // 初始化组件
     this.grid = new BookmarkGrid();
     new Breadcrumb();
-    new Toolbar();
     new EditDialog();
     new MoveDialog();
-    new QuickFind();
     new IconStudio();
     // SettingsPanel 同时负责 #background-effect-layer 上的背景光效（含浅深配色与开关）
     new SettingsPanel();
@@ -52,6 +51,7 @@ class App {
     // 全局拖拽
     this.bindGlobalDrag();
 
+    await this.grid.ready;
   }
 
   bindKeyboardShortcuts() {
@@ -77,12 +77,6 @@ class App {
         EventBus.emit('toolbar:newFolder');
       }
 
-      // Ctrl+F 或 / - 搜索
-      if ((ctrl && key === 'f') || key === '/') {
-        e.preventDefault();
-        EventBus.emit('toolbar:search');
-      }
-
       // Backspace 或 Alt+← - 返回
       if (key === 'backspace' || (key === 'arrowleft' && e.altKey)) {
         if (Router.canBack()) {
@@ -94,17 +88,14 @@ class App {
       // Escape - 关闭弹窗
       if (key === 'escape') {
         // 关闭所有弹窗
-        document.querySelectorAll('.dialog, .settings-panel, .quick-find').forEach(el => {
+        document.querySelectorAll('.dialog, .settings-panel').forEach(el => {
           el.classList.add('hidden');
         });
         const menuPanel = document.getElementById('menu-panel');
         const menuTrigger = document.getElementById('menu-trigger');
-        const searchTrigger = document.getElementById('btn-search');
         menuPanel?.classList.remove('visible');
         menuTrigger?.classList.remove('active');
         menuTrigger?.setAttribute('aria-expanded', 'false');
-        searchTrigger?.classList.remove('active');
-        searchTrigger?.setAttribute('aria-expanded', 'false');
       }
 
       // = / + 放大卡片，- 缩小卡片（不与 Ctrl+滚轮冲突）
@@ -119,7 +110,7 @@ class App {
 
       // 方向键导航（弹窗打开时不响应）
       if (['arrowup', 'arrowdown', 'arrowleft', 'arrowright'].includes(key)) {
-        const hasOpenDialog = document.querySelector('.dialog:not(.hidden), .quick-find:not(.hidden)');
+        const hasOpenDialog = document.querySelector('.dialog:not(.hidden)');
         if (!hasOpenDialog && !e.altKey) {
           e.preventDefault();
           this.navigateCards(key);
@@ -133,11 +124,10 @@ class App {
   }
 
   navigateCards(direction) {
-    const cards = Array.from(document.querySelectorAll('.bookmark-card'));
+    const cards = Array.from(document.querySelectorAll('#bookmark-grid > .bookmark-card, #bookmark-grid > .grid-create-card'));
     if (cards.length === 0) return;
 
-    const focused = document.querySelector('.bookmark-card:focus');
-    let index = focused ? cards.indexOf(focused) : 0;
+    let index = Math.max(0, cards.indexOf(document.activeElement));
 
     // 动态计算每行列数
     let cols = 1;

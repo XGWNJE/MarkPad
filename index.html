@@ -15,7 +15,7 @@
   <!-- 背景光效层：canvas 由 components/BackgroundEffect.js 挂载，层级见 background-effect.css -->
   <div id="background-effect-layer" class="background-effect-layer" aria-hidden="true"></div>
 
-  <div id="app">
+  <div id="app" class="page-enter-pending">
     <!-- 顶部工具栏 -->
     <header id="toolbar" class="toolbar">
       <nav id="breadcrumb" class="breadcrumb">
@@ -23,9 +23,6 @@
       </nav>
 
       <div class="toolbar-section toolbar-utility-actions">
-        <button id="btn-search" class="toolbar-btn toolbar-icon-btn search-trigger" type="button" aria-label="快速查找" aria-haspopup="dialog" aria-expanded="false" title="快速查找 (Ctrl+F 或 /)">
-          <span class="toolbar-icon" data-icon="search"></span>
-        </button>
         <button id="menu-trigger" class="toolbar-btn toolbar-icon-btn menu-trigger" type="button" aria-label="设置" aria-controls="menu-panel" aria-expanded="false" title="设置">
           <span class="toolbar-icon" data-icon="settings"></span>
         </button>
@@ -57,21 +54,6 @@
     <!-- 头部工具面板 -->
     <div id="menu-panel" class="menu-panel">
       <div class="menu-panel-title">设置</div>
-      <div class="menu-section">
-        <div class="menu-section-label">常用操作</div>
-        <div class="menu-action-grid">
-          <button id="menu-new-bookmark" class="menu-action-btn" type="button">
-            <span class="menu-action-icon" data-icon="bookmark-plus"></span>
-            <span class="menu-action-text">新建书签</span>
-            <kbd>N</kbd>
-          </button>
-          <button id="menu-new-folder" class="menu-action-btn" type="button">
-            <span class="menu-action-icon" data-icon="folder-plus"></span>
-            <span class="menu-action-text">新建文件夹</span>
-            <kbd>Shift+N</kbd>
-          </button>
-        </div>
-      </div>
       <div class="menu-section menu-section-major">
         <div class="menu-section-heading">
           <div class="menu-section-label">主题</div>
@@ -113,7 +95,7 @@
       <div class="menu-section menu-section-major">
         <div class="menu-section-heading">
           <div class="menu-section-label">文字</div>
-          <p>调整卡片标题与域名的字体、字重、字号和字距。</p>
+          <p>字体应用于整个页面；字号调整卡片文字，字距只调整标题。</p>
         </div>
         <div class="menu-range-stack">
           <label class="menu-select-control">
@@ -130,15 +112,6 @@
             <span>标题字号 <strong id="card-title-size-value">16px</strong></span>
             <input type="range" id="card-title-size" min="14" max="20" step="1" value="16">
             <span class="menu-range-scale"><small>紧凑</small><small>醒目</small></span>
-          </label>
-          <label class="menu-select-control">
-            <span>标题字重</span>
-            <select id="card-title-weight">
-              <option value="400">常规</option>
-              <option value="500">中等</option>
-              <option value="600">半粗</option>
-              <option value="700">加粗</option>
-            </select>
           </label>
           <label class="menu-range-control">
             <span>标题字距 <strong id="card-title-tracking-value">0.01em</strong></span>
@@ -189,7 +162,6 @@
         <div class="shortcuts-list">
           <div class="shortcut-item"><kbd>N</kbd> 新建书签</div>
           <div class="shortcut-item"><kbd>Shift+N</kbd> 新建文件夹</div>
-          <div class="shortcut-item"><kbd>Ctrl+F</kbd> / <kbd>/</kbd> 快速查找</div>
           <div class="shortcut-item"><kbd>Enter</kbd> 打开选中项</div>
           <div class="shortcut-item"><kbd>←</kbd><kbd>→</kbd><kbd>↑</kbd><kbd>↓</kbd> 导航</div>
           <div class="shortcut-item"><kbd>Backspace</kbd> 返回上级</div>
@@ -198,15 +170,6 @@
           <div class="shortcut-item"><kbd>Ctrl+Click</kbd> 多选</div>
           <div class="shortcut-item"><kbd>=</kbd> / <kbd>-</kbd> 放大 / 缩小卡片</div>
         </div>
-      </div>
-    </div>
-
-    <!-- 快速查找弹窗 -->
-    <div id="quick-find" class="quick-find hidden">
-      <div class="quick-find-overlay"></div>
-      <div class="quick-find-dialog">
-        <input type="text" id="quick-find-input" class="quick-find-input" placeholder="搜索书签…" autocomplete="off">
-        <div id="quick-find-results" class="quick-find-results"></div>
       </div>
     </div>
 

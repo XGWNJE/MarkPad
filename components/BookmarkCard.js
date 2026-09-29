@@ -6,7 +6,7 @@ import BookmarkStore from '../core/BookmarkStore.js';
 import { iconSvg } from '../core/IconLibrary.js';
 import { resolveBookmarkIcon } from '../core/icons/IconResolver.js';
 import { isSvgRaw } from '../core/icons/IconSanitizer.js';
-import { backgroundCssValue, getIconScale, iconTextColor, normalizeIconBackground } from '../core/icons/IconBackground.js';
+import { backgroundCssValue, getIconScale, normalizeIconBackground } from '../core/icons/IconBackground.js';
 import { normalizeIconScale } from '../core/icons/IconUploadProcessor.js';
 import { analyzeIconBackground } from '../core/icons/IconBackgroundAnalyzer.js';
 import CardEffects from './CardEffects.js';
@@ -69,12 +69,6 @@ function applyIconModelToElement(el, model) {
   const cssBackground = backgroundCssValue(background);
   el.style.background = cssBackground;
   el.style.setProperty('--icon-content-scale', String(scale));
-  const card = el.closest('.bookmark-card');
-  if (card) {
-    const textColor = iconTextColor(background);
-    if (textColor) card.style.setProperty('--icon-text-color', textColor);
-    else card.style.removeProperty('--icon-text-color');
-  }
 }
 
 /**
@@ -107,7 +101,6 @@ class BookmarkCard {
     this.isFolder = !data.url;
     this.selected = false;
     this.dragOver = false;
-    this.isEditing = false;
     this.longPressTimer = null;
     this.longPressStart = null;
     this.suppressNextClick = false;
@@ -151,6 +144,7 @@ class BookmarkCard {
       icon.classList.add('favicon');
       const iconModel = resolveBookmarkIcon(this.data, { storage: BookmarkStore });
       applyIconModelToElement(icon, iconModel);
+      this.setIconAvailable(Boolean(iconModel));
     }
 
     iconWrapper.appendChild(icon);
@@ -177,17 +171,24 @@ class BookmarkCard {
       meta.textContent = this.getDomain(this.data.url);
     }
 
-    info.appendChild(meta);
     info.appendChild(title);
+    info.appendChild(meta);
 
-    this.element.appendChild(iconWrapper);
-    this.element.appendChild(gradient);
-    this.element.appendChild(info);
+    const surface = document.createElement('div');
+    surface.className = 'card-surface';
+    surface.appendChild(iconWrapper);
+    surface.appendChild(gradient);
+    surface.appendChild(info);
+    this.element.appendChild(surface);
 
     this.bindEvents();
     this.effects = CardEffects.attach(this.element);
 
     return this.element;
+  }
+
+  setIconAvailable(available) {
+    this.element.classList.toggle('iconless', !available);
   }
 
   resolveSiteIconWhenVisible() {
@@ -205,6 +206,8 @@ class BookmarkCard {
         if (icon && this.element?.isConnected && this.data.url === requestedUrl && !resolveBookmarkIcon(this.data, { storage: BookmarkStore })) {
           this.updateIcon(icon);
         }
+      } catch (error) {
+        console.warn('[MarkPad] Website icon background request failed; reload the extension and new tab.', error);
       } finally {
         if (this.siteIconRequestedUrl === requestedUrl) this.siteIconLoading = false;
       }
@@ -239,7 +242,6 @@ class BookmarkCard {
   bindEvents() {
     // 点击打开
     this.element.addEventListener('click', (e) => {
-      if (this.isEditing) return;
       if (this.suppressNextClick) {
         this.suppressNextClick = false;
         e.preventDefault();
@@ -250,14 +252,6 @@ class BookmarkCard {
         this.toggleSelect();
       } else {
         this.open();
-      }
-    });
-
-    // 双击编辑标题
-    this.element.addEventListener('dblclick', () => {
-      if (!this.isFolder) {
-        const titleEl = this.element.querySelector('.card-title');
-        this.startEdit(titleEl);
       }
     });
 
@@ -358,8 +352,8 @@ class BookmarkCard {
           title: this.data.title
         });
       } else if (e.key === 'F2') {
-        const titleEl = this.element.querySelector('.card-title');
-        this.startEdit(titleEl);
+        e.preventDefault();
+        this.startEdit();
       }
     });
 
@@ -380,7 +374,7 @@ class BookmarkCard {
   }
 
   startLongPress(e) {
-    if (this.isEditing || (e.pointerType !== 'touch' && e.pointerType !== 'pen')) return;
+    if (e.pointerType !== 'touch' && e.pointerType !== 'pen') return;
     this.cancelLongPress();
     this.longPressStart = { x: e.clientX, y: e.clientY };
     this.longPressTimer = window.setTimeout(() => {
@@ -475,45 +469,18 @@ class BookmarkCard {
     });
   }
 
-  startEdit(titleEl) {
-    this.isEditing = true;
-    titleEl.contentEditable = 'true';
-    titleEl.focus();
-
-    const range = document.createRange();
-    range.selectNodeContents(titleEl);
-    const sel = window.getSelection();
-    sel.removeAllRanges();
-    sel.addRange(range);
-
-    const finishEdit = async () => {
-      this.isEditing = false;
-      titleEl.contentEditable = 'false';
-      const newTitle = titleEl.textContent.trim();
-      if (newTitle && newTitle !== this.data.title) {
-        EventBus.emit('card:rename', {
-          id: this.data.id,
-          title: newTitle
-        });
-      }
-      titleEl.textContent = newTitle || this.data.title;
-    };
-
-    titleEl.addEventListener('blur', finishEdit, { once: true });
-    titleEl.addEventListener('keydown', (e) => {
-      e.stopPropagation();
-      if (e.key === 'Enter') {
-        e.preventDefault();
-        titleEl.blur();
-      } else if (e.key === 'Escape') {
-        e.preventDefault();
-        titleEl.textContent = this.data.title;
-        titleEl.blur();
-      }
+  startEdit() {
+    EventBus.emit('card:editTitle', {
+      id: this.data.id,
+      title: this.data.title,
+      isFolder: this.isFolder,
+      returnFocus: this.element
     });
   }
 
   async update(data) {
+    const previousTitle = this.data.title;
+    const previousUrl = this.data.url;
     this.data = { ...this.data, ...data };
     const titleEl = this.element.querySelector('.card-title');
     titleEl.textContent = this.data.title;
@@ -525,6 +492,13 @@ class BookmarkCard {
       metaEl.textContent = `${children.length} 项`;
     } else {
       metaEl.textContent = this.getDomain(this.data.url);
+      if (previousTitle !== this.data.title || previousUrl !== this.data.url) {
+        const localIcon = resolveBookmarkIcon(this.data, { storage: BookmarkStore });
+        const siteIcon = localIcon ? null : BookmarkStore.getSiteIcon(this.data.url);
+        this.siteIconModel = siteIcon;
+        this.updateIcon(localIcon || siteIcon);
+        if (!localIcon && !siteIcon) this.resolveSiteIconWhenVisible();
+      }
     }
   }
 
@@ -545,10 +519,7 @@ class BookmarkCard {
     const items = [
       {
         label: '编辑名称',
-        action: () => {
-          const titleEl = this.element.querySelector('.card-title');
-          this.startEdit(titleEl);
-        }
+        action: () => this.startEdit()
       },
       {
         label: '移动到文件夹...',
@@ -648,7 +619,7 @@ class BookmarkCard {
       // 文件夹：恢复默认 SVG
       this.updateIcon(null);
     } else {
-      const iconModel = resolveBookmarkIcon(this.data, { storage: BookmarkStore });
+      const iconModel = resolveBookmarkIcon(this.data, { storage: BookmarkStore }) || BookmarkStore.getSiteIcon(this.data.url);
       this.updateIcon(iconModel);
       if (!iconModel) this.resolveSiteIconWhenVisible();
     }
@@ -658,6 +629,7 @@ class BookmarkCard {
     const iconEl = this.element.querySelector('.card-icon');
     if (iconEl) iconEl.style.opacity = '0';
     BookmarkStore.clearSiteIcon(this.data.url);
+    this.siteIconModel = null;
     const background = BookmarkStore.getSiteIconBackground(this.data.id);
     if (background.mode === 'auto') BookmarkStore.setSiteIconBackground(this.data.id, { mode: 'auto' });
     this.updateIcon(resolveBookmarkIcon(this.data, { storage: BookmarkStore }));
@@ -689,6 +661,7 @@ class BookmarkCard {
         ? { ...iconData, background: this.siteBackgroundPreview || BookmarkStore.getSiteIconBackground(this.data.id) }
         : iconData;
       if (iconData.source === 'site') this.siteIconModel = iconData;
+      this.setIconAvailable(true);
       if (this.isFolder && iconData.type === 'initial') {
         iconEl.classList.add('folder-default');
         applyDefaultFolderIcon(iconEl);
@@ -703,6 +676,7 @@ class BookmarkCard {
     }
 
     if (this.isFolder) {
+      this.setIconAvailable(true);
       if (iconData) {
         iconEl.classList.remove('folder-default');
         if (isSvgRaw(iconData)) {
@@ -716,6 +690,8 @@ class BookmarkCard {
         applyDefaultFolderIcon(iconEl);
       }
     } else {
+      const fallbackIcon = iconData || resolveBookmarkIcon(this.data, { storage: BookmarkStore });
+      this.setIconAvailable(Boolean(fallbackIcon));
       if (iconData) {
         if (isSvgRaw(iconData)) {
           applySvgToElement(iconEl, iconData);
@@ -723,7 +699,7 @@ class BookmarkCard {
           applyImageToElement(iconEl, iconData);
         }
       } else {
-        applyIconModelToElement(iconEl, resolveBookmarkIcon(this.data, { storage: BookmarkStore }));
+        applyIconModelToElement(iconEl, fallbackIcon);
       }
     }
   }

@@ -15,6 +15,9 @@ class EditDialog {
     this.isEditMode = false;
     this.currentId = null;
     this.currentParentId = null;
+    this.currentTitle = null;
+    this.returnFocus = null;
+    this.isSaving = false;
 
     this.init();
   }
@@ -31,6 +34,7 @@ class EditDialog {
 
     // 确认
     this.confirmBtn.addEventListener('click', () => this.confirm());
+    this.titleInput.addEventListener('input', () => this.titleInput.setCustomValidity(''));
 
     // 键盘
     document.addEventListener('keydown', (e) => {
@@ -47,10 +51,12 @@ class EditDialog {
     // 监听事件
     EventBus.on('toolbar:newBookmark', () => this.showNew());
     EventBus.on('toolbar:newFolder', () => this.showNewFolder());
+    EventBus.on('card:editTitle', (card) => this.showEditTitle(card));
   }
 
   showNew() {
     this.isEditMode = false;
+    this.returnFocus = null;
     this.dialogTitle.textContent = '新建书签';
     this.confirmBtn.textContent = '创建';
     this.titleInput.value = '';
@@ -65,6 +71,7 @@ class EditDialog {
 
   showNewFolder() {
     this.isEditMode = false;
+    this.returnFocus = null;
     this.dialogTitle.textContent = '新建文件夹';
     this.confirmBtn.textContent = '创建';
     this.titleInput.value = '';
@@ -76,7 +83,23 @@ class EditDialog {
     this.titleInput.focus();
   }
 
+  showEditTitle({ id, title, isFolder, returnFocus }) {
+    this.isEditMode = true;
+    this.currentId = id;
+    this.currentTitle = title;
+    this.returnFocus = returnFocus;
+    this.dialogTitle.textContent = isFolder ? '编辑文件夹名称' : '编辑书签名称';
+    this.confirmBtn.textContent = '保存';
+    this.titleInput.value = title;
+    this.urlInput.parentElement.style.display = 'none';
+
+    this.dialog.classList.remove('hidden');
+    this.titleInput.focus();
+    this.titleInput.select();
+  }
+
   async confirm() {
+    if (this.isSaving) return;
     const title = this.titleInput.value.trim();
     if (!title) {
       this.titleInput.focus();
@@ -84,9 +107,18 @@ class EditDialog {
     }
 
     if (this.isEditMode) {
-      // 编辑模式
-      const url = this.urlInput.value.trim();
-      await BookmarkStore.update(this.currentId, title, url || undefined);
+      if (title !== this.currentTitle) {
+        this.isSaving = true;
+        try {
+          await BookmarkStore.update(this.currentId, title);
+        } catch {
+          this.titleInput.setCustomValidity('保存失败，请重试');
+          this.titleInput.reportValidity();
+          return;
+        } finally {
+          this.isSaving = false;
+        }
+      }
     } else {
       // 新建模式
       if (this.urlInput.parentElement.style.display !== 'none') {
@@ -109,8 +141,12 @@ class EditDialog {
   hide() {
     this.dialog.classList.add('hidden');
     this.urlInput.parentElement.style.display = 'block';
+    this.titleInput.setCustomValidity('');
     this.isEditMode = false;
     this.currentId = null;
+    this.currentTitle = null;
+    if (this.returnFocus?.isConnected) this.returnFocus.focus();
+    this.returnFocus = null;
   }
 
   normalizeUrl(value) {
