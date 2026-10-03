@@ -62,6 +62,7 @@
   padding: var(--space-3);
   border: 1px dashed var(--color-border-strong);
   border-radius: var(--card-radius);
+  corner-shape: var(--card-corner-shape);
   background: color-mix(in srgb, var(--color-surface) 40%, transparent);
   color: var(--text-secondary);
   font-family: var(--font-family-ui);

@@ -11,6 +11,7 @@
   background: transparent;
   border: 0;
   border-radius: var(--card-radius);
+  corner-shape: var(--card-corner-shape);
   cursor: pointer;
   /* 光效变量：由 components/CardEffects.js 在指针移动时改写 */
   --glow-x: 50%;
@@ -45,8 +46,17 @@
   inset: 0;
   overflow: hidden;
   border-radius: inherit;
+  corner-shape: inherit;
   /* 图标和遮罩先合成，再统一裁圆角，避免底图从两层的抗锯齿边缘漏出。 */
   clip-path: inset(0 round var(--card-radius));
+}
+
+@supports (corner-shape: squircle) {
+  .card-surface {
+    /* 用自身溢出边界裁切连续圆角，避免 geometry-box 路径的坐标偏移。 */
+    clip-path: none;
+    isolation: isolate;
+  }
 }
 
 .card-icon-wrapper {

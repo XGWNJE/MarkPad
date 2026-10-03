@@ -115,6 +115,7 @@
   --card-size: 164px;
   --card-width: clamp(116px, calc(var(--card-size) * 1.45), 320px);
   --card-radius: 18px;
+  --card-corner-shape: squircle;
   --card-overlay-bg: rgb(0 0 0 / 0.64);
   --card-overlay-blur: 24px;
   --card-overlay-text: #ffffff;
