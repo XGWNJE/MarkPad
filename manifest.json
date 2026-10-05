@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "MarkPad",
-  "version": "0.4.0",
+  "version": "0.4.1",
   "description": "面向触控操作的新标签页书签面板",
   "chrome_url_overrides": {
     "newtab": "index.html"
@@ -9,6 +9,14 @@
   "background": {
     "service_worker": "background.js",
     "type": "module"
+  },
+  "action": {
+    "default_title": "MarkPad：点击添加当前页面到书签栏",
+    "default_icon": {
+      "16": "icons/icon16.png",
+      "48": "icons/icon48.png",
+      "128": "icons/icon128.png"
+    }
   },
   "permissions": [
     "bookmarks",

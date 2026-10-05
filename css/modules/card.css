@@ -18,15 +18,9 @@
   --glow-y: 50%;
   --glow-intensity: 0;
   --glow-radius: var(--card-glow-radius);
-  transition:
-    transform var(--transition-base);
 }
 
-.bookmark-card[data-drop-position] {
-  overflow: visible;
-}
-
-/* 悬停反馈交给光标光效，卡片本身不再改边框/阴影/位移（transform 由 gsap 接管）。 */
+/* 根卡片只承载排序位置，悬停变换在现有 card-surface 内层完成。 */
 .bookmark-card:hover {
   z-index: 2;
 }
@@ -97,7 +91,15 @@
 }
 
 .bookmark-card:hover .card-icon {
-  transform: scale(1.025);
+  transform: scale(var(--card-icon-hover-scale));
+}
+
+.bookmark-card.interaction-paused:not(.text-revealed) .card-icon-wrapper {
+  filter: none;
+}
+
+.bookmark-card.interaction-paused .card-icon {
+  transform: none;
 }
 
 /* 方形卡片里图标只占中间一块，避免品牌 SVG 贴到卡片边缘 */
@@ -146,8 +148,8 @@
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  gap: var(--space-2);
-  padding: var(--space-3);
+  gap: clamp(4px, calc(var(--card-width) * 0.04), 8px);
+  padding: clamp(8px, calc(var(--card-width) * 0.07), 16px);
   text-align: center;
   color: var(--card-overlay-text);
   background: var(--card-overlay-bg);
@@ -173,6 +175,21 @@
   pointer-events: auto;
 }
 
+.bookmark-card.iconless .card-icon-wrapper {
+  filter: none;
+}
+
+.bookmark-card.iconless .card-info {
+  background: var(--card-iconless-bg);
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+}
+
+.bookmark-card.interaction-paused:not(.iconless):not(.text-revealed) .card-info {
+  opacity: 0;
+  visibility: hidden;
+}
+
 .card-title {
   width: 100%;
   color: var(--card-overlay-text);
@@ -192,13 +209,13 @@
 
 .card-meta {
   width: 100%;
-  min-height: 18px;
+  min-height: 1.5em;
   display: block;
   color: var(--card-overlay-text);
   font-family: var(--card-font-family, var(--font-family));
   font-size: var(--card-meta-size, var(--font-size-xs));
   font-weight: 400;
-  line-height: 18px;
+  line-height: 1.5;
   letter-spacing: 0.01em;
   -webkit-font-smoothing: antialiased;
   font-synthesis: none;
@@ -207,6 +224,7 @@
   text-overflow: ellipsis;
   white-space: nowrap;
   font-variant-numeric: tabular-nums;
+  opacity: var(--card-overlay-meta-opacity);
 }
 
 .bookmark-card.new-card {
@@ -223,8 +241,8 @@
   color: var(--text-tertiary);
 }
 
-.bookmark-card.deleting {
-  animation: cardDelete 260ms var(--ease-lumen) forwards;
+.bookmark-card.deleting .card-surface {
+  animation: cardDelete var(--card-delete-duration) var(--card-motion-ease) forwards;
 }
 
 @keyframes cardDelete {
@@ -242,8 +260,8 @@
   }
 }
 
-.bookmark-card.creating {
-  animation: cardCreate 260ms var(--ease-lumen) forwards;
+.bookmark-card.creating .card-surface {
+  animation: cardCreate var(--card-motion-duration) var(--card-motion-ease) backwards;
 }
 
 @keyframes cardCreate {
@@ -257,73 +275,81 @@
   }
 }
 
-.drop-indicator {
-  position: absolute;
-  top: var(--space-2);
-  bottom: var(--space-2);
-  width: 3px;
-  background: var(--color-action);
-  border-radius: var(--radius-pill);
-  pointer-events: none;
-  z-index: 10;
-}
-
-.drop-indicator.left {
-  left: calc(var(--space-2) * -1);
-}
-
-.drop-indicator.right {
-  right: calc(var(--space-2) * -1);
-}
-
-.bookmark-card.drag-over {
-  outline: 2px solid var(--color-action);
-  outline-offset: 2px;
-  transform: translateY(-2px);
-}
-
 .bookmark-card.is-dragging {
   opacity: 0.45;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bookmark-card:hover .card-icon {
+    transform: none;
+  }
 }
 
 .context-menu {
   position: fixed;
   min-width: 220px;
+  max-width: calc(100vw - 16px);
+  max-height: calc(100dvh - 16px);
+  overflow-y: auto;
   padding: var(--space-2);
   background: var(--color-surface);
   border: 1px solid var(--color-border);
-  border-radius: var(--radius-md);
-  box-shadow: var(--shadow-dialog);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-popover);
   z-index: 2000;
-  animation: contextMenuIn 120ms var(--ease-lumen);
+  animation: contextMenuIn var(--overlay-popover-duration) var(--ease-lumen);
 }
 
 @keyframes contextMenuIn {
   from {
     opacity: 0;
-    transform: scale(0.98) translateY(-4px);
+    transform: translateY(calc(var(--overlay-enter-offset) * -1));
   }
   to {
     opacity: 1;
-    transform: scale(1) translateY(0);
+    transform: translateY(0);
   }
 }
 
 .context-menu-item {
+  width: 100%;
   min-height: 44px;
   display: flex;
   align-items: center;
+  gap: var(--space-3);
+  text-align: left;
   padding: 0 var(--space-3);
   border-radius: var(--radius-sm);
   color: var(--text-primary);
   cursor: pointer;
-  font-size: var(--font-size-sm);
+  font-size: var(--menu-font-size);
+  line-height: var(--ui-line-height);
   transition:
     background var(--transition-fast),
     color var(--transition-fast);
 }
 
-.context-menu-item:hover {
+.context-menu-title {
+  max-width: 264px;
+  padding: var(--space-2) var(--space-3) var(--space-3);
+  margin-bottom: var(--space-1);
+  border-bottom: 1px solid var(--color-border);
+  color: var(--text-secondary);
+  font-size: var(--menu-caption-size);
+  line-height: var(--ui-line-height);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.context-menu-shortcut {
+  margin-inline-start: auto;
+  color: var(--text-secondary);
+  font-size: var(--menu-key-size);
+}
+
+.context-menu-item:hover,
+.context-menu-item:focus-visible {
   background: var(--color-bg-soft);
 }
 
@@ -331,8 +357,19 @@
   color: var(--danger);
 }
 
-.context-menu-item.danger:hover {
+.context-menu-item.danger:hover,
+.context-menu-item.danger:focus-visible {
   background: color-mix(in srgb, var(--danger) 10%, transparent);
+}
+
+.context-menu-item .app-icon {
+  width: 18px;
+  height: 18px;
+  color: var(--text-secondary);
+}
+
+.context-menu-item.danger .app-icon {
+  color: inherit;
 }
 
 .context-menu-separator {
@@ -342,7 +379,13 @@
 }
 
 @media (max-width: 520px) {
-  .card-title {
-    font-size: var(--font-size-md);
+  .card-info {
+    padding-inline: var(--space-2);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .context-menu {
+    animation: none;
   }
 }

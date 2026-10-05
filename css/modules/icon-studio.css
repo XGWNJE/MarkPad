@@ -1,7 +1,7 @@
 .dialog-content.icon-studio-content {
   width: min(920px, 94vw);
   max-width: 920px;
-  max-height: 88vh;
+  max-height: min(88dvh, calc(100dvh - 32px));
   display: flex;
   flex-direction: column;
 }
@@ -10,11 +10,26 @@
   margin-top: var(--space-1);
   color: var(--text-secondary);
   font-size: var(--font-size-xs);
+  line-height: 1.5;
+  overflow-wrap: anywhere;
 }
 
 .icon-studio-body {
+  min-height: 0;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--space-6);
   padding: var(--space-5) var(--space-6);
   overflow: auto;
+  overscroll-behavior: contain;
+}
+
+.icon-studio-editor {
+  min-width: 0;
+}
+
+.icon-studio-editor > :last-child {
+  margin-bottom: 0;
 }
 
 .icon-studio-section {
@@ -43,8 +58,7 @@
 }
 
 .icon-studio-status {
-  min-height: 20px;
-  margin: var(--space-2) 0 var(--space-3);
+  margin: 0;
   color: var(--text-secondary);
   font-size: var(--font-size-sm);
 }
@@ -54,11 +68,10 @@
 }
 
 .icon-studio-local-context {
-  margin: 0 0 var(--space-4);
-  padding: var(--space-4);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-md);
-  background: var(--color-bg-soft);
+  margin: 0 0 var(--space-3);
+  color: var(--text-tertiary);
+  font-size: var(--font-size-xs);
+  line-height: 1.5;
 }
 
 .icon-studio-help {
@@ -72,10 +85,31 @@
   width: 100%;
   min-height: 44px;
   padding: var(--space-2);
+  font: inherit;
+  font-size: var(--font-size-sm);
   color: var(--text-secondary);
-  border: 1px dashed var(--color-border-strong);
+  border: 1px solid var(--color-border);
   border-radius: var(--radius-md);
+  background: var(--color-surface-muted);
+}
+
+.icon-upload-input::file-selector-button {
+  min-height: 44px;
+  margin-inline-end: var(--space-3);
+  padding: 0 var(--space-4);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  background: var(--color-surface);
+  color: var(--text-primary);
+  font: inherit;
+  font-weight: 560;
+  cursor: pointer;
+  transition: background var(--transition-fast), border-color var(--transition-fast);
+}
+
+.icon-upload-input::file-selector-button:hover {
   background: var(--color-bg-soft);
+  border-color: var(--color-border-strong);
 }
 
 .icon-upload-options {
@@ -92,7 +126,7 @@
 }
 
 .icon-background-modes .btn.active {
-  color: var(--color-surface);
+  color: var(--color-action-text);
   background: var(--color-action);
   border-color: var(--color-action);
 }
@@ -114,6 +148,29 @@
   border: 1px solid var(--color-border);
   border-radius: var(--radius-sm);
   background: var(--color-surface);
+  font: inherit;
+  font-size: var(--font-size-sm);
+  transition: background var(--transition-fast), border-color var(--transition-fast);
+}
+
+.icon-color-hex:focus,
+.icon-upload-input:focus {
+  border-color: var(--color-action);
+  background: var(--color-surface);
+}
+
+.icon-color-hex:focus-visible,
+.icon-upload-input:focus-visible,
+.icon-scale-input:focus-visible,
+.icon-hue-wheel:focus-visible,
+.icon-sv-plane:focus-visible,
+.icon-studio-local-tile:focus-visible {
+  outline: 2px solid var(--color-action);
+  outline-offset: 3px;
+}
+
+.icon-color-hex[aria-invalid="true"] {
+  border-color: var(--danger);
 }
 
 .icon-studio-context-heading {
@@ -152,7 +209,6 @@
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(76px, 1fr));
   gap: var(--space-3);
-  min-height: 104px;
 }
 
 .icon-studio-results.local-candidates {
@@ -297,11 +353,11 @@
 }
 
 .icon-studio-preview {
-  margin-top: var(--space-5);
+  margin-top: 0;
   display: grid;
-  grid-template-columns: minmax(160px, 220px) minmax(0, 1fr);
-  align-items: center;
-  gap: var(--space-5);
+  grid-template-columns: minmax(0, 1fr);
+  align-self: start;
+  gap: var(--space-3);
   padding: var(--space-4);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-md);
@@ -311,6 +367,7 @@
 .icon-studio-preview-source {
   color: var(--text-secondary);
   font-size: var(--font-size-xs);
+  line-height: 1.5;
 }
 
 .icon-background-composer {
@@ -332,6 +389,7 @@
 }
 
 .icon-scale-control > span:first-child {
+  grid-column: 1 / -1;
   display: flex;
   justify-content: space-between;
   gap: var(--space-3);
@@ -429,16 +487,29 @@
   cursor: default;
 }
 
-.icon-studio-footer .btn[disabled] {
-  opacity: 0.45;
-  pointer-events: none;
+@media (min-width: 960px) {
+  .icon-studio-body.has-preview {
+    grid-template-columns: minmax(0, 1fr) 240px;
+    gap: 24px;
+  }
+
+  .icon-studio-preview {
+    position: sticky;
+    top: 0;
+  }
+}
+
+@media (max-width: 480px), (max-height: 600px) {
+  .icon-studio-body {
+    padding: var(--space-5);
+  }
 }
 
 @media (pointer: coarse) {
   .dialog-content.icon-studio-content {
     width: 100vw;
     max-width: none;
-    max-height: 92vh;
+    max-height: 92dvh;
     margin-top: auto;
     border-radius: var(--radius-xl) var(--radius-xl) 0 0;
   }

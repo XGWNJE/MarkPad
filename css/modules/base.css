@@ -12,7 +12,7 @@ body {
 
 body {
   font-family: var(--font-family);
-  font-size: var(--font-size-base);
+  font-size: var(--menu-font-size);
   color: var(--text-primary);
   background: var(--color-bg);
   letter-spacing: 0;
@@ -48,7 +48,7 @@ body {
 }
 
 button {
-  min-height: 40px;
+  min-height: 44px;
   font-family: inherit;
   font-size: inherit;
   border: none;
@@ -65,8 +65,8 @@ button:focus-visible,
 [tabindex]:focus-visible,
 input:focus-visible,
 textarea:focus-visible {
-  outline: 3px solid var(--color-focus);
-  outline-offset: 3px;
+  outline: 2px solid var(--color-focus);
+  outline-offset: 2px;
 }
 
 input,
@@ -81,6 +81,14 @@ textarea {
 input:focus,
 textarea:focus {
   outline: none;
+}
+
+/* 放在通用 :focus 重置之后，让键盘焦点保持可见。 */
+input:focus-visible,
+textarea:focus-visible,
+select:focus-visible {
+  outline: 2px solid var(--color-focus);
+  outline-offset: 2px;
 }
 
 ::selection {

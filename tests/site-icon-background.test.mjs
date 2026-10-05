@@ -4,7 +4,11 @@ import { readFile } from 'node:fs/promises';
 
 let registered;
 const runtime = { id: 'markpad', getURL: path => `chrome-extension://markpad/${path}`, onMessage: { addListener: handler => { registered = handler; } } };
-globalThis.chrome = { runtime };
+globalThis.chrome = {
+  runtime,
+  action: { onClicked: { addListener() {} } },
+  tabs: { onUpdated: { addListener() {} }, onRemoved: { addListener() {} } }
+};
 const { createSiteIconMessageHandler } = await import('../background.js');
 delete globalThis.chrome;
 const sender = { id: runtime.id, url: runtime.getURL('index.html') };

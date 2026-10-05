@@ -11,7 +11,7 @@
   align-items: center;
   justify-content: space-between;
   gap: var(--space-4);
-  padding: 0 max(var(--space-4), calc((100vw - 1200px) / 2));
+  padding: 0 max(var(--page-inset), calc((100vw - var(--content-max-width)) / 2));
   background: rgb(var(--color-bg-rgb) / var(--toolbar-alpha, 0.94));
   border-bottom: 1px solid var(--color-border);
   z-index: 100;
@@ -36,14 +36,14 @@
 
 .toolbar-btn {
   position: relative;
-  min-height: 40px;
+  min-height: 44px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: var(--space-2);
   padding: 0 var(--space-4);
   border: 1px solid var(--color-border);
-  border-radius: var(--radius-pill);
+  border-radius: var(--radius-md);
   background: var(--color-surface);
   color: var(--text-primary);
   opacity: 1;
@@ -116,7 +116,6 @@
 
 @media (max-width: 768px) {
   .toolbar {
-    padding-inline: var(--space-4);
     gap: var(--space-2);
   }
 
@@ -134,7 +133,6 @@
 @media (max-width: 560px) {
   .toolbar {
     gap: var(--space-1);
-    padding-inline: var(--space-2);
   }
 
   .toolbar-section {

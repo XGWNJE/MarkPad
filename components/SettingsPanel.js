@@ -1,5 +1,4 @@
 import EventBus from '../core/EventBus.js';
-import BackgroundEffect from './BackgroundEffect.js';
 
 const CARD_FONT_FAMILIES = Object.freeze({
   system: '"Segoe UI Variable", "Segoe UI", "Microsoft YaHei UI", "Microsoft YaHei", system-ui, sans-serif',
@@ -10,12 +9,11 @@ const CARD_FONT_FAMILIES = Object.freeze({
 });
 
 /**
- * SettingsPanel - 设置菜单里的主题、背景光效、书签卡片与顶部栏外观偏好
+ * SettingsPanel - 设置菜单里的主题、书签卡片与顶部栏外观偏好
  *
  * 主题只有浅色和深色两种，实际配色由 variables.css 的
  * `:root[data-theme="dark"]` 令牌控制，这里只负责切换和记忆选择。
- * 背景光效（移植自 React Bits 的 MoltenMetal）挂在 #background-effect-layer 上，
- * 由这里按主题和开关建/停实例。壁纸、壁纸亮度/模糊、自定义图片上传已整体移除。
+ * 页面使用静态主题底色，设置只同步现有偏好。
  */
 class SettingsPanel {
   constructor() {
@@ -28,11 +26,7 @@ class SettingsPanel {
     this.cardTitleTrackingKey = 'cardTitleTracking';
     this.gridPageMarginKey = 'gridPageMargin';
     this.cardGapKey = 'cardGap';
-    this.backgroundEffectKey = 'backgroundEffect';
-    this.backgroundEffectStrengthKey = 'backgroundEffectStrength';
-    this.backgroundEffectMin = 20;
-    this.backgroundEffectMax = 100;
-    this.backgroundEffectDefaultStrength = 70;
+    this.openModeKey = 'openMode';
     this.cardSizeMin = 80;
     this.cardSizeMax = 200;
     this.cardSizeStep = 20;
@@ -47,14 +41,7 @@ class SettingsPanel {
     this.currentCardTitleTracking = this.readNumber(this.cardTitleTrackingKey, 1, -2, 8);
     this.currentGridPageMargin = this.readNumber(this.gridPageMarginKey, 24, 12, 160);
     this.currentCardGap = this.readNumber(this.cardGapKey, 28, 8, 64);
-    this.backgroundEffectEnabled = this.readBackgroundEffectEnabled();
-    this.backgroundEffectStrength = this.readPercent(
-      this.backgroundEffectStrengthKey,
-      this.backgroundEffectDefaultStrength,
-      this.backgroundEffectMin,
-      this.backgroundEffectMax
-    );
-    this.backgroundEffect = null;
+    this.currentOpenMode = this.readChoice(this.openModeKey, 'new', { new: true, current: true });
 
     this.init();
   }
@@ -63,14 +50,12 @@ class SettingsPanel {
     const themeGroup = document.getElementById('theme-group');
     if (!themeGroup) return;
 
-    // 先建背景光效，后面 applyTheme 才能把主题推给它
-    this.applyBackgroundEffect();
-
     this.applyTheme(this.currentTheme);
     this.applyTransparency();
+    this.bindPanelControls();
     this.bindThemeControls(themeGroup);
+    this.bindOpenModeControls();
     this.bindTransparencyControls();
-    this.bindBackgroundEffectControls();
     this.bindCardControls();
     this.applyCardPreferences();
   }
@@ -90,6 +75,50 @@ class SettingsPanel {
   readChoice(key, fallback, choices) {
     const value = localStorage.getItem(key);
     return value && Object.hasOwn(choices, value) ? value : fallback;
+  }
+
+  // ========== 设置分页 ==========
+
+  bindPanelControls() {
+    document.getElementById('settings-close')?.addEventListener('click', () => {
+      EventBus.emit('settings:close');
+    });
+
+    const tablist = document.getElementById('settings-tabs');
+    if (!tablist) return;
+    const tabs = [...tablist.querySelectorAll('[role="tab"]')];
+    const panes = new Map(tabs.map(tab => [tab, document.getElementById(tab.getAttribute('aria-controls'))]));
+    if (!tabs.length || [...panes.values()].some(pane => !pane)) return;
+    const content = document.getElementById('settings-content');
+    let activeTab = null;
+    const activate = (tab, focus = false) => {
+      if (tab !== activeTab && content) content.scrollTop = 0;
+      activeTab = tab;
+      for (const item of tabs) {
+        const selected = item === tab;
+        item.setAttribute('aria-selected', String(selected));
+        item.tabIndex = selected ? 0 : -1;
+        panes.get(item).hidden = !selected;
+      }
+      if (focus) tab.focus({ preventScroll: true });
+    };
+
+    tabs.forEach((tab, index) => {
+      tab.addEventListener('click', () => activate(tab, true));
+      tab.addEventListener('keydown', event => {
+        if (event.altKey || event.ctrlKey || event.metaKey) return;
+        let next;
+        if (event.key === 'ArrowRight') next = (index + 1) % tabs.length;
+        else if (event.key === 'ArrowLeft') next = (index + tabs.length - 1) % tabs.length;
+        else if (event.key === 'Home') next = 0;
+        else if (event.key === 'End') next = tabs.length - 1;
+        else return;
+        event.preventDefault();
+        event.stopPropagation();
+        activate(tabs[next], true);
+      });
+    });
+    activate(tabs.find(tab => tab.getAttribute('aria-selected') === 'true') || tabs[0]);
   }
 
   // ========== 主题 ==========
@@ -112,76 +141,33 @@ class SettingsPanel {
 
   applyTheme(mode) {
     document.documentElement.dataset.theme = mode;
-    document.getElementById('theme-light')?.classList.toggle('active', mode === 'light');
-    document.getElementById('theme-dark')?.classList.toggle('active', mode === 'dark');
-    this.backgroundEffect?.setTheme(mode);
-  }
-
-  // ========== 背景光效 ==========
-
-  /** 存的是 'on' / 'off'，缺省视为开启，和菜单默认值一致。 */
-  readBackgroundEffectEnabled() {
-    return localStorage.getItem(this.backgroundEffectKey) !== 'off';
-  }
-
-  applyBackgroundEffect() {
-    const layer = document.getElementById('background-effect-layer');
-    if (!layer) return;
-
-    const enabled = this.backgroundEffectEnabled;
-    layer.classList.toggle('hidden', !enabled);
-    document.getElementById('background-effect-on')?.classList.toggle('active', enabled);
-    document.getElementById('background-effect-off')?.classList.toggle('active', !enabled);
-
-    if (!enabled) {
-      this.backgroundEffect?.destroy();
-      this.backgroundEffect = null;
-      return;
+    for (const value of ['light', 'dark']) {
+      const button = document.getElementById(`theme-${value}`);
+      button?.classList.toggle('active', mode === value);
+      button?.setAttribute('aria-pressed', String(mode === value));
     }
-
-    if (!this.backgroundEffect) {
-      // 参数取自用户在特效站挑中的那一版
-      this.backgroundEffect = new BackgroundEffect({
-        container: layer,
-        colorMode: 'molten',
-        strength: this.backgroundEffectStrength / 100,
-        theme: this.currentTheme
-      });
-      if (this.backgroundEffect.supported === false) {
-        // WebGL2 不可用或初始化失败：撤回空层，保持原来的纯色背景
-        this.backgroundEffect = null;
-        layer.classList.add('hidden');
-        document.getElementById('background-effect-on')?.classList.remove('active');
-        document.getElementById('background-effect-off')?.classList.add('active');
-      }
-      return;
-    }
-
-    this.backgroundEffect.setTheme(this.currentTheme);
   }
 
-  setBackgroundEffectEnabled(enabled) {
-    this.backgroundEffectEnabled = Boolean(enabled);
-    localStorage.setItem(this.backgroundEffectKey, enabled ? 'on' : 'off');
-    this.applyBackgroundEffect();
-  }
+  // ========== 打开方式 ==========
 
-  bindBackgroundEffectControls() {
-    const group = document.getElementById('background-effect-group');
-    group?.addEventListener('click', (event) => {
+  bindOpenModeControls() {
+    this.applyOpenMode(this.currentOpenMode);
+    document.getElementById('open-mode-group')?.addEventListener('click', event => {
       const button = event.target.closest('.menu-toggle-btn');
-      if (!button) return;
-      this.setBackgroundEffectEnabled(button.dataset.value !== 'off');
+      const mode = button?.dataset.value;
+      if (mode !== 'new' && mode !== 'current') return;
+      this.currentOpenMode = mode;
+      localStorage.setItem(this.openModeKey, mode);
+      this.applyOpenMode(mode);
     });
+  }
 
-    this.bindPercentControl({
-      input: document.getElementById('background-effect-strength'),
-      value: document.getElementById('background-effect-strength-value'),
-      storageKey: this.backgroundEffectStrengthKey,
-      getCurrent: () => this.backgroundEffectStrength,
-      setCurrent: (next) => { this.backgroundEffectStrength = next; },
-      apply: () => this.backgroundEffect?.setStrength(this.backgroundEffectStrength / 100)
-    });
+  applyOpenMode(mode) {
+    for (const value of ['new', 'current']) {
+      const button = document.getElementById(`open-mode-${value}`);
+      button?.classList.toggle('active', mode === value);
+      button?.setAttribute('aria-pressed', String(mode === value));
+    }
   }
 
   // ========== 顶部栏与卡片 ==========

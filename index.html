@@ -12,9 +12,6 @@
   <link rel="stylesheet" href="css/main.css">
 </head>
 <body>
-  <!-- 背景光效层：canvas 由 components/BackgroundEffect.js 挂载，层级见 background-effect.css -->
-  <div id="background-effect-layer" class="background-effect-layer" aria-hidden="true"></div>
-
   <div id="app" class="page-enter-pending">
     <!-- 顶部工具栏 -->
     <header id="toolbar" class="toolbar">
@@ -23,7 +20,7 @@
       </nav>
 
       <div class="toolbar-section toolbar-utility-actions">
-        <button id="menu-trigger" class="toolbar-btn toolbar-icon-btn menu-trigger" type="button" aria-label="设置" aria-controls="menu-panel" aria-expanded="false" title="设置">
+        <button id="menu-trigger" class="toolbar-btn toolbar-icon-btn menu-trigger" type="button" aria-label="设置" aria-controls="menu-panel" aria-haspopup="dialog" aria-expanded="false" title="设置">
           <span class="toolbar-icon" data-icon="settings"></span>
         </button>
       </div>
@@ -47,128 +44,130 @@
 
     <!-- 拖拽：右侧删除区域 -->
     <div id="drag-delete-zone" class="drag-delete-zone">
-      <div class="drag-delete-icon" data-icon="trash"></div>
-      <div class="drag-delete-label">松手删除</div>
+      <div class="drag-panel-header">删除书签</div>
+      <div class="drag-delete-content">
+        <div class="drag-delete-icon" data-icon="trash"></div>
+        <div class="drag-delete-label">松手后确认删除</div>
+      </div>
     </div>
 
     <!-- 头部工具面板 -->
-    <div id="menu-panel" class="menu-panel">
-      <div class="menu-panel-title">设置</div>
-      <div class="menu-section menu-section-major">
-        <div class="menu-section-heading">
-          <div class="menu-section-label">主题</div>
-          <p>浅色和深色两种配色，深色统一使用中性深灰。</p>
-        </div>
-        <div class="menu-toggle-group" id="theme-group">
-          <button class="menu-toggle-btn" data-value="light" id="theme-light">浅色</button>
-          <button class="menu-toggle-btn" data-value="dark" id="theme-dark">深色</button>
-        </div>
+    <div id="menu-panel" class="menu-panel" role="dialog" aria-labelledby="settings-title" inert aria-hidden="true">
+      <div class="menu-panel-header">
+        <div id="settings-title" class="menu-panel-title">设置</div>
+        <button id="settings-close" class="menu-panel-close" type="button" aria-label="关闭设置"><span data-icon="x"></span></button>
       </div>
-      <div class="menu-section menu-section-major">
-        <div class="menu-section-heading">
-          <div class="menu-section-label">书签卡片</div>
-          <p>控制卡片占用空间、圆角与文字排版；标题在悬停时展开。</p>
-        </div>
-        <div class="menu-range-stack">
-            <label class="menu-range-control">
-              <span>卡片尺寸 <strong id="card-size-value">120px</strong></span>
-              <input type="range" id="card-size" min="80" max="200" step="20" value="120">
-              <span class="menu-range-scale"><small>紧凑</small><small>宽松</small></span>
-            </label>
-            <label class="menu-range-control">
-              <span>卡片圆角 <strong id="card-radius-value">18px</strong></span>
-              <input type="range" id="card-radius" min="0" max="87" step="1" value="18">
-              <span class="menu-range-scale"><small>直角</small><small>圆润</small></span>
-            </label>
-            <label class="menu-range-control">
-              <span>卡片容器边距 <strong id="grid-page-margin-value">24px</strong></span>
-              <input type="range" id="grid-page-margin" min="12" max="160" step="4" value="24">
-              <span class="menu-range-scale"><small>紧凑</small><small>留白</small></span>
-            </label>
-            <label class="menu-range-control">
-              <span>卡片间距 <strong id="card-gap-value">28px</strong></span>
-              <input type="range" id="card-gap" min="8" max="64" step="4" value="28">
-              <span class="menu-range-scale"><small>紧凑</small><small>舒展</small></span>
-            </label>
-        </div>
+      <div id="settings-tabs" class="menu-tabs" role="tablist" aria-label="设置分类">
+        <button id="settings-tab-appearance" class="menu-tab" type="button" role="tab" aria-controls="settings-pane-appearance" aria-selected="true" tabindex="0">外观</button>
+        <button id="settings-tab-text" class="menu-tab" type="button" role="tab" aria-controls="settings-pane-text" aria-selected="false" tabindex="-1">文字</button>
+        <button id="settings-tab-behavior" class="menu-tab" type="button" role="tab" aria-controls="settings-pane-behavior" aria-selected="false" tabindex="-1">操作</button>
       </div>
-      <div class="menu-section menu-section-major">
-        <div class="menu-section-heading">
-          <div class="menu-section-label">文字</div>
-          <p>字体应用于整个页面；字号调整卡片文字，字距只调整标题。</p>
+      <div id="settings-content" class="menu-panel-content">
+        <div id="settings-pane-appearance" class="menu-tab-panel" role="tabpanel" aria-labelledby="settings-tab-appearance">
+          <div class="menu-section menu-section-major">
+            <div class="menu-section-heading">
+              <div class="menu-section-label">主题</div>
+              <p>浅色和深色两种配色，深色统一使用中性深灰。</p>
+            </div>
+            <div class="menu-toggle-group" id="theme-group">
+              <button class="menu-toggle-btn" type="button" data-value="light" id="theme-light">浅色</button>
+              <button class="menu-toggle-btn" type="button" data-value="dark" id="theme-dark">深色</button>
+            </div>
+          </div>
+          <div class="menu-section menu-section-major">
+            <div class="menu-section-heading">
+              <div class="menu-section-label">书签卡片</div>
+              <p>控制卡片尺寸、圆角与网格留白；文字排版在「文字」页签调整。</p>
+            </div>
+            <div class="menu-range-stack">
+                <label class="menu-range-control">
+                  <span>卡片尺寸 <strong id="card-size-value">120px</strong></span>
+                  <input type="range" id="card-size" min="80" max="200" step="20" value="120">
+                  <span class="menu-range-scale"><small>紧凑</small><small>宽松</small></span>
+                </label>
+                <label class="menu-range-control">
+                  <span>卡片圆角 <strong id="card-radius-value">18px</strong></span>
+                  <input type="range" id="card-radius" min="0" max="87" step="1" value="18">
+                  <span class="menu-range-scale"><small>直角</small><small>圆润</small></span>
+                </label>
+                <label class="menu-range-control">
+                  <span>卡片容器边距 <strong id="grid-page-margin-value">24px</strong></span>
+                  <input type="range" id="grid-page-margin" min="12" max="160" step="4" value="24">
+                  <span class="menu-range-scale"><small>紧凑</small><small>留白</small></span>
+                </label>
+                <label class="menu-range-control">
+                  <span>卡片间距 <strong id="card-gap-value">28px</strong></span>
+                  <input type="range" id="card-gap" min="8" max="64" step="4" value="28">
+                  <span class="menu-range-scale"><small>紧凑</small><small>舒展</small></span>
+                </label>
+            </div>
+          </div>
+          <div class="menu-section menu-section-major">
+            <div class="menu-section-heading">
+              <div class="menu-section-label">顶部栏</div>
+              <p>调整导航和工具按钮背后的衬底强度。</p>
+            </div>
+            <div class="menu-range-stack">
+              <label class="menu-range-control">
+                <span>顶部栏背景强度 <strong id="header-opacity-value">94%</strong></span>
+                <input type="range" id="header-opacity" min="55" max="100" step="1" value="94">
+                <span class="menu-range-scale"><small>更通透</small><small>更清晰</small></span>
+              </label>
+            </div>
+          </div>
         </div>
-        <div class="menu-range-stack">
-          <label class="menu-select-control">
-            <span>字体</span>
-            <select id="card-font-family">
-              <option value="system">系统清晰</option>
-              <option value="pingfang">苹方</option>
-              <option value="yahei">微软雅黑</option>
-              <option value="noto">思源黑体</option>
-              <option value="serif">思源宋体</option>
-            </select>
-          </label>
-          <label class="menu-range-control">
-            <span>标题字号 <strong id="card-title-size-value">16px</strong></span>
-            <input type="range" id="card-title-size" min="14" max="20" step="1" value="16">
-            <span class="menu-range-scale"><small>紧凑</small><small>醒目</small></span>
-          </label>
-          <label class="menu-range-control">
-            <span>标题字距 <strong id="card-title-tracking-value">0.01em</strong></span>
-            <input type="range" id="card-title-tracking" min="-2" max="8" step="1" value="1">
-            <span class="menu-range-scale"><small>紧凑</small><small>舒展</small></span>
-          </label>
+        <div id="settings-pane-text" class="menu-tab-panel" role="tabpanel" aria-labelledby="settings-tab-text" hidden>
+          <div class="menu-section menu-section-major">
+            <div class="menu-section-heading">
+              <div class="menu-section-label">文字</div>
+              <p>字体应用于整个页面；字号调整卡片文字，字距只调整标题。</p>
+            </div>
+            <div class="menu-range-stack">
+              <label class="menu-select-control">
+                <span>字体</span>
+                <select id="card-font-family">
+                  <option value="system">系统清晰</option>
+                  <option value="pingfang">苹方</option>
+                  <option value="yahei">微软雅黑</option>
+                  <option value="noto">思源黑体</option>
+                  <option value="serif">思源宋体</option>
+                </select>
+              </label>
+              <label class="menu-range-control">
+                <span>标题字号 <strong id="card-title-size-value">16px</strong></span>
+                <input type="range" id="card-title-size" min="14" max="20" step="1" value="16">
+                <span class="menu-range-scale"><small>紧凑</small><small>醒目</small></span>
+              </label>
+              <label class="menu-range-control">
+                <span>标题字距 <strong id="card-title-tracking-value">0.01em</strong></span>
+                <input type="range" id="card-title-tracking" min="-2" max="8" step="1" value="1">
+                <span class="menu-range-scale"><small>紧凑</small><small>舒展</small></span>
+              </label>
+            </div>
+          </div>
         </div>
-      </div>
-      <div class="menu-section menu-section-major">
-        <div class="menu-section-heading">
-          <div class="menu-section-label">顶部栏</div>
-          <p>调整导航和工具按钮背后的衬底强度。</p>
-        </div>
-        <div class="menu-range-stack">
-          <label class="menu-range-control">
-            <span>顶部栏背景强度 <strong id="header-opacity-value">94%</strong></span>
-            <input type="range" id="header-opacity" min="55" max="100" step="1" value="94">
-            <span class="menu-range-scale"><small>更通透</small><small>更清晰</small></span>
-          </label>
-        </div>
-      </div>
-      <div class="menu-section menu-section-major">
-        <div class="menu-section-heading">
-          <div class="menu-section-label">背景光效</div>
-          <p>卡片后面的熔融金属流光；浅色和深色各自配色，可单独关闭。</p>
-        </div>
-        <div class="menu-toggle-group" id="background-effect-group">
-          <button class="menu-toggle-btn" data-value="on" id="background-effect-on" type="button">开启</button>
-          <button class="menu-toggle-btn" data-value="off" id="background-effect-off" type="button">关闭</button>
-        </div>
-        <div class="menu-range-stack">
-          <label class="menu-range-control">
-            <span>光效强度 <strong id="background-effect-strength-value">70%</strong></span>
-            <input type="range" id="background-effect-strength" min="20" max="100" step="5" value="70">
-            <span class="menu-range-scale"><small>克制</small><small>强烈</small></span>
-          </label>
-        </div>
-      </div>
-      <div class="menu-section">
-        <div class="menu-section-label">打开行为</div>
-        <div class="menu-toggle-group" id="open-mode-group">
-          <button class="menu-toggle-btn" data-value="new" id="open-mode-new">新标签页</button>
-          <button class="menu-toggle-btn" data-value="current" id="open-mode-current">当前页</button>
-        </div>
-      </div>
-      <div class="menu-section">
-        <div class="menu-section-label">快捷键</div>
-        <div class="shortcuts-list">
-          <div class="shortcut-item"><kbd>N</kbd> 新建书签</div>
-          <div class="shortcut-item"><kbd>Shift+N</kbd> 新建文件夹</div>
-          <div class="shortcut-item"><kbd>Enter</kbd> 打开选中项</div>
-          <div class="shortcut-item"><kbd>←</kbd><kbd>→</kbd><kbd>↑</kbd><kbd>↓</kbd> 导航</div>
-          <div class="shortcut-item"><kbd>Backspace</kbd> 返回上级</div>
-          <div class="shortcut-item"><kbd>Delete</kbd> 删除选中项</div>
-          <div class="shortcut-item"><kbd>F2</kbd> 编辑选中项</div>
-          <div class="shortcut-item"><kbd>Ctrl+Click</kbd> 多选</div>
-          <div class="shortcut-item"><kbd>=</kbd> / <kbd>-</kbd> 放大 / 缩小卡片</div>
+        <div id="settings-pane-behavior" class="menu-tab-panel" role="tabpanel" aria-labelledby="settings-tab-behavior" hidden>
+          <div class="menu-section">
+            <div class="menu-section-label">打开行为</div>
+            <div class="menu-toggle-group" id="open-mode-group">
+              <button class="menu-toggle-btn" type="button" data-value="new" id="open-mode-new">新标签页</button>
+              <button class="menu-toggle-btn" type="button" data-value="current" id="open-mode-current">当前页</button>
+            </div>
+          </div>
+          <div class="menu-section">
+            <div class="menu-section-label">快捷键</div>
+            <div class="shortcuts-list">
+              <div class="shortcut-item"><kbd>N</kbd> 新建书签</div>
+              <div class="shortcut-item"><kbd>Shift+N</kbd> 新建文件夹</div>
+              <div class="shortcut-item"><kbd>Enter</kbd> 打开选中项</div>
+              <div class="shortcut-item"><kbd>←</kbd><kbd>→</kbd><kbd>↑</kbd><kbd>↓</kbd> 导航</div>
+              <div class="shortcut-item"><kbd>Backspace</kbd> 返回上级</div>
+              <div class="shortcut-item"><kbd>Delete</kbd> 删除选中项</div>
+              <div class="shortcut-item"><kbd>F2</kbd> 编辑选中项</div>
+              <div class="shortcut-item"><kbd>Ctrl+Click</kbd> 多选</div>
+              <div class="shortcut-item"><kbd>=</kbd> / <kbd>-</kbd> 放大 / 缩小卡片</div>
+            </div>
+          </div>
         </div>
       </div>
     </div>

@@ -34,12 +34,12 @@
   }
 }
 
-.bookmark-grid.slide-in-left .bookmark-card {
-  animation: slideInLeft 260ms var(--ease-lumen) forwards;
+.bookmark-grid.slide-in-left .bookmark-card .card-surface {
+  animation: slideInLeft var(--card-motion-duration) var(--card-motion-ease) backwards;
 }
 
-.bookmark-grid.slide-in-right .bookmark-card {
-  animation: slideInRight 260ms var(--ease-lumen) forwards;
+.bookmark-grid.slide-in-right .bookmark-card .card-surface {
+  animation: slideInRight var(--card-motion-duration) var(--card-motion-ease) backwards;
 }
 
 @keyframes slideInLeft {
@@ -64,8 +64,8 @@
   }
 }
 
-.bookmark-card.removing {
-  animation: cardRemove 220ms var(--ease-lumen) forwards;
+.bookmark-card.removing .card-surface {
+  animation: cardRemove var(--card-delete-duration) var(--card-motion-ease) forwards;
 }
 
 @keyframes cardRemove {
@@ -75,8 +75,8 @@
   }
 }
 
-.bookmark-card.adding {
-  animation: cardAdd 260ms var(--ease-lumen) forwards;
+.bookmark-card.adding .card-surface {
+  animation: cardAdd var(--card-motion-duration) var(--card-motion-ease) backwards;
 }
 
 @keyframes cardAdd {
@@ -90,8 +90,8 @@
   }
 }
 
-.bookmark-card.shake {
-  animation: cardShake 360ms var(--ease-lumen);
+.bookmark-card.shake .card-surface {
+  animation: cardShake var(--card-shake-duration) var(--card-motion-ease);
 }
 
 @keyframes cardShake {
@@ -103,19 +103,7 @@
 }
 
 .bookmark-card.is-dragging {
-  opacity: 0.5;
-  transform: scale(0.98);
-}
-
-.bookmark-grid.drag-active .bookmark-card:not(.is-dragging) {
-  transition:
-    transform var(--transition-fast),
-    border-color var(--transition-fast);
-}
-
-.bookmark-grid.drag-active .bookmark-card.drop-target {
-  border-color: var(--color-action);
-  background: color-mix(in srgb, var(--color-info) 8%, var(--color-surface));
+  opacity: 0.45;
 }
 
 .fade-enter {
@@ -134,4 +122,11 @@
 .fade-exit-active {
   opacity: 0;
   transition: opacity var(--transition-base);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bookmark-grid .bookmark-card .card-surface,
+  body .context-menu {
+    animation: none;
+  }
 }

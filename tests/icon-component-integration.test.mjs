@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 import test from 'node:test';
+import { setupGrid } from './helpers/grid-harness.mjs';
 
 async function read(path) {
   return await readFile(new URL(`../${path}`, import.meta.url), 'utf8');
@@ -79,7 +80,15 @@ test('BookmarkGrid starts website-icon visibility observation only after each ca
   const source = await read('components/BookmarkGrid.js');
   const loadFolderBlock = source.match(/async loadFolder\(folderId\) \{[\s\S]*?\n  \}/)?.[0] || '';
 
-  assert.match(loadFolderBlock, /this\.grid\.appendChild\(element\);\s*this\.cards\.set\(child\.id, card\);\s*\/\/[^\n]*\n\s*card\.resolveSiteIconWhenVisible\(\);/);
+  // The harness throws if an icon observer starts before its card is connected.
+  // Exercise initial insertion, keyed reuse, and navigation instead of depending
+  // on the exact appendChild/insertBefore source spelling.
+  const harness = await setupGrid();
+  assert.equal(harness.lifecycle.observed.length, 5);
+  await harness.instance.refresh();
+  await harness.navigate('F');
+  assert.equal(harness.lifecycle.observed.some(card => card.data.id === 'F1'), true);
+  assert.deepEqual(harness.errors, []);
   assert.doesNotMatch(loadFolderBlock, /BookmarkStore\.resolveSiteIcon\(/);
 });
 
@@ -90,7 +99,7 @@ test('website icon cache remains valid until the user manually requests a refres
   const cacheBlock = store.match(/getSiteIconEntry\(url\) \{[\s\S]*?\n  \}/)?.[0] || '';
   assert.doesNotMatch(cacheBlock, /TTL|checkedAt|Date\.now/);
   assert.match(cacheBlock, /return this\.siteIcons\.get\(key\) \|\| null;/);
-  assert.match(card, /label: '图标：重新获取网站图标'/);
+  assert.match(card, /label: '重新获取网站图标'/);
   assert.match(card, /BookmarkStore\.clearSiteIcon\(this\.data\.url\)/);
 });
 

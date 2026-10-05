@@ -18,20 +18,82 @@
   overflow-x: hidden;
   min-height: 0;
   box-sizing: border-box;
-  padding: calc(var(--toolbar-height) + var(--grid-page-margin)) var(--grid-page-margin) var(--grid-page-margin);
+  padding: calc(var(--toolbar-height) + var(--grid-page-margin)) var(--page-inset) var(--grid-page-margin);
 }
 
 .grid-scroll-inner {
-  width: min(100%, 1200px);
+  width: min(100%, var(--content-max-width));
   margin-inline: auto;
 }
 
 .bookmark-grid {
+  position: relative;
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(min(100%, var(--card-width)), var(--card-width)));
   justify-content: center;
   gap: var(--card-gap);
   width: 100%;
+}
+
+.bookmark-grid.drag-active .bookmark-card {
+  will-change: transform;
+}
+
+.bookmark-grid.drag-active .bookmark-card.is-dragging,
+.bookmark-grid .bookmark-card.drag-saving-source {
+  opacity: 0;
+}
+
+.bookmark-grid .drop-pending::after,
+.bookmark-grid .drop-into::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  box-sizing: border-box;
+  border: 1px dashed var(--text-secondary);
+  border-radius: inherit;
+  corner-shape: inherit;
+  pointer-events: none;
+  z-index: 6;
+}
+
+.bookmark-grid .drop-into::after {
+  border: 2px solid var(--color-action);
+}
+
+.grid-drop-placeholder {
+  position: fixed;
+  box-sizing: border-box;
+  border: 1px dashed var(--text-secondary);
+  border-radius: var(--card-radius);
+  corner-shape: var(--card-corner-shape);
+  background: color-mix(in srgb, var(--color-surface) 30%, transparent);
+  pointer-events: none;
+  z-index: 40;
+}
+
+.grid-drop-label,
+.grid-operation-status {
+  position: fixed;
+  padding: var(--space-2) var(--space-3);
+  border: 1px solid var(--color-border-strong);
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+  color: var(--text-primary);
+  font-size: var(--menu-font-size);
+  pointer-events: none;
+  z-index: 50;
+}
+
+.grid-drop-label {
+  transform: translateX(-50%);
+  white-space: nowrap;
+}
+
+.grid-operation-status {
+  bottom: var(--space-6);
+  left: 50%;
+  transform: translateX(-50%);
 }
 
 .bookmark-grid .bookmark-card {

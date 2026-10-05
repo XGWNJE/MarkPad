@@ -6,6 +6,9 @@ import BookmarkStore from '../core/BookmarkStore.js';
 import Router from '../core/Router.js';
 import BookmarkCard from './BookmarkCard.js';
 import { iconSvg } from '../core/IconLibrary.js';
+import { getMoveDestination, getPreviewOrder } from '../core/DragOrder.js';
+import GridDragController from './GridDragController.js';
+import CardNavigation from './CardNavigation.js';
 
 class BookmarkGrid {
   constructor() {
@@ -13,7 +16,11 @@ class BookmarkGrid {
     this.cards = new Map();
     this.selectedCards = new Set();
     this.isLoading = false;
-    this.suppressNextMoveRefresh = false;
+    this.loadGeneration = 0;
+    this.pendingMoves = new Map();
+    this.pendingDeletes = new Set();
+    this.moveQueue = Promise.resolve();
+    this.dragController = new GridDragController(this);
 
     this.ready = this.init();
   }
@@ -26,17 +33,15 @@ class BookmarkGrid {
 
     // 监听书签变更
     EventBus.on('created', () => this.refresh());
-    EventBus.on('removed', () => this.refresh());
-    EventBus.on('changed', async ({ id, title, url }) => {
-      const card = this.cards.get(id);
-      if (card) {
-        await card.update({ title, url });
-      }
+    EventBus.on('removed', ({ id }) => {
+      if (!this.pendingDeletes.has(id)) this.refresh();
     });
-    EventBus.on('moved', () => {
-      if (this.suppressNextMoveRefresh) {
-        this.suppressNextMoveRefresh = false;
-        return;
+    EventBus.on('changed', () => this.refresh());
+    EventBus.on('moved', (move) => {
+      const pending = this.pendingMoves.get(move.id);
+      if (pending && move.parentId === pending.parentId && move.oldParentId === pending.oldParentId) {
+        pending.eventSeen = true;
+        return; // 本次 API 完成后必定核对，包含没有 onMoved 的原地移动。
       }
       this.refresh();
     });
@@ -51,8 +56,11 @@ class BookmarkGrid {
       this.deleteCard(id, isFolder);
     });
 
-    EventBus.on('card:rename', async ({ id, title }) => {
-      await BookmarkStore.update(id, title);
+    EventBus.on('card:rename', ({ id, title }) => {
+      BookmarkStore.update(id, title).catch(err => {
+        console.error('Rename failed:', err);
+        this.dragController.showStatus('重命名失败，请重试');
+      });
     });
 
     EventBus.on('icon:applied', ({ id, iconData }) => {
@@ -85,41 +93,7 @@ class BookmarkGrid {
       }
     });
 
-    EventBus.on('card:drop', async ({ draggedId, targetId, action, position }) => {
-      if (action === 'into') {
-        // 拖入文件夹
-        await BookmarkStore.move(draggedId, targetId);
-      } else if (action === 'reorder') {
-        // 同级排序：获取目标的实际位置
-        try {
-          const [targetNodes] = await Promise.all([
-            chrome.bookmarks.get(targetId)
-          ]);
-          const targetNode = targetNodes[0];
-          const [draggedNodes] = await Promise.all([
-            chrome.bookmarks.get(draggedId)
-          ]);
-          const draggedNode = draggedNodes[0];
-
-          let newIndex = targetNode.index;
-          if (position === 'after') {
-            newIndex = targetNode.index + 1;
-          }
-          // 如果在同一个父文件夹中，且拖拽源在目标之前，需要调整索引
-          if (draggedNode.parentId === targetNode.parentId && draggedNode.index < targetNode.index) {
-            newIndex = Math.max(0, newIndex - 1);
-          }
-
-          this.applyOptimisticReorder(draggedId, targetId, position);
-          this.suppressNextMoveRefresh = true;
-          await BookmarkStore.move(draggedId, targetNode.parentId, newIndex);
-        } catch (err) {
-          this.suppressNextMoveRefresh = false;
-          console.error('Reorder failed:', err);
-          await this.refresh();
-        }
-      }
-    });
+    EventBus.on('card:drop', operation => this.moveCard(operation));
 
     // 新建书签
     EventBus.on('bookmark:create', ({ parentId, title, url }) => {
@@ -136,57 +110,64 @@ class BookmarkGrid {
   }
 
   async loadFolder(folderId) {
-    if (this.isLoading) return;
-
-    // 文件夹可能已被外部删除（其他设备同步、书签管理器等），
-    // 先校验存在性，失效则回退到根目录，避免 getChildren 抛 "Can't find bookmark for id."
-    if (folderId && folderId !== Router.getRootId()) {
-      const node = await BookmarkStore.getNode(folderId);
-      if (!node) {
-        Router.goToIndex(0); // 触发 navigate -> 重新加载根目录
+    const generation = ++this.loadGeneration;
+    this.isLoading = true;
+    const created = [];
+    try {
+      if (folderId !== Router.getRootId() && !await BookmarkStore.getNode(folderId)) {
+        if (generation === this.loadGeneration) Router.goToIndex(0);
         return;
       }
-    }
-
-    this.isLoading = true;
-
-    // 清空
-    this.grid.innerHTML = '';
-    this.cards.clear();
-    this.selectedCards.clear();
-
-    try {
-      // 获取数据
+      if (generation !== this.loadGeneration) return;
       const children = await BookmarkStore.getChildren(folderId);
-      const hasFolders = children.some(child => !child.url);
-      const folderChildCounts = hasFolders
+      const folderChildCounts = children.some(child => !child.url)
         ? await BookmarkStore.getFolderChildCountMap()
         : new Map();
-
-      // 渲染
+      if (generation !== this.loadGeneration) return;
+      const nextCards = new Map();
+      await Promise.all(children.map(async child => {
+        let card = this.cards.get(child.id);
+        if (card) {
+          await card.update({ ...child, childCount: folderChildCounts.get(child.id) });
+        } else {
+          card = new BookmarkCard(child, this.grid, { childCount: folderChildCounts.get(child.id) });
+          created.push(card);
+          await card.render();
+        }
+        nextCards.set(child.id, card);
+      }));
+      if (generation !== this.loadGeneration) {
+        created.forEach(card => card.destroy());
+        return;
+      }
+      const changingFolder = this.currentFolderId !== undefined && this.currentFolderId !== folderId;
+      CardNavigation.cancelFolderEntrance(this.grid);
+      this.dragController.cancel();
+      const previous = this.dragController.capturePositions();
+      this.cards.forEach((card, id) => {
+        if (!nextCards.has(id)) {
+          card.destroy();
+          this.selectedCards.delete(id);
+        }
+      });
+      this.cards = new Map(children.map(child => [child.id, nextCards.get(child.id)]));
       for (let index = 0; index < children.length; index++) {
-        const child = children[index];
-        const card = new BookmarkCard(child, this.grid, {
-          childCount: folderChildCounts.get(child.id)
-        });
-        const element = await card.render();
-        this.grid.appendChild(element);
-        this.cards.set(child.id, card);
-        // 网站图标只在卡片实际进入文档、且接近可视区时读取。
+        const card = this.cards.get(children[index].id);
+        if (this.grid.children[index] !== card.element) {
+          this.grid.insertBefore(card.element, this.grid.children[index] || null);
+        }
         card.resolveSiteIconWhenVisible();
       }
       this.renderCreateActions();
+      this.currentFolderId = folderId;
+      this.dragController.animateLayout(previous);
+      if (changingFolder) CardNavigation.enterFolder(this.grid);
     } catch (err) {
+      created.forEach(card => card.destroy());
       console.error('loadFolder failed:', err);
+      if (generation === this.loadGeneration) this.dragController.showStatus('读取书签失败，请重试');
     } finally {
-      this.isLoading = false;
-      // 如果加载期间有挂起的 refresh 请求，执行它
-      if (this._pendingRefreshId) {
-        const pendingId = this._pendingRefreshId;
-        this._pendingRefreshId = null;
-        await this.loadFolder(pendingId);
-        return;
-      }
+      if (generation === this.loadGeneration) this.isLoading = false;
     }
   }
 
@@ -194,16 +175,48 @@ class BookmarkGrid {
     const current = Router.getCurrent();
     if (!current) return;
 
-    // 如果正在加载，等待当前加载完成后重新加载
-    if (this.isLoading) {
-      this._pendingRefreshId = current.id;
-      return;
-    }
-
     await this.loadFolder(current.id);
   }
 
+  moveCard(operation) {
+    const task = this.moveQueue.then(() => this.performMove(operation));
+    this.moveQueue = task.catch(() => {});
+    return task;
+  }
+
+  async performMove({ draggedId, targetId, action, position }) {
+    if (draggedId === targetId) return false;
+    action = action === 'reorder' ? position : action;
+    const previousFolderId = this.currentFolderId;
+    const previousOrder = [...this.cards.keys()];
+    try {
+      const nodes = await chrome.bookmarks.get([draggedId, targetId]);
+      const source = nodes.find(node => node.id === draggedId);
+      const target = nodes.find(node => node.id === targetId);
+      const destination = getMoveDestination(source, target, action);
+      if (destination.noOp) return false;
+      this.pendingMoves.set(draggedId, { ...destination, oldParentId: source.parentId });
+      if (action !== 'into') this.applyOptimisticReorder(draggedId, targetId, action);
+      await BookmarkStore.move(draggedId, destination.parentId, destination.index);
+      await this.refresh();
+      return true;
+    } catch (err) {
+      console.error('Move failed:', err);
+      if (previousFolderId === this.currentFolderId) this.applyOrder(previousOrder);
+      this.dragController.showStatus('移动失败，已恢复书签显示，请重试');
+      await this.refresh();
+      return false;
+    } finally {
+      this.pendingMoves.delete(draggedId);
+    }
+  }
+
   renderCreateActions() {
+    if (this.createActions) {
+      this.createActions.forEach(button => this.grid.appendChild(button));
+      return;
+    }
+    this.createActions = [];
     const actions = [
       { kind: 'bookmark', icon: 'bookmark-plus', label: '新建书签', event: 'toolbar:newBookmark' },
       { kind: 'folder', icon: 'folder-plus', label: '新建文件夹', event: 'toolbar:newFolder' }
@@ -221,6 +234,7 @@ class BookmarkGrid {
       `;
       button.addEventListener('click', () => EventBus.emit(event));
       this.grid.appendChild(button);
+      this.createActions.push(button);
     }
   }
 
@@ -248,10 +262,22 @@ class BookmarkGrid {
     const card = this.cards.get(id);
     if (!card) return;
 
-    await card.animateDelete();
-    await BookmarkStore.remove(id, isFolder);
-    this.cards.delete(id);
-    this.selectedCards.delete(id);
+    try {
+      // 先确认写入成功；失败时卡片仍可操作。
+      this.pendingDeletes.add(id);
+      await BookmarkStore.remove(id, isFolder);
+      await card.animateDelete();
+      card.destroy();
+      this.cards.delete(id);
+      this.selectedCards.delete(id);
+      await this.refresh();
+    } catch (err) {
+      console.error('Delete failed:', err);
+      this.dragController.showStatus('删除失败，请重试');
+      await this.refresh();
+    } finally {
+      this.pendingDeletes.delete(id);
+    }
   }
 
   applyOptimisticReorder(draggedId, targetId, position) {
@@ -259,39 +285,20 @@ class BookmarkGrid {
     const target = this.cards.get(targetId)?.element;
     if (!dragged || !target || dragged === target) return;
 
-    // FLIP 动画要自己写 inline transform，先让卡片光效交出 gsap 的 transform，
-    // 否则两边同时改同一个属性会出现跳动。
-    this.cards.forEach((card) => card.releaseEffectsTransform());
+    const previous = this.dragController.capturePositions();
+    const ids = getPreviewOrder([...this.cards.keys()], draggedId, targetId, position);
+    this.applyOrder(ids, previous);
+  }
 
-    const previousRects = new Map();
-    this.grid.querySelectorAll('.bookmark-card').forEach(card => {
-      previousRects.set(card, card.getBoundingClientRect());
+  applyOrder(ids, previous = this.dragController.capturePositions()) {
+    const existing = ids.filter(id => this.cards.has(id));
+    this.cards.forEach((_card, id) => { if (!existing.includes(id)) existing.push(id); });
+    this.cards = new Map(existing.map(id => [id, this.cards.get(id)]));
+    existing.forEach((id, index) => {
+      const element = this.cards.get(id).element;
+      if (this.grid.children[index] !== element) this.grid.insertBefore(element, this.grid.children[index] || null);
     });
-
-    if (position === 'before') {
-      this.grid.insertBefore(dragged, target);
-    } else {
-      this.grid.insertBefore(dragged, target.nextSibling);
-    }
-
-    this.grid.querySelectorAll('.bookmark-card').forEach(card => {
-      const previous = previousRects.get(card);
-      if (!previous) return;
-      const next = card.getBoundingClientRect();
-      const dx = previous.left - next.left;
-      const dy = previous.top - next.top;
-      if (!dx && !dy) return;
-
-      card.style.transform = `translate(${dx}px, ${dy}px)`;
-      card.style.transition = 'transform 0s';
-      requestAnimationFrame(() => {
-        card.style.transform = '';
-        card.style.transition = 'transform 180ms cubic-bezier(0.2, 0, 0, 1)';
-        window.setTimeout(() => {
-          card.style.transition = '';
-        }, 200);
-      });
-    });
+    this.dragController.animateLayout(previous);
   }
 
   clearSelection() {

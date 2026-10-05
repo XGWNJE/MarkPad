@@ -2,7 +2,7 @@
  * CardEffects - 书签卡片光效控制器
  *
  * 视觉效果移植自 React Bits 的 MagicBento（原组件为 React + gsap），
- * 这里保留同样的视觉参数，改成在现有 DOM 上直接挂载：
+ * 在现有 DOM 上直接挂载，幅度和时长从 CSS 令牌读取：
  *   - 3D 倾斜 + 磁吸：hover 时按光标位置做小幅旋转与位移（gsap 驱动 transform）
  *
  * 所有光效都只画在卡片自身内部（卡片 overflow: hidden，没有全局聚光层），
@@ -55,12 +55,16 @@ class CardEffect {
   constructor(system, element) {
     this.system = system;
     this.element = element;
+    this.target = element.querySelector('.card-surface');
     this.particles = [];
     this.timeouts = [];
     this.pool = [];
     this.poolReady = false;
     this.hovered = false;
     this.attached = false;
+    this.paused = false;
+    this.pointerFrame = 0;
+    this.lastPointer = null;
 
     this.handlePointerEnter = this.handlePointerEnter.bind(this);
     this.handlePointerLeave = this.handlePointerLeave.bind(this);
@@ -102,6 +106,15 @@ class CardEffect {
     this.hovered = false;
     this.clearParticles();
     this.releaseTransform();
+    this.target = null;
+  }
+
+  setPaused(paused) {
+    this.paused = Boolean(paused);
+    if (!this.paused) return;
+    this.hovered = false;
+    this.clearParticles();
+    this.releaseTransform();
   }
 
   /** 系统整体开关变化时把卡片恢复到静止状态 */
@@ -113,30 +126,30 @@ class CardEffect {
   }
 
   /**
-   * 清掉 gsap 写在卡片上的 transform。
-   * 拖拽、网格 FLIP 排序会自己写 inline transform，两边必须交接干净，
-   * 否则 gsap 的 transform 缓存会和外部写入的值对不上，出现跳动。
+   * 悬停只修改内层 surface，根卡片的 transform 留给网格排序。
+   * 暂停时取消未执行的指针帧，避免落位动画期间重新写入悬停变换。
    */
   releaseTransform() {
-    if (!this.element) return;
-    gsap.killTweensOf(this.element);
-    gsap.set(this.element, { clearProps: 'transform' });
+    if (this.pointerFrame) cancelAnimationFrame(this.pointerFrame);
+    this.pointerFrame = 0;
+    this.lastPointer = null;
+    if (!this.target) return;
+    gsap.killTweensOf(this.target);
+    gsap.set(this.target, { clearProps: 'transform' });
   }
 
   // ---------- 交互 ----------
 
   handlePointerEnter(event) {
-    if (event.pointerType === 'touch' || !this.system.enabled) return;
+    if (event.pointerType === 'touch' || this.paused || !this.system.enabled || !this.target) return;
     this.hovered = true;
 
     if (this.options.enableStars) this.spawnParticles();
 
     if (this.options.enableTilt) {
-      gsap.to(this.element, {
-        scale: 1.02,
-        rotateX: 5,
-        rotateY: 5,
-        duration: 0.3,
+      gsap.to(this.target, {
+        scale: this.system.tokens.hoverScale,
+        duration: this.system.tokens.hoverDuration,
         ease: 'power2.out',
         transformPerspective: 1000,
         overwrite: 'auto'
@@ -145,13 +158,17 @@ class CardEffect {
   }
 
   handlePointerLeave() {
+    if (this.paused || !this.system.enabled || !this.target) return;
     this.hovered = false;
+    if (this.pointerFrame) cancelAnimationFrame(this.pointerFrame);
+    this.pointerFrame = 0;
+    this.lastPointer = null;
     if (this.options.enableStars) this.clearParticles();
 
     const { enableTilt, enableMagnetism } = this.options;
     if (!enableTilt && !enableMagnetism) return;
 
-    const vars = { duration: 0.3, ease: 'power2.out', overwrite: 'auto', clearProps: 'transform' };
+    const vars = { duration: this.system.tokens.hoverReturnDuration, ease: 'power2.out', overwrite: 'auto', clearProps: 'transform' };
     if (enableTilt) {
       vars.rotateX = 0;
       vars.rotateY = 0;
@@ -161,51 +178,54 @@ class CardEffect {
       vars.x = 0;
       vars.y = 0;
     }
-    gsap.to(this.element, vars);
+    gsap.to(this.target, vars);
   }
 
   handlePointerMove(event) {
-    if (event.pointerType === 'touch' || !this.system.enabled) return;
+    if (event.pointerType === 'touch' || this.paused || !this.system.enabled || !this.target) return;
+    this.lastPointer = { x: event.clientX, y: event.clientY };
+    if (this.pointerFrame) return;
+    this.pointerFrame = requestAnimationFrame(() => {
+      this.pointerFrame = 0;
+      this.updatePointerTransform();
+    });
+  }
+
+  updatePointerTransform() {
+    if (this.paused || !this.system.enabled || !this.target || !this.lastPointer) return;
 
     const { enableTilt, enableMagnetism } = this.options;
     if (!enableTilt && !enableMagnetism) return;
 
     const el = this.element;
     const rect = el.getBoundingClientRect();
-    // 卡片被倾斜后 getBoundingClientRect 是外接矩形，尺寸用 offsetWidth/Height 更稳
+    // 根卡片不参与悬停变换，命中坐标不会被内层倾斜和磁吸反向影响。
     const width = el.offsetWidth || rect.width;
     const height = el.offsetHeight || rect.height;
     if (!width || !height) return;
 
-    const x = event.clientX - rect.left;
-    const y = event.clientY - rect.top;
+    const x = this.lastPointer.x - rect.left;
+    const y = this.lastPointer.y - rect.top;
     const centerX = width / 2;
     const centerY = height / 2;
 
+    const tokens = this.system.tokens;
+    const vars = { duration: tokens.hoverDuration, ease: 'power2.out', overwrite: 'auto' };
     if (enableTilt) {
-      gsap.to(el, {
-        rotateX: ((y - centerY) / centerY) * -10,
-        rotateY: ((x - centerX) / centerX) * 10,
-        duration: 0.1,
-        ease: 'power2.out',
-        transformPerspective: 1000,
-        overwrite: 'auto'
-      });
+      vars.rotateX = Math.max(-1, Math.min(1, (y - centerY) / centerY)) * -tokens.hoverTilt;
+      vars.rotateY = Math.max(-1, Math.min(1, (x - centerX) / centerX)) * tokens.hoverTilt;
+      vars.scale = tokens.hoverScale;
+      vars.transformPerspective = 1000;
     }
-
     if (enableMagnetism) {
-      gsap.to(el, {
-        x: (x - centerX) * 0.05,
-        y: (y - centerY) * 0.05,
-        duration: 0.3,
-        ease: 'power2.out',
-        overwrite: 'auto'
-      });
+      vars.x = Math.max(-tokens.hoverMaxOffset, Math.min(tokens.hoverMaxOffset, (x - centerX) * tokens.hoverMagnetism));
+      vars.y = Math.max(-tokens.hoverMaxOffset, Math.min(tokens.hoverMaxOffset, (y - centerY) * tokens.hoverMagnetism));
     }
+    gsap.to(this.target, vars);
   }
 
   handleClick(event) {
-    if (!this.options.clickEffect || !this.system.enabled) return;
+    if (!this.options.clickEffect || this.paused || !this.system.enabled) return;
 
     const el = this.element;
     const rect = el.getBoundingClientRect();
@@ -228,7 +248,8 @@ class CardEffect {
 
     // gsap 的 onComplete 负责正常收尾；这里再兜一个定时器，
     // 避免 tween 被外部 kill（拖拽、卡片重渲染）时涟漪节点留在 DOM 里。
-    window.setTimeout(() => ripple.remove(), 1200);
+    this.timeouts.push(window.setTimeout(() => ripple.remove(), 1200));
+    this.particles.push(ripple);
 
     gsap.fromTo(
       ripple,
@@ -294,13 +315,8 @@ class CardEffect {
     this.timeouts = [];
 
     this.particles.forEach((particle) => {
-      gsap.to(particle, {
-        scale: 0,
-        opacity: 0,
-        duration: 0.3,
-        ease: 'back.in(1.7)',
-        onComplete: () => particle.remove()
-      });
+      gsap.killTweensOf(particle);
+      particle.remove();
     });
     this.particles = [];
   }
@@ -320,7 +336,12 @@ class CardEffectSystem {
     this.rectStamp = 0;
     this.pointer = null;
     this.frame = 0;
-    this.tokens = { radius: 300, fillPeak: 0.1 };
+    this.tokens = {
+      radius: 300, fillPeak: 0.1,
+      hoverScale: 1.006, hoverTilt: 2.5, hoverMagnetism: 0.015, hoverMaxOffset: 3,
+      hoverDuration: 0.16, hoverReturnDuration: 0.18
+    };
+    this.tokensInitialized = false;
 
     this.handlePointerMove = this.handlePointerMove.bind(this);
     this.handleDocumentLeave = this.handleDocumentLeave.bind(this);
@@ -333,6 +354,9 @@ class CardEffectSystem {
       attributes: true,
       attributeFilter: ['data-theme']
     });
+    mediaQuery('(hover: none)')?.addEventListener?.('change', this.handleViewportChange);
+    mediaQuery('(prefers-reduced-motion: reduce)')?.addEventListener?.('change', this.handleViewportChange);
+    globalThis.window?.addEventListener?.('resize', this.handleViewportChange, { passive: true });
   }
 
   /** 覆盖默认参数；可重复调用 */
@@ -344,7 +368,8 @@ class CardEffectSystem {
 
   /** 把卡片挂进光效系统，返回该卡片的效果句柄 */
   attach(element, options = {}) {
-    if (!element) return null;
+    if (!element?.querySelector?.('.card-surface')) return null;
+    if (!this.tokensInitialized) this.readTokens();
 
     let effect = this.effects.get(element);
     if (!effect) {
@@ -365,6 +390,7 @@ class CardEffectSystem {
     effect.destroy();
     this.effects.delete(element);
     this.rects.delete(element);
+    this.glowState.delete(element);
   }
 
   /** 按当前环境决定是否启用光效（触摸、窄屏、减少动效时关闭） */
@@ -395,7 +421,6 @@ class CardEffectSystem {
     document.addEventListener('pointermove', this.handlePointerMove);
     document.addEventListener('mouseleave', this.handleDocumentLeave);
     window.addEventListener('scroll', this.handleLayoutChange, { passive: true, capture: true });
-    window.addEventListener('resize', this.handleViewportChange, { passive: true });
 
     this.rectsDirty = true;
   }
@@ -407,7 +432,6 @@ class CardEffectSystem {
     document.removeEventListener('pointermove', this.handlePointerMove);
     document.removeEventListener('mouseleave', this.handleDocumentLeave);
     window.removeEventListener('scroll', this.handleLayoutChange, { capture: true });
-    window.removeEventListener('resize', this.handleViewportChange);
 
     if (this.frame) {
       cancelAnimationFrame(this.frame);
@@ -424,6 +448,22 @@ class CardEffectSystem {
     const fillPeak = Number.parseFloat(styles.getPropertyValue('--card-spotlight-peak'));
     this.tokens.radius = Number.isFinite(radius) ? radius : 300;
     this.tokens.fillPeak = Number.isFinite(fillPeak) ? fillPeak : 0.1;
+    const number = (key, fallback) => {
+      const value = Number.parseFloat(styles.getPropertyValue(key));
+      return Number.isFinite(value) && value >= 0 ? value : fallback;
+    };
+    const seconds = (key, fallback) => {
+      const value = styles.getPropertyValue(key).trim();
+      const duration = Number.parseFloat(value);
+      return Number.isFinite(duration) && duration >= 0 ? duration / (value.endsWith('ms') ? 1000 : 1) : fallback;
+    };
+    this.tokens.hoverScale = number('--card-hover-scale', 1.006);
+    this.tokens.hoverTilt = number('--card-hover-tilt', 2.5);
+    this.tokens.hoverMagnetism = number('--card-hover-magnetism', 0.015);
+    this.tokens.hoverMaxOffset = number('--card-hover-max-offset', 3);
+    this.tokens.hoverDuration = seconds('--card-hover-duration', 0.16);
+    this.tokens.hoverReturnDuration = seconds('--card-hover-return-duration', 0.18);
+    this.tokensInitialized = true;
   }
 
   handlePointerMove(event) {

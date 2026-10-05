@@ -5,7 +5,8 @@
   align-items: center;
   justify-content: center;
   z-index: 1000;
-  animation: fadeIn 160ms var(--ease-lumen);
+  padding: var(--space-4);
+  animation: fadeIn var(--overlay-dialog-duration) var(--ease-lumen);
 }
 
 .dialog.hidden {
@@ -20,16 +21,20 @@
 
 .dialog-content {
   position: relative;
-  width: min(90vw, 440px);
+  width: min(100%, 440px);
+  max-height: calc(100dvh - 32px);
+  display: flex;
+  flex-direction: column;
   background: var(--color-surface);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-xl);
   box-shadow: var(--shadow-dialog);
-  animation: slideUp 220ms var(--ease-lumen);
+  animation: slideUp var(--overlay-dialog-duration) var(--ease-lumen);
   overflow: hidden;
 }
 
 .dialog-header {
+  flex: 0 0 auto;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -40,11 +45,12 @@
 .dialog-header h3 {
   color: var(--text-primary);
   font-size: var(--font-size-lg);
-  font-weight: 620;
-  line-height: 1.2;
+  font-weight: var(--ui-heading-weight);
+  line-height: 1.35;
 }
 
 .dialog-close {
+  flex: 0 0 44px;
   width: 44px;
   min-height: 44px;
   display: flex;
@@ -68,17 +74,45 @@
 }
 
 .dialog-body {
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
   padding: var(--space-6);
   color: var(--text-secondary);
   line-height: 1.6;
 }
 
 .dialog-footer {
+  flex: 0 0 auto;
   display: flex;
+  flex-wrap: wrap;
+  align-items: center;
   justify-content: flex-end;
   gap: var(--space-3);
   padding: var(--space-5) var(--space-6);
   border-top: 1px solid var(--color-border);
+}
+
+.dialog-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: var(--space-3);
+  margin-inline-start: auto;
+}
+
+.dialog-status {
+  flex: 1 1 100px;
+  min-width: 0;
+  min-height: 40px;
+  color: var(--text-secondary);
+  font-size: var(--font-size-sm);
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+
+.dialog-status.error {
+  color: var(--danger);
 }
 
 .form-group {
@@ -105,7 +139,7 @@
   border: 1px solid var(--color-border);
   border-radius: var(--radius-md);
   color: var(--text-primary);
-  font-size: var(--font-size-base);
+  font-size: var(--menu-font-size);
   transition:
     background var(--transition-fast),
     border-color var(--transition-fast);
@@ -122,19 +156,36 @@ textarea.form-input {
   background: var(--color-surface);
 }
 
+.form-input:focus-visible,
+.dialog-close:focus-visible,
+.btn:focus-visible {
+  outline: 2px solid var(--color-action);
+  outline-offset: 3px;
+}
+
+.form-input[aria-invalid="true"] {
+  border-color: var(--danger);
+}
+
+.form-input:disabled {
+  color: var(--text-secondary);
+  cursor: wait;
+}
+
 .form-input::placeholder {
   color: var(--text-tertiary);
 }
 
 .btn {
+  flex-shrink: 0;
   min-height: 44px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   padding: 0 var(--space-5);
   border-radius: var(--radius-pill);
-  font-size: var(--font-size-sm);
-  font-weight: 560;
+  font-size: var(--menu-font-size);
+  font-weight: var(--ui-font-weight);
   transition:
     background var(--transition-fast),
     border-color var(--transition-fast),
@@ -142,7 +193,7 @@ textarea.form-input {
     transform var(--transition-fast);
 }
 
-.btn:active {
+.btn:not(:disabled):active {
   transform: translateY(1px);
 }
 
@@ -151,7 +202,7 @@ textarea.form-input {
   color: var(--color-action-text);
 }
 
-.btn-primary:hover {
+.btn-primary:not(:disabled):hover {
   background: var(--color-action-hover);
 }
 
@@ -161,18 +212,100 @@ textarea.form-input {
   border: 1px solid var(--color-border);
 }
 
-.btn-secondary:hover {
+.btn-secondary:not(:disabled):hover {
   background: var(--color-bg-soft);
   border-color: var(--color-border-strong);
 }
 
 .btn-danger {
   background: var(--danger);
-  color: #fff;
+  color: var(--color-danger-text);
 }
 
-.btn-danger:hover {
+.btn-danger:not(:disabled):hover {
   background: var(--danger-hover);
+}
+
+.btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.btn[aria-busy="true"] {
+  cursor: progress;
+}
+
+.folder-tree-item {
+  width: 100%;
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: 0 var(--space-3);
+  padding-inline-start: min(calc(var(--space-3) + var(--folder-depth, 0) * var(--space-4)), calc(100% - 112px));
+  cursor: pointer;
+  border-radius: var(--radius-md);
+  border: 0;
+  background: transparent;
+  font: inherit;
+  text-align: left;
+  color: var(--text-secondary);
+  transition: background var(--transition-fast), color var(--transition-fast);
+}
+
+.folder-tree-item:not(:disabled):hover {
+  background: var(--color-bg-soft);
+  color: var(--text-primary);
+}
+
+.folder-tree-item:focus-visible {
+  outline: 2px solid var(--color-action);
+  outline-offset: -2px;
+}
+
+.folder-tree-item.selected {
+  background: var(--color-action);
+  color: var(--color-action-text);
+}
+
+.folder-tree-item:disabled {
+  cursor: wait;
+}
+
+.folder-tree-item[data-current="true"] {
+  cursor: default;
+  background: var(--color-bg-soft);
+  color: var(--text-tertiary);
+}
+
+.folder-tree-item .folder-current {
+  flex: 0 0 auto;
+  margin-inline-start: auto;
+  font-size: var(--font-size-xs);
+}
+
+.folder-tree-item .folder-icon {
+  width: 22px;
+  height: 22px;
+  flex: 0 0 22px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0.7;
+}
+
+.folder-tree-item .folder-icon .app-icon {
+  width: 16px;
+  height: 16px;
+}
+
+.folder-tree-item .folder-name {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: var(--menu-font-size);
 }
 
 @keyframes fadeIn {
@@ -183,10 +316,27 @@ textarea.form-input {
 @keyframes slideUp {
   from {
     opacity: 0;
-    transform: translateY(16px);
+    transform: translateY(var(--overlay-enter-offset));
   }
   to {
     opacity: 1;
     transform: translateY(0);
+  }
+}
+
+@media (max-width: 480px), (max-height: 600px) {
+  .dialog-header,
+  .dialog-footer {
+    padding: var(--space-4) var(--space-5);
+  }
+
+  .dialog-body {
+    padding: var(--space-5);
+  }
+}
+
+@media (max-width: 480px) {
+  .dialog-status {
+    flex-basis: 100%;
   }
 }

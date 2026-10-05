@@ -49,20 +49,25 @@ test('the card retains clipping for rounded icon backgrounds without a visual su
 test('CardEffects keeps card tilt and scale wiring but disables removed visuals', async () => {
   const effects = await read('components/CardEffects.js');
   const card = await read('components/BookmarkCard.js');
-  const grid = await read('components/BookmarkGrid.js');
+  const controller = await read('components/GridDragController.js');
 
   assert.match(effects, /from '\.\.\/vendor\/gsap\.js'/);
   assert.match(effects, /enableStars: false/);
   assert.match(effects, /enableBorderGlow: false/);
   assert.match(effects, /clickEffect: false/);
-  assert.match(effects, /scale: 1\.02/);
+  assert.match(effects, /scale: this\.system\.tokens\.hoverScale/);
+  assert.match(effects, /element\.querySelector\('\.card-surface'\)/);
+  assert.match(effects, /gsap\.to\(this\.target,/);
+  assert.doesNotMatch(effects, /gsap\.(?:to|set)\(this\.element,/);
   assert.match(effects, /clearProps: 'transform'/);
   assert.match(effects, /MOBILE_BREAKPOINT = 768/);
   assert.match(effects, /prefers-reduced-motion/);
 
   assert.match(card, /CardEffects\.attach\(this\.element\)/);
   assert.match(card, /releaseEffectsTransform\(\)/);
-  assert.match(grid, /releaseEffectsTransform\(\)/);
+  assert.match(card, /setInteractionPaused\(paused\)/);
+  assert.match(controller, /card\.setInteractionPaused\(true\)/);
+  assert.match(controller, /card\.element\.animate\(/);
 });
 
 test('card light intensity stays bounded and only lights the card under the pointer', async () => {

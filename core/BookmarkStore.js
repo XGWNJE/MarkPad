@@ -15,6 +15,7 @@ class BookmarkStore {
     // 缓存
     this.cache = new Map();
     this.tree = null;
+    this.cacheGeneration = 0;
 
     // 网站声明图标缓存：按完整书签 URL 缓存，避免同域页面串图标。
     this.siteIcons = null;
@@ -106,6 +107,7 @@ class BookmarkStore {
   }
 
   invalidateCache() {
+    this.cacheGeneration++;
     this.cache.clear();
     this.tree = null;
   }
@@ -117,7 +119,10 @@ class BookmarkStore {
    */
   async getTree() {
     if (!this.tree) {
-      this.tree = await chrome.bookmarks.getTree();
+      const generation = this.cacheGeneration;
+      const tree = await chrome.bookmarks.getTree();
+      if (generation !== this.cacheGeneration) return this.getTree();
+      this.tree = tree;
     }
     return this.tree;
   }
@@ -166,13 +171,15 @@ class BookmarkStore {
     }
 
     try {
+      const generation = this.cacheGeneration;
       const children = await chrome.bookmarks.getChildren(parentId);
+      if (generation !== this.cacheGeneration) return this.getChildren(parentId);
       // 保持 Chrome API 返回的原始 index 顺序，不重排
       this.cache.set(cacheKey, children);
       return children;
     } catch (err) {
       console.error('Failed to get children:', err);
-      return [];
+      throw err;
     }
   }
 

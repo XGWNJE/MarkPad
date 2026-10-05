@@ -31,7 +31,7 @@ test('header keeps settings while creation actions belong to the grid', async ()
   assert.match(headerHtml, /id="menu-trigger"[\s\S]*data-icon="settings"/);
   assert.doesNotMatch(headerHtml, /<span class="toolbar-label">/);
 
-  assert.match(menuHtml, /<div class="menu-panel-title">设置<\/div>/);
+  assert.match(menuHtml, /<div id="settings-title" class="menu-panel-title">设置<\/div>/);
   assert.doesNotMatch(menuHtml, /常用操作|menu-new-bookmark|menu-new-folder/);
 
   assert.match(breadcrumbCss, /\.breadcrumb\s*\{[\s\S]*?flex:\s*0 1 auto;/);
@@ -39,7 +39,7 @@ test('header keeps settings while creation actions belong to the grid', async ()
   assert.match(breadcrumbCss, /\.breadcrumb\s*\{[\s\S]*?background:\s*transparent;/);
   assert.match(breadcrumbCss, /\.breadcrumb-item\.active\s*\{[\s\S]*?background:\s*transparent;/);
   assert.match(breadcrumbCss, /\.breadcrumb-item\s*\{[\s\S]*?min-height:\s*44px;/);
-  assert.match(breadcrumbCss, /\.breadcrumb-item\s*\{[\s\S]*?font-size:\s*var\(--font-size-md\);/);
+  assert.match(breadcrumbCss, /\.breadcrumb-item\.active\s*\{[\s\S]*?font-size:\s*var\(--font-size-md\);/);
 
   assert.match(iconLibrary, /Lucide/);
   assert.match(iconLibrary, /settings:\s*\[[\s\S]*?<path d="M9\.671 4\.136/);
@@ -48,8 +48,8 @@ test('header keeps settings while creation actions belong to the grid', async ()
   assert.doesNotMatch(gridCss, /-webkit-mask-image:\s*linear-gradient/);
   assert.doesNotMatch(gridCss.match(/\.content\s*\{[\s\S]*?\}/)?.[0] || '', /padding-top/);
   assert.doesNotMatch(gridCss.match(/@media \(max-width: 768px\)\s*\{[\s\S]*?\.content\s*\{[\s\S]*?\}/)?.[0] || '', /padding-top/);
-  assert.match(gridCss, /\.grid-scroll\s*\{[\s\S]*?box-sizing:\s*border-box;[\s\S]*?padding:\s*calc\(var\(--toolbar-height\) \+ var\(--grid-page-margin\)\) var\(--grid-page-margin\) var\(--grid-page-margin\);/);
-  assert.match(gridCss, /\.grid-scroll-inner\s*\{[\s\S]*?width:\s*min\(100%, 1200px\);/);
+  assert.match(gridCss, /\.grid-scroll\s*\{[\s\S]*?box-sizing:\s*border-box;[\s\S]*?padding:\s*calc\(var\(--toolbar-height\) \+ var\(--grid-page-margin\)\) var\(--page-inset\) var\(--grid-page-margin\);/);
+  assert.match(gridCss, /\.grid-scroll-inner\s*\{[\s\S]*?width:\s*min\(100%, var\(--content-max-width\)\);/);
   assert.match(toolbarCss, /height:\s*var\(--toolbar-height\);/);
   assert.match(gridCss, /grid-template-columns:\s*repeat\(auto-fill, minmax\(min\(100%, var\(--card-width\)\), var\(--card-width\)\)\);/);
   assert.match(gridCss, /justify-content:\s*center;/);

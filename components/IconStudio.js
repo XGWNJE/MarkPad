@@ -31,32 +31,35 @@ function hexToHsv(hex) {
 class IconStudio {
   constructor() {
     this.dialog = null; this.bookmark = null; this.selectedIcon = null; this.upload = null; this.siteIcon = null;
+    this.returnFocus = null; this.sessionId = 0; this.uploadRequest = 0; this.backgroundRequest = 0;
+    this.uploadBusy = false; this.backgroundBusy = false;
     this.mode = 'custom'; this.background = { mode: 'raw' }; this.iconScale = 1; this.customColor = '#ffffff'; this.customEditing = false; this.colorState = hexToHsv(this.customColor);
     this.init();
   }
 
   init() {
     this.createDialog();
-    EventBus.on('iconStudio:open', ({ bookmark }) => this.show(bookmark));
-    EventBus.on('iconStudio:openSiteBackground', ({ bookmark }) => this.showSiteBackground(bookmark));
+    EventBus.on('iconStudio:open', ({ bookmark, returnFocus }) => this.show(bookmark, returnFocus));
+    EventBus.on('iconStudio:openSiteBackground', ({ bookmark, returnFocus }) => this.showSiteBackground(bookmark, returnFocus));
   }
 
   createDialog() {
     this.dialog = document.createElement('div'); this.dialog.id = 'icon-studio'; this.dialog.className = 'dialog icon-studio hidden';
+    this.dialog.setAttribute('role', 'dialog'); this.dialog.setAttribute('aria-modal', 'true'); this.dialog.setAttribute('aria-labelledby', 'icon-studio-title');
     this.dialog.innerHTML = `
       <div class="dialog-overlay"></div><div class="dialog-content icon-studio-content">
-        <div class="dialog-header"><div><h3>图标</h3><div class="icon-studio-subtitle"></div></div><button class="dialog-close" data-action="close" aria-label="关闭">${iconSvg('x')}</button></div>
-        <div class="icon-studio-body">
+        <div class="dialog-header"><div><h3 id="icon-studio-title">图标</h3><div class="icon-studio-subtitle"></div></div><button class="dialog-close" data-action="close" aria-label="关闭">${iconSvg('x')}</button></div>
+        <div class="icon-studio-body"><div class="icon-studio-editor">
           <section class="icon-studio-section icon-library-section"><div class="icon-studio-label">内置图标</div><div class="icon-studio-local-context"></div><div class="icon-studio-results"></div></section>
           <section class="icon-studio-section icon-upload-section"><label class="icon-studio-label" for="icon-upload-input">上传图片</label><p class="icon-studio-help">支持 SVG、PNG/APNG、GIF、JPG、WebP；动画保持原始播放，GIF、APNG、动态 WebP 与 SVG 动画可到 10MB，静态图片不超过 1MB；位图原始尺寸至少 256 × 256。</p><input id="icon-upload-input" class="icon-upload-input" type="file" accept="image/svg+xml,image/png,image/jpeg,image/webp,image/gif"></section>
           <section class="icon-background-composer hidden"><div class="icon-studio-label">图标背景</div><p class="icon-studio-help icon-background-source"></p>
-            <div class="icon-background-modes" role="radiogroup" aria-label="图标背景模式"><button type="button" class="btn btn-secondary" data-background-mode="raw">保留原样</button><button type="button" class="btn btn-secondary" data-background-mode="auto">自动融合</button><button type="button" class="btn btn-secondary" data-background-mode="black">黑色</button><button type="button" class="btn btn-secondary" data-background-mode="white">白色</button><button type="button" class="btn btn-secondary" data-background-mode="custom">自定义</button></div>
+            <div class="icon-background-modes" role="group" aria-label="图标背景模式"><button type="button" class="btn btn-secondary" data-background-mode="raw">保留原样</button><button type="button" class="btn btn-secondary" data-background-mode="auto">自动融合</button><button type="button" class="btn btn-secondary" data-background-mode="black">黑色</button><button type="button" class="btn btn-secondary" data-background-mode="white">白色</button><button type="button" class="btn btn-secondary" data-background-mode="custom">自定义</button></div>
             <div class="icon-custom-color hidden"><div class="icon-color-picker-row"><button type="button" class="icon-hue-wheel" aria-label="色相色轮"><span></span></button><button type="button" class="icon-sv-plane" aria-label="饱和度和明度面板"><span></span></button></div><div class="icon-color-inputs"><input class="icon-color-hex" type="text" value="#ffffff" maxlength="7" spellcheck="false" aria-label="背景色 HEX"><button type="button" class="btn btn-secondary icon-eyedropper">屏幕取色</button></div></div>
           </section>
           <label class="icon-scale-control hidden"><span>图标缩放 <strong class="icon-scale-value">100%</strong></span><input class="icon-scale-input" type="range" min="40" max="400" step="5" value="100"><span class="icon-scale-hint">缩小</span><span class="icon-scale-hint">放大</span></label>
-          <div class="icon-studio-status" role="status"></div>
+          </div>
           <section class="icon-studio-preview hidden"><div class="icon-studio-preview-card bookmark-card" tabindex="0"><div class="card-surface"><div class="card-icon-wrapper"><div class="card-icon"></div></div><div class="card-info"><div class="card-title"></div><div class="card-meta"></div></div></div></div><div class="icon-studio-preview-source"></div></section>
-        </div><div class="dialog-footer icon-studio-footer"><button class="btn btn-secondary" data-action="close">取消</button><button class="btn btn-primary" data-action="apply" disabled>应用图标</button></div>
+        </div><div class="dialog-footer icon-studio-footer"><div class="dialog-status icon-studio-status" role="status" aria-live="polite"></div><div class="dialog-actions"><button class="btn btn-secondary" data-action="close">取消</button><button class="btn btn-primary" data-action="apply" disabled>应用图标</button></div></div>
       </div>`;
     document.body.appendChild(this.dialog); this.bindDialogEvents();
   }
@@ -68,7 +71,16 @@ class IconStudio {
     this.dialog.querySelector('#icon-upload-input').addEventListener('change', event => this.handleUpload(event));
     this.dialog.querySelectorAll('[data-background-mode]').forEach(button => button.addEventListener('click', () => this.setBackgroundMode(button.dataset.backgroundMode)));
     this.dialog.querySelector('.icon-scale-input').addEventListener('input', event => this.setIconScale(Number(event.target.value) / 100));
-    this.dialog.querySelector('.icon-color-hex').addEventListener('input', event => { if (isValidHexColor(event.target.value)) this.setCustomColor(event.target.value); });
+    this.dialog.querySelector('.icon-color-hex').addEventListener('input', event => {
+      event.target.removeAttribute('aria-invalid');
+      if (isValidHexColor(event.target.value)) this.setCustomColor(event.target.value);
+    });
+    this.dialog.querySelector('.icon-color-hex').addEventListener('change', event => {
+      if (!isValidHexColor(event.target.value)) {
+        event.target.setAttribute('aria-invalid', 'true');
+        this.setStatus('请输入 #RRGGBB 格式的颜色。', true);
+      }
+    });
     this.bindPicker('.icon-hue-wheel', event => this.updateHueFromPointer(event)); this.bindPicker('.icon-sv-plane', event => this.updateSvFromPointer(event));
     this.dialog.querySelector('.icon-eyedropper').addEventListener('click', () => this.pickScreenColor());
   }
@@ -82,7 +94,8 @@ class IconStudio {
     });
   }
 
-  show(bookmark) {
+  show(bookmark, returnFocus) {
+    this.beginSession(returnFocus);
     this.bookmark = bookmark; this.selectedIcon = null; this.siteIcon = null; this.mode = 'custom';
     const existing = BookmarkStore.getCustomIcon(bookmark.id);
     if (existing) {
@@ -101,35 +114,92 @@ class IconStudio {
     }
     this.dialog.querySelector('#icon-upload-input').value = ''; this.dialog.querySelector('.icon-studio-subtitle').textContent = bookmark.title || '未命名书签'; this.dialog.querySelector('.dialog-header h3').textContent = '图标';
     this.dialog.querySelector('.icon-library-section').classList.remove('hidden'); this.dialog.querySelector('.icon-upload-section').classList.remove('hidden'); this.setStatus(''); this.renderLibraryCandidates(); this.updateAll(); this.dialog.classList.remove('hidden');
+    this.dialog.querySelector('.dialog-close').focus();
   }
 
-  showSiteBackground(bookmark) {
+  showSiteBackground(bookmark, returnFocus) {
     const siteIcon = BookmarkStore.getSiteIcon(bookmark.url); if (!siteIcon) return;
+    this.beginSession(returnFocus);
     this.bookmark = bookmark; this.selectedIcon = null; this.upload = null; this.siteIcon = siteIcon; this.mode = 'site-background'; this.background = cloneIconBackground(BookmarkStore.getSiteIconBackground(bookmark.id)); this.iconScale = getIconScale(this.background); this.customColor = this.background.mode === 'solid' ? this.background.color : '#ffffff'; this.colorState = hexToHsv(this.customColor); this.customEditing = this.background.mode === 'solid' && !['#111111', '#ffffff'].includes(this.background.color);
     this.dialog.querySelector('.dialog-header h3').textContent = '网站图标背景'; this.dialog.querySelector('.icon-studio-subtitle').textContent = bookmark.title || '未命名书签'; this.dialog.querySelector('.icon-library-section').classList.add('hidden'); this.dialog.querySelector('.icon-upload-section').classList.add('hidden');
     this.setStatus('背景只改变显示策略，网站图标仍由页面声明资源提供。'); this.updateAll(); this.dialog.classList.remove('hidden');
+    this.dialog.querySelector('.dialog-close').focus();
   }
 
-  resetIconPresentation() { this.background = { mode: 'raw' }; this.iconScale = 1; this.customColor = '#ffffff'; this.customEditing = false; this.colorState = hexToHsv(this.customColor); }
-  hide() { if (this.mode === 'site-background' && this.bookmark) EventBus.emit('siteIcon:backgroundPreview', { id: this.bookmark.id, background: null }); this.dialog.classList.add('hidden'); }
+  beginSession(returnFocus) {
+    if (returnFocus) this.returnFocus = returnFocus;
+    else if (!this.dialog.contains(document.activeElement)) this.returnFocus = document.activeElement;
+    this.sessionId++;
+    this.uploadRequest++;
+    this.backgroundRequest++;
+    this.uploadBusy = false;
+    this.backgroundBusy = false;
+    this.dialog.querySelector('.icon-color-hex').removeAttribute('aria-invalid');
+  }
+
+  resetIconPresentation() { this.backgroundRequest++; this.backgroundBusy = false; this.background = { mode: 'raw' }; this.iconScale = 1; this.customColor = '#ffffff'; this.customEditing = false; this.colorState = hexToHsv(this.customColor); }
+  hide() {
+    this.sessionId++;
+    this.uploadRequest++;
+    this.backgroundRequest++;
+    this.uploadBusy = false;
+    this.backgroundBusy = false;
+    if (this.mode === 'site-background' && this.bookmark) EventBus.emit('siteIcon:backgroundPreview', { id: this.bookmark.id, background: null });
+    this.dialog.classList.add('hidden');
+    if (this.returnFocus?.isConnected && !this.returnFocus.closest?.('[inert], .hidden')) this.returnFocus.focus();
+    else document.getElementById('menu-trigger')?.focus();
+    this.returnFocus = null;
+  }
 
   renderLibraryCandidates() {
     const result = getLibraryIconCandidates(this.bookmark, { limit: 48 }); const container = this.dialog.querySelector('.icon-studio-results');
-    this.dialog.querySelector('.icon-studio-local-context').textContent = `仅按书签名称“${this.bookmark.title || '未命名'}”匹配；内置图标库当前收录 ${result.candidates.length} 个可用图标。`; container.innerHTML = '';
-    if (!result.candidates.length) { container.innerHTML = '<div class="icon-studio-empty">当前版本的内置图标库尚无匹配图标</div>'; return; }
+    this.dialog.querySelector('.icon-studio-local-context').textContent = result.candidates.length
+      ? `按书签名称“${this.bookmark.title || '未命名'}”匹配到 ${result.candidates.length} 个图标。`
+      : '暂无匹配的内置图标，可在下方上传图片。';
+    container.innerHTML = '';
+    container.classList.toggle('hidden', !result.candidates.length);
+    if (!result.candidates.length) return;
     result.candidates.forEach(icon => {
       const button = document.createElement('button'); button.type = 'button'; button.className = 'icon-studio-local-tile'; button.innerHTML = `<span class="icon-studio-local-art">${icon.svg}</span><span class="icon-studio-local-info"><span class="icon-studio-local-title">${this.escapeHtml(icon.title)}</span><span class="icon-studio-local-reasons">${this.escapeHtml(icon.matchReason)}</span></span>`;
-      button.addEventListener('click', () => { this.selectedIcon = icon; this.upload = null; this.resetIconPresentation(); container.querySelectorAll('.icon-studio-local-tile').forEach(item => item.classList.remove('selected')); button.classList.add('selected'); this.updateAll(); }); container.appendChild(button);
+      button.addEventListener('click', () => { if (this.uploadBusy) return; this.selectedIcon = icon; this.upload = null; this.resetIconPresentation(); this.setStatus(''); container.querySelectorAll('.icon-studio-local-tile').forEach(item => item.classList.remove('selected')); button.classList.add('selected'); this.updateAll(); }); container.appendChild(button);
     });
   }
 
   async handleUpload(event) {
-    const file = event.target.files?.[0]; if (!file) return; this.setStatus('正在读取图标…'); const result = await readIconUpload(file);
-    if (!result.ok) return this.setStatus(result.reason, true);
-    this.upload = result; this.selectedIcon = null; this.resetIconPresentation(); this.dialog.querySelectorAll('.icon-studio-local-tile').forEach(item => item.classList.remove('selected')); this.setStatus(result.kind === 'svg' ? '已载入 SVG，动画会按原文件播放。' : '已保留原始图片，动画不会转码。'); this.updateAll();
+    const file = event.target.files?.[0]; if (!file) return;
+    const session = this.sessionId; const request = ++this.uploadRequest;
+    this.backgroundRequest++;
+    this.backgroundBusy = false;
+    this.uploadBusy = true;
+    this.setStatus('正在读取图标…');
+    this.updateBusyState();
+    try {
+      const result = await readIconUpload(file);
+      if (!this.isCurrentRequest(session, request, 'uploadRequest')) return;
+      if (!result.ok) { event.target.value = ''; this.setStatus(result.reason, true); return; }
+      this.upload = result; this.selectedIcon = null; this.resetIconPresentation(); this.dialog.querySelectorAll('.icon-studio-local-tile').forEach(item => item.classList.remove('selected')); this.setStatus(result.kind === 'svg' ? '已载入 SVG，动画会按原文件播放。' : '已保留原始图片，动画不会转码。'); this.updateAll();
+    } catch {
+      if (this.isCurrentRequest(session, request, 'uploadRequest')) {
+        event.target.value = '';
+        this.setStatus('图标读取失败，请重新选择文件。', true);
+      }
+    } finally {
+      if (this.isCurrentRequest(session, request, 'uploadRequest')) {
+        this.uploadBusy = false;
+        this.updateBusyState();
+      }
+    }
+  }
+
+  isCurrentRequest(session, request, key) {
+    return session === this.sessionId && request === this[key] && !this.dialog.classList.contains('hidden');
   }
 
   setBackgroundMode(mode) {
+    if (this.uploadBusy) return;
+    this.backgroundRequest++;
+    this.backgroundBusy = false;
+    this.setStatus('');
     if (mode === 'raw') { this.background = { mode: 'raw' }; this.customEditing = false; }
     if (mode === 'black') { this.background = { mode: 'solid', color: '#111111' }; this.customEditing = false; }
     if (mode === 'white') { this.background = { mode: 'solid', color: '#ffffff' }; this.customEditing = false; }
@@ -139,36 +209,83 @@ class IconStudio {
   }
 
   async applyAutoBackground() {
-    const source = this.currentIcon(); if (!source) return; this.setStatus('正在分析图标第一帧边缘颜色…'); const analysis = await analyzeIconBackground(source);
-    if (!analysis.ok) { this.background = { mode: 'raw' }; this.setStatus(`自动融合不可用：${analysis.reason}。请选择黑色、白色或自定义颜色。`, true); } else { this.background = { mode: 'auto', result: analysis.result }; this.setStatus(analysis.result.type === 'gradient' ? '已生成多色融合渐变。' : '已生成融合纯色背景。'); }
-    this.updateAll();
+    const source = this.currentIcon(); if (!source) return;
+    const session = this.sessionId; const request = ++this.backgroundRequest;
+    this.backgroundBusy = true;
+    this.setStatus('正在分析图标第一帧边缘颜色…');
+    this.updateBusyState();
+    try {
+      const analysis = await analyzeIconBackground(source);
+      if (!this.isCurrentRequest(session, request, 'backgroundRequest') || source.value !== this.currentIcon()?.value) return;
+      if (!analysis.ok) { this.background = { mode: 'raw' }; this.setStatus(`自动融合不可用：${analysis.reason}。请选择黑色、白色或自定义颜色。`, true); } else { this.background = { mode: 'auto', result: analysis.result }; this.setStatus(analysis.result.type === 'gradient' ? '已生成多色融合渐变。' : '已生成融合纯色背景。'); }
+      this.updateAll();
+    } catch {
+      if (this.isCurrentRequest(session, request, 'backgroundRequest')) this.setStatus('自动融合失败，请重试或选择其他背景。', true);
+    } finally {
+      if (this.isCurrentRequest(session, request, 'backgroundRequest')) {
+        this.backgroundBusy = false;
+        this.updateBusyState();
+      }
+    }
   }
 
-  setCustomColor(color) { if (!isValidHexColor(color)) return; this.customColor = color.toLowerCase(); this.customEditing = true; this.colorState = hexToHsv(this.customColor); this.background = { mode: 'solid', color: this.customColor }; this.updateAll(); }
+  setCustomColor(color) { if (!isValidHexColor(color)) return; this.backgroundRequest++; this.backgroundBusy = false; this.customColor = color.toLowerCase(); this.customEditing = true; this.colorState = hexToHsv(this.customColor); this.background = { mode: 'solid', color: this.customColor }; this.dialog.querySelector('.icon-color-hex').removeAttribute('aria-invalid'); this.setStatus(''); this.updateAll(); }
   setIconScale(scale) { this.iconScale = normalizeIconScale(scale); this.updateAll(); }
   updateHueFromPointer(event) { const rect = this.dialog.querySelector('.icon-hue-wheel').getBoundingClientRect(); const x = event.clientX - rect.left - rect.width / 2; const y = event.clientY - rect.top - rect.height / 2; this.colorState.hue = (Math.atan2(y, x) * 180 / Math.PI + 450) % 360; this.setCustomColor(hsvToHex(this.colorState.hue, this.colorState.saturation, this.colorState.value)); }
   updateSvFromPointer(event) { const rect = this.dialog.querySelector('.icon-sv-plane').getBoundingClientRect(); this.colorState.saturation = Math.min(1, Math.max(0, (event.clientX - rect.left) / rect.width)); this.colorState.value = Math.min(1, Math.max(0, 1 - (event.clientY - rect.top) / rect.height)); this.setCustomColor(hsvToHex(this.colorState.hue, this.colorState.saturation, this.colorState.value)); }
-  async pickScreenColor() { if (!('EyeDropper' in window)) return this.setStatus('当前 Chrome 不支持屏幕取色，请用色轮或 HEX 输入。', true); try { this.setCustomColor((await new EyeDropper().open()).sRGBHex); } catch {} }
+  async pickScreenColor() {
+    if (!('EyeDropper' in window)) return this.setStatus('当前 Chrome 不支持屏幕取色，请用色轮或 HEX 输入。', true);
+    const session = this.sessionId;
+    try {
+      const result = await new EyeDropper().open();
+      if (session === this.sessionId && !this.dialog.classList.contains('hidden')) this.setCustomColor(result.sRGBHex);
+    } catch {}
+  }
 
   currentIcon() { const current = this.upload || this.selectedIcon || this.siteIcon; return current ? { kind: current.kind || current.type || 'svg', value: current.data || current.svg || current.value } : null; }
 
   updateAll() {
     const current = this.currentIcon(); const enabled = Boolean(this.upload) || this.mode === 'site-background'; this.dialog.querySelector('.icon-background-composer').classList.toggle('hidden', !enabled); this.dialog.querySelector('.icon-background-source').textContent = this.mode === 'site-background' ? '来源：当前网站声明图标。' : '来源：上传原始图标文件。';
-    this.dialog.querySelectorAll('[data-background-mode]').forEach(button => { const mode = button.dataset.backgroundMode; const active = mode === 'custom' ? this.customEditing : mode === 'black' ? !this.customEditing && this.background.mode === 'solid' && this.background.color === '#111111' : mode === 'white' ? !this.customEditing && this.background.mode === 'solid' && this.background.color === '#ffffff' : mode === this.background.mode; button.classList.toggle('active', active); });
-    this.dialog.querySelector('.icon-custom-color').classList.toggle('hidden', !this.customEditing); this.dialog.querySelector('.icon-scale-control').classList.toggle('hidden', !current); const scaleInput = this.dialog.querySelector('.icon-scale-input'); scaleInput.value = String(this.iconScale * 100); this.dialog.querySelector('.icon-scale-value').textContent = `${Math.round(this.iconScale * 100)}%`; this.renderPicker(); this.renderPreview(current); this.dialog.querySelector('[data-action="apply"]').disabled = !current;
+    this.dialog.querySelectorAll('[data-background-mode]').forEach(button => { const mode = button.dataset.backgroundMode; const active = mode === 'custom' ? this.customEditing : mode === 'black' ? !this.customEditing && this.background.mode === 'solid' && this.background.color === '#111111' : mode === 'white' ? !this.customEditing && this.background.mode === 'solid' && this.background.color === '#ffffff' : mode === this.background.mode; button.classList.toggle('active', active); button.setAttribute('aria-pressed', String(active)); });
+    this.dialog.querySelector('.icon-custom-color').classList.toggle('hidden', !this.customEditing); this.dialog.querySelector('.icon-scale-control').classList.toggle('hidden', !current); const scaleInput = this.dialog.querySelector('.icon-scale-input'); scaleInput.value = String(this.iconScale * 100); this.dialog.querySelector('.icon-scale-value').textContent = `${Math.round(this.iconScale * 100)}%`; this.renderPicker(); this.renderPreview(current); this.updateBusyState();
     if (this.mode === 'site-background' && this.bookmark) EventBus.emit('siteIcon:backgroundPreview', { id: this.bookmark.id, background: { ...cloneIconBackground(this.background), scale: this.iconScale } });
+  }
+
+  updateBusyState() {
+    const busy = this.uploadBusy || this.backgroundBusy;
+    const apply = this.dialog.querySelector('[data-action="apply"]');
+    apply.disabled = !this.currentIcon() || busy;
+    apply.setAttribute('aria-busy', String(busy));
+    this.dialog.querySelector('#icon-upload-input').setAttribute('aria-busy', String(this.uploadBusy));
+    this.dialog.querySelectorAll('[data-background-mode]').forEach(button => {
+      button.disabled = this.uploadBusy;
+      button.setAttribute('aria-busy', String(button.dataset.backgroundMode === 'auto' && this.backgroundBusy));
+    });
+    this.dialog.querySelectorAll('.icon-studio-local-tile').forEach(button => { button.disabled = this.uploadBusy; });
   }
 
   renderPicker() { const wheel = this.dialog.querySelector('.icon-hue-wheel'); const plane = this.dialog.querySelector('.icon-sv-plane'); wheel.style.setProperty('--hue-angle', `${this.colorState.hue}deg`); plane.style.setProperty('--hue-color', hsvToHex(this.colorState.hue, 1, 1)); plane.style.setProperty('--sv-x', `${this.colorState.saturation * 100}%`); plane.style.setProperty('--sv-y', `${(1 - this.colorState.value) * 100}%`); this.dialog.querySelector('.icon-color-hex').value = this.customColor; }
 
   renderPreview(current) {
+    this.dialog.querySelector('.icon-studio-body').classList.toggle('has-preview', Boolean(current));
     const preview = this.dialog.querySelector('.icon-studio-preview'); const card = preview.querySelector('.icon-studio-preview-card'); const icon = card.querySelector('.card-icon'); if (!current) { preview.classList.add('hidden'); return; }
     preview.classList.remove('hidden'); icon.innerHTML = ''; icon.style.background = backgroundCssValue(this.background); icon.style.setProperty('--icon-content-scale', String(this.iconScale)); if (current.kind === 'svg') icon.innerHTML = current.value; else { const image = document.createElement('img'); image.className = 'card-icon-image'; image.src = current.value; image.alt = ''; icon.appendChild(image); }
     card.querySelector('.card-title').textContent = this.bookmark.title || '未命名书签'; card.querySelector('.card-meta').textContent = this.mode === 'site-background' ? this.domain() : '上传图标'; preview.querySelector('.icon-studio-preview-source').textContent = this.mode === 'site-background' ? '来源：网站声明图标（临时预览同步到原卡片）' : '来源：上传图标（应用前不写入）';
   }
 
   domain() { try { return new URL(this.bookmark.url).hostname; } catch { return ''; } }
-  applySelectedIcon() { const current = this.currentIcon(); if (!current || !this.bookmark) return; if (this.mode === 'site-background') { const background = { ...(this.background.mode === 'auto' ? { ...this.background, sourceValue: current.value } : this.background), scale: this.iconScale }; BookmarkStore.setSiteIconBackground(this.bookmark.id, background); EventBus.emit('siteIcon:backgroundApplied', { id: this.bookmark.id }); this.setStatus('网站图标背景与缩放已应用。'); return; } const record = createCustomIconRecord({ kind: current.kind, data: current.value, background: this.upload ? this.background : { mode: 'raw' }, scale: this.iconScale }); BookmarkStore.setCustomIcon(this.bookmark.id, record); EventBus.emit('icon:applied', { id: this.bookmark.id, iconData: record }); this.setStatus('图标与缩放已应用。'); }
+  applySelectedIcon() {
+    const current = this.currentIcon(); if (!current || !this.bookmark || this.uploadBusy || this.backgroundBusy) return;
+    try {
+      if (this.mode === 'site-background') {
+        const background = { ...(this.background.mode === 'auto' ? { ...this.background, sourceValue: current.value } : this.background), scale: this.iconScale };
+        BookmarkStore.setSiteIconBackground(this.bookmark.id, background); EventBus.emit('siteIcon:backgroundApplied', { id: this.bookmark.id }); this.setStatus('网站图标背景与缩放已应用。'); return;
+      }
+      const record = createCustomIconRecord({ kind: current.kind, data: current.value, background: this.upload ? this.background : { mode: 'raw' }, scale: this.iconScale }); BookmarkStore.setCustomIcon(this.bookmark.id, record); EventBus.emit('icon:applied', { id: this.bookmark.id, iconData: record }); this.setStatus('图标与缩放已应用。');
+    } catch {
+      this.setStatus('图标应用失败，请重试。', true);
+    }
+  }
   setStatus(message, isError = false) { const status = this.dialog.querySelector('.icon-studio-status'); status.textContent = message; status.classList.toggle('error', isError); }
   escapeHtml(text) { const div = document.createElement('div'); div.textContent = text || ''; return div.innerHTML; }
 }

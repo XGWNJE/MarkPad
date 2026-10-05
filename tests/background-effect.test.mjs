@@ -1,123 +1,171 @@
 import assert from 'node:assert/strict';
 import { readFile, stat } from 'node:fs/promises';
 import test from 'node:test';
+import vm from 'node:vm';
+import { Element } from './helpers/grid-harness.mjs';
 
-async function read(path) {
-  return await readFile(new URL(`../${path}`, import.meta.url), 'utf8');
+const read = path => readFile(new URL(`../${path}`, import.meta.url), 'utf8');
+
+async function setupSettings(legacy = {}, { reducedMotion = false } = {}) {
+  const [source, busSource, html] = await Promise.all([
+    read('components/SettingsPanel.js'), read('core/EventBus.js'), read('index.html')
+  ]);
+  const stored = new Map(Object.entries({
+    themeMode: 'dark', headerOpacity: '82', cardSize: '160', cardRadius: '20',
+    gridPageMargin: '36', cardGap: '32', cardFontFamily: 'yahei',
+    cardTitleSize: '20', cardTitleTracking: '4', openMode: 'current',
+    custom_icon_cache: '{"keep":"custom"}', site_icon_cache_v2: '{"keep":"website"}',
+    ...legacy
+  }));
+  const before = new Map(stored);
+  const reads = [];
+  const writes = [];
+  const localStorage = {
+    getItem(key) { reads.push(key); return stored.get(key) ?? null; },
+    setItem(key, value) { writes.push(key); stored.set(key, String(value)); },
+    removeItem(key) { throw new Error(`Unexpected removal of preference ${key}`); },
+    clear() { throw new Error('Preferences must remain intact'); }
+  };
+  const elements = new Map([...html.matchAll(/id="([^"]+)"/g)].map(([, id]) => [id, new Element()]));
+  const root = new Element('html');
+  root.dataset.theme = 'dark';
+  const document = new Element('document');
+  Object.assign(document, {
+    hidden: false, documentElement: root,
+    getElementById: id => elements.get(id) || null,
+    querySelector: () => null
+  });
+  const activity = { canvases: 0, webgl: 0, observers: 0, frames: 0, timers: 0 };
+  document.createElement = tag => {
+    if (tag === 'canvas') activity.canvases++;
+    const node = new Element(tag);
+    node.getContext = kind => { if (String(kind).startsWith('webgl')) activity.webgl++; return null; };
+    return node;
+  };
+  const frames = new Map();
+  let frameId = 0;
+  const requestAnimationFrame = callback => { activity.frames++; frames.set(++frameId, callback); return frameId; };
+  const cancelAnimationFrame = id => frames.delete(id);
+  const window = new Element('window');
+  Object.assign(window, {
+    document, innerWidth: 2560, innerHeight: 1440, devicePixelRatio: 1.5,
+    matchMedia: () => ({ matches: reducedMotion, addEventListener() {}, removeEventListener() {} }),
+    requestAnimationFrame, cancelAnimationFrame
+  });
+  class Observer {
+    constructor() { activity.observers++; }
+    observe() {}
+    disconnect() {}
+  }
+  const context = vm.createContext({
+    window, document, localStorage, console, requestAnimationFrame, cancelAnimationFrame,
+    ResizeObserver: Observer, IntersectionObserver: Observer,
+    setTimeout() { activity.timers++; return 1; }, clearTimeout() {}
+  });
+  vm.runInContext(`globalThis.EventBus = (() => { ${busSource.replace('export default new EventBus();', 'return new EventBus();')} })()`, context);
+  vm.runInContext(source.replace(/^import .*;\r?\n/gm, '').replace('export default SettingsPanel;', 'globalThis.SettingsPanel = SettingsPanel;'), context);
+  const panel = vm.runInContext('new SettingsPanel()', context);
+  const dispatch = (node, type, event = {}) => {
+    for (const handler of node.listeners.get(type) || []) handler({ target: node, ...event });
+  };
+  const input = (id, value, type = 'input') => {
+    const node = elements.get(id);
+    assert.ok(node, `Control ${id} must exist`);
+    node.value = value;
+    dispatch(node, type);
+  };
+  const clickTheme = value => {
+    const button = elements.get(`theme-${value}`);
+    button.dataset.value = value;
+    button.closest = selector => selector === '.menu-toggle-btn' ? button : null;
+    dispatch(elements.get('theme-group'), 'click', { target: button });
+  };
+  const idle = () => {
+    for (let tick = 0; tick < 30; tick++) {
+      for (const [id, callback] of [...frames]) { frames.delete(id); callback(tick * 16); }
+    }
+  };
+  return { panel, document, window, root, stored, before, reads, writes, activity, frames, dispatch, input, clickTheme, idle };
 }
 
-async function exists(path) {
-  try {
-    await stat(new URL(`../${path}`, import.meta.url));
-    return true;
-  } catch {
-    return false;
+const legacyCases = [
+  ['missing', {}],
+  ['enabled', { backgroundEffect: 'on', backgroundEffectStrength: '70' }],
+  ['disabled', { backgroundEffect: 'off', backgroundEffectStrength: '20' }],
+  ['maximum', { backgroundEffect: 'on', backgroundEffectStrength: '100' }],
+  ['invalid', { backgroundEffect: 'unexpected', backgroundEffectStrength: 'not-a-number' }]
+];
+
+for (const [name, legacy] of legacyCases) {
+  for (const reducedMotion of [false, true]) {
+    test(`static background ignores ${name} effect preferences with reduced motion ${reducedMotion}`, async () => {
+      const h = await setupSettings(legacy, { reducedMotion });
+      assert.deepEqual(h.stored, h.before, 'Initialization must preserve existing preferences and icon caches');
+      assert.equal(h.root.dataset.theme, 'dark');
+      assert.equal(h.root.style.getPropertyValue('--toolbar-alpha'), '0.82');
+      assert.equal(h.root.style.getPropertyValue('--card-size'), '160px');
+      assert.equal(h.root.style.getPropertyValue('--card-radius'), '20px');
+      assert.equal(h.root.style.getPropertyValue('--card-title-size'), '20px');
+      assert.equal(h.root.style.getPropertyValue('--card-title-tracking'), '0.04em');
+      assert.equal(h.root.style.getPropertyValue('--grid-page-margin'), '36px');
+      assert.equal(h.root.style.getPropertyValue('--card-gap'), '32px');
+      assert.ok(h.reads.every(key => !key.startsWith('backgroundEffect')), 'Legacy effect values must not affect startup');
+      h.clickTheme('light');
+      assert.equal(h.root.dataset.theme, 'light');
+      assert.equal(h.stored.get('themeMode'), 'light');
+      h.clickTheme('dark');
+      assert.equal(h.root.dataset.theme, 'dark');
+      assert.deepEqual(h.stored, h.before);
+      h.document.hidden = true;
+      h.dispatch(h.document, 'visibilitychange');
+      h.document.hidden = false;
+      h.dispatch(h.document, 'visibilitychange');
+      h.dispatch(h.window, 'resize');
+      h.idle();
+      assert.deepEqual(h.activity, { canvases: 0, webgl: 0, observers: 0, frames: 0, timers: 0 });
+      assert.equal(h.frames.size, 0, 'Settings must not own an idle rendering loop');
+    });
   }
 }
 
-test('background effect ports the MoltenMetal shader without adding a runtime dependency', async () => {
-  const effect = await read('components/BackgroundEffect.js');
-  const pkg = JSON.parse(await read('package.json'));
-
-  // 移植要求：着色器与参数语义保留，渲染层换成原生 WebGL2，不引入 ogl
-  assert.match(effect, /#version 300 es/);
-  assert.match(effect, /getContext\('webgl2'/);
-  assert.doesNotMatch(effect, /from 'ogl'/);
-  assert.doesNotMatch(effect, /require\(/);
-
-  for (const uniform of [
-    'uSpeed',
-    'uScale',
-    'uDetail',
-    'uGlow',
-    'uCoreSize',
-    'uSwirl',
-    'uFold',
-    'uBlackPoint',
-    'uBrightness',
-    'uColorMode',
-    'uGrain',
-    'uGrainIntensity',
-    'uLightMode'
-  ]) {
-    assert.match(effect, new RegExp(uniform), `着色器参数 ${uniform} 需要保留`);
-  }
-
-  // 原组件里 ogl 的角色由这几步原生调用替代
-  assert.match(effect, /drawArrays\(gl\.TRIANGLES, 0, 3\)/);
-
-  assert.equal(pkg.dependencies?.ogl, undefined, 'ogl 不能变成运行时依赖');
-  assert.equal(pkg.devDependencies?.ogl, undefined, 'ogl 也不作为 devDependency 引入');
+test('existing appearance controls keep working without reading or rewriting legacy effect values', async () => {
+  const legacy = { backgroundEffect: 'on', backgroundEffectStrength: '85' };
+  const h = await setupSettings(legacy);
+  h.input('header-opacity', '90');
+  h.input('card-size', '180');
+  h.input('card-radius', '24');
+  h.input('grid-page-margin', '40');
+  h.input('card-gap', '36');
+  h.input('card-title-size', '18');
+  h.input('card-title-tracking', '2');
+  h.input('card-font-family', 'serif', 'change');
+  assert.equal(h.root.style.getPropertyValue('--toolbar-alpha'), '0.90');
+  assert.equal(h.root.style.getPropertyValue('--card-size'), '180px');
+  assert.equal(h.root.style.getPropertyValue('--card-radius'), '24px');
+  assert.equal(h.root.style.getPropertyValue('--grid-page-margin'), '40px');
+  assert.equal(h.root.style.getPropertyValue('--card-gap'), '36px');
+  assert.equal(h.root.style.getPropertyValue('--card-title-size'), '18px');
+  assert.equal(h.root.style.getPropertyValue('--card-meta-size'), '14px');
+  assert.equal(h.root.style.getPropertyValue('--card-title-tracking'), '0.02em');
+  assert.match(h.root.style.getPropertyValue('--font-family'), /Noto Serif SC/);
+  for (const [key, value] of Object.entries(legacy)) assert.equal(h.stored.get(key), value);
+  assert.ok([...h.reads, ...h.writes].every(key => !key.startsWith('backgroundEffect')));
+  assert.equal(h.stored.get('openMode'), 'current');
+  assert.equal(h.stored.get('custom_icon_cache'), h.before.get('custom_icon_cache'));
+  assert.equal(h.stored.get('site_icon_cache_v2'), h.before.get('site_icon_cache_v2'));
+  h.idle();
+  assert.deepEqual(h.activity, { canvases: 0, webgl: 0, observers: 0, frames: 0, timers: 0 });
 });
 
-test('background effect degrades safely and pauses when hidden', async () => {
-  const effect = await read('components/BackgroundEffect.js');
-
-  assert.match(effect, /prefers-reduced-motion: reduce/);
-  assert.match(effect, /IntersectionObserver/);
-  assert.match(effect, /visibilitychange/);
-  assert.match(effect, /webglcontextlost/);
-  assert.match(effect, /background-effect-canvas/);
-  // 投影上限，避免高分屏把 GPU 打满
-  assert.match(effect, /MAX_DPR = 1\.5/);
-
-  const css = await read('css/modules/background-effect.css');
-  assert.match(css, /\.background-effect-layer \{/);
-  assert.match(css, /z-index: -1/);
-  assert.match(css, /pointer-events: none/);
-
-  const mainCss = await read('css/main.css');
-  assert.match(mainCss, /background-effect\.css/, '背景光效样式要进 css/main.css');
-});
-
-test('background effect recreates WebGL resources after a context reset', async () => {
-  const effect = await read('components/BackgroundEffect.js');
-  const restoredStart = effect.lastIndexOf('this.handleContextRestored = () => {');
-  const restored = restoredStart >= 0 ? effect.slice(restoredStart, effect.indexOf('\n      };', restoredStart) + 8) : '';
-
-  assert.match(effect, /createRenderResources\(\)/);
-  assert.match(restored, /this\.createRenderResources\(\);/);
-  assert.match(restored, /this\.contextLost = false;/);
-  assert.match(restored, /catch \(error\)/);
-});
-
-test('light and dark themes both define background effect colors', async () => {
-  const variables = await read('css/modules/variables.css');
-
-  for (const token of [
-    '--background-effect-bg',
-    '--background-effect-color1',
-    '--background-effect-color2',
-    '--background-effect-color3'
-  ]) {
-    assert.equal(
-      (variables.match(new RegExp(`${token}:`, 'g')) || []).length,
-      2,
-      `${token} 需要在亮色和暗色主题各定义一次`
-    );
-  }
-
-  const darkBlock = variables.match(/:root\[data-theme="dark"\] \{[\s\S]*?\n\}/)?.[0] || '';
-  assert.match(darkBlock, /--background-effect-bg: #141414;/);
-});
-
-test('the settings menu owns the background effect switch and strength', async () => {
-  const html = await read('index.html');
-  const settings = await read('components/SettingsPanel.js');
-
-  assert.match(html, /id="background-effect-layer"/);
-  assert.match(html, /id="background-effect-group"/);
-  assert.match(html, /id="background-effect-on"/);
-  assert.match(html, /id="background-effect-off"/);
-  assert.match(html, /id="background-effect-strength"/);
-
-  assert.match(settings, /this\.backgroundEffectKey = 'backgroundEffect'/);
-  assert.match(settings, /this\.backgroundEffectStrengthKey = 'backgroundEffectStrength'/);
-  assert.match(settings, /this\.backgroundEffect\?\.setTheme\(mode\)/);
-  assert.match(settings, /new BackgroundEffect\(/);
-});
-
-test('the ported effect stays a single self-contained component', async () => {
-  assert.equal(await exists('components/MoltenMetal.jsx'), false, '本仓库没有 React，不引入 jsx 组件');
-  assert.equal(await exists('components/MoltenMetal.css'), false);
+test('the shipped page uses a static theme surface with no independent rendering entry point', async () => {
+  const [html, settings, mainCss, baseCss] = await Promise.all([
+    read('index.html'), read('components/SettingsPanel.js'), read('css/main.css'), read('css/modules/base.css')
+  ]);
+  assert.doesNotMatch(html, /background-effect|<canvas\b/);
+  assert.doesNotMatch(settings, /BackgroundEffect|backgroundEffect|requestAnimationFrame|getContext/);
+  assert.doesNotMatch(mainCss, /background-effect/);
+  assert.match(baseCss, /body\s*\{[\s\S]*?background:\s*var\(--color-bg\);/);
+  assert.match(html, /id="menu-panel"[^>]*\binert\b[^>]*aria-hidden="true"/);
+  await assert.rejects(stat(new URL('../components/BackgroundEffect.js', import.meta.url)), { code: 'ENOENT' });
+  await assert.rejects(stat(new URL('../css/modules/background-effect.css', import.meta.url)), { code: 'ENOENT' });
 });

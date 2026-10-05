@@ -1,4 +1,5 @@
 import { discoverSiteIcons } from './core/icons/SiteIconDiscovery.js';
+import { createQuickBookmarkAction } from './core/QuickBookmark.js';
 
 export function createSiteIconMessageHandler(runtime, discover = discoverSiteIcons) {
   return (message, sender, sendResponse) => {
@@ -29,3 +30,8 @@ export function createSiteIconMessageHandler(runtime, discover = discoverSiteIco
 }
 
 chrome.runtime.onMessage.addListener(createSiteIconMessageHandler(chrome.runtime));
+
+const quickBookmark = createQuickBookmarkAction(chrome);
+chrome.action.onClicked.addListener(quickBookmark.handleClick);
+chrome.tabs.onUpdated.addListener(quickBookmark.handleTabUpdated);
+chrome.tabs.onRemoved.addListener(quickBookmark.handleTabRemoved);
