@@ -9,7 +9,7 @@
 
 [功能](#功能) · [安装](#安装) · [使用](#使用) · [快捷键](#快捷键) · [项目结构](#项目结构) · [验证](#验证) · [权限与数据](#权限与数据)
 
-[![版本：0.4.3](https://img.shields.io/badge/version-0.4.3-444444)](manifest.json) [![平台：桌面版 Chrome](https://img.shields.io/badge/platform-Chrome-444444)](#安装) [![扩展格式：Manifest V3](https://img.shields.io/badge/Manifest-V3-444444)](manifest.json)
+[![版本：0.4.3](https://img.shields.io/badge/version-0.4.3-2da44e)](manifest.json) [![平台：桌面版 Chrome](https://img.shields.io/badge/platform-Chrome-0969da)](#安装) [![扩展格式：Manifest V3](https://img.shields.io/badge/Manifest-V3-8250df)](manifest.json) [![CI](https://github.com/XGWNJE/MarkPad/actions/workflows/ci.yml/badge.svg)](https://github.com/XGWNJE/MarkPad/actions/workflows/ci.yml)
 
 </div>
 
