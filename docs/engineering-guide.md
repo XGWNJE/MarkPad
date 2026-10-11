@@ -60,7 +60,7 @@
 | 键 | 内容 |
 | --- | --- |
 | `themeMode` | `light` / `dark` |
-| `cardSize` / `cardRadius` | 卡片尺寸与圆角 |
+| `cardSize` / `cardRadiusPercent` | 卡片尺寸（无级）；圆角为卡片边长的百分比，改尺寸不改圆角 |
 | `gridPageMargin` / `cardGap` | 网格四周留白与卡片间距 |
 | `cardFontFamily` | 全局字体选择 |
 | `cardTitleSize` / `cardTitleTracking` | 卡片标题字号与字距 |

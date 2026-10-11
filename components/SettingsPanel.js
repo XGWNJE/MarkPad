@@ -8,6 +8,20 @@ const CARD_FONT_FAMILIES = Object.freeze({
   serif: '"Noto Serif SC", "Songti SC", serif'
 });
 
+// 圆角以卡片边长的百分比保存，改卡片尺寸不需要重新调整；50% 即圆形。
+const CARD_RADIUS_MAX_PERCENT = 50;
+const CARD_RADIUS_DEFAULT_PERCENT = 10;
+// 卡片宽度与 --card-width 的换算：clamp(116px, 卡片尺寸 * 1.45, 320px)。
+const CARD_WIDTH_MIN = 116;
+const CARD_WIDTH_MAX = 320;
+const CARD_WIDTH_RATIO = 1.45;
+
+function toCardRadiusPercent(value) {
+  const number = Number(value);
+  if (!Number.isFinite(number)) return CARD_RADIUS_DEFAULT_PERCENT;
+  return Math.min(CARD_RADIUS_MAX_PERCENT, Math.max(0, Math.round(number)));
+}
+
 /**
  * SettingsPanel - 设置菜单里的主题、书签卡片与顶部栏外观偏好
  *
@@ -20,7 +34,8 @@ class SettingsPanel {
     this.themeKey = 'themeMode';
     this.headerOpacityKey = 'headerOpacity';
     this.cardSizeKey = 'cardSize';
-    this.cardRadiusKey = 'cardRadius';
+    this.cardRadiusKey = 'cardRadiusPercent';
+    this.legacyCardRadiusKey = 'cardRadius';
     this.cardFontFamilyKey = 'cardFontFamily';
     this.cardTitleSizeKey = 'cardTitleSize';
     this.cardTitleTrackingKey = 'cardTitleTracking';
@@ -29,13 +44,13 @@ class SettingsPanel {
     this.openModeKey = 'openMode';
     this.cardSizeMin = 80;
     this.cardSizeMax = 200;
-    this.cardSizeStep = 20;
+    this.cardSizeStep = 4;
 
     // theme-init.js 已在首次绘制前写好 data-theme，这里只同步界面状态
     this.currentTheme = document.documentElement.dataset.theme === 'dark' ? 'dark' : 'light';
     this.currentHeaderOpacity = this.readPercent(this.headerOpacityKey, 94, 55, 100);
     this.currentCardSize = this.readNumber(this.cardSizeKey, 120, this.cardSizeMin, this.cardSizeMax);
-    this.currentCardRadius = this.readNumber(this.cardRadiusKey, 18, 0, 999);
+    this.currentCardRadiusPercent = this.readCardRadiusPercent();
     this.currentCardFontFamily = this.readChoice(this.cardFontFamilyKey, 'system', CARD_FONT_FAMILIES);
     this.currentCardTitleSize = this.readNumber(this.cardTitleSizeKey, 16, 14, 20);
     this.currentCardTitleTracking = this.readNumber(this.cardTitleTrackingKey, 1, -2, 8);
@@ -75,6 +90,29 @@ class SettingsPanel {
   readChoice(key, fallback, choices) {
     const value = localStorage.getItem(key);
     return value && Object.hasOwn(choices, value) ? value : fallback;
+  }
+
+  readStoredNumber(key) {
+    const raw = localStorage.getItem(key);
+    if (raw === null) return null;
+    const value = Number(raw);
+    return Number.isFinite(value) ? value : null;
+  }
+
+  /** 旧版把圆角存成像素，按当时的卡片宽度换算成百分比并改写存储。 */
+  readCardRadiusPercent() {
+    const stored = this.readStoredNumber(this.cardRadiusKey);
+    if (stored !== null) return toCardRadiusPercent(stored);
+    const legacy = this.readStoredNumber(this.legacyCardRadiusKey);
+    if (legacy === null) return CARD_RADIUS_DEFAULT_PERCENT;
+    const percent = toCardRadiusPercent(legacy / this.cardWidthFor(this.currentCardSize) * 100);
+    localStorage.setItem(this.cardRadiusKey, String(percent));
+    localStorage.removeItem(this.legacyCardRadiusKey);
+    return percent;
+  }
+
+  cardWidthFor(size) {
+    return Math.min(CARD_WIDTH_MAX, Math.max(CARD_WIDTH_MIN, size * CARD_WIDTH_RATIO));
   }
 
   // ========== 设置分页 ==========
@@ -225,6 +263,8 @@ class SettingsPanel {
       this.setCardSize(Number(sizeInput.value));
     });
 
+    if (radiusInput) radiusInput.value = String(this.currentCardRadiusPercent);
+    if (radiusValue) radiusValue.textContent = `${this.currentCardRadiusPercent}%`;
     radiusInput?.addEventListener('input', () => this.setCardRadius(Number(radiusInput.value)));
     const marginInput = document.getElementById('grid-page-margin');
     const marginValue = document.getElementById('grid-page-margin-value');
@@ -248,7 +288,6 @@ class SettingsPanel {
     });
 
     syncSize();
-    this.syncCardRadiusControl(radiusInput, radiusValue);
   }
 
   bindCardTypographyControls() {
@@ -284,33 +323,20 @@ class SettingsPanel {
   }
 
   setCardSize(size) {
-    this.currentCardSize = Math.min(this.cardSizeMax, Math.max(this.cardSizeMin, size));
+    this.currentCardSize = Math.min(this.cardSizeMax, Math.max(this.cardSizeMin, Math.round(size)));
     localStorage.setItem(this.cardSizeKey, String(this.currentCardSize));
     document.documentElement.style.setProperty('--card-size', `${this.currentCardSize}px`);
     const value = document.getElementById('card-size-value');
     if (value) value.textContent = `${this.currentCardSize}px`;
-    this.syncCardRadiusControl();
-    this.applyCardRadius();
   }
 
-  getCardRadiusLimit() {
-    const card = document.querySelector('.bookmark-card');
-    const side = card?.getBoundingClientRect().width || Math.min(320, Math.max(116, this.currentCardSize * 1.45));
-    return Math.max(0, Math.floor(side / 2));
-  }
-
-  syncCardRadiusControl(input = document.getElementById('card-radius'), value = document.getElementById('card-radius-value')) {
-    const limit = this.getCardRadiusLimit();
-    this.currentCardRadius = Math.min(limit, this.currentCardRadius);
-    localStorage.setItem(this.cardRadiusKey, String(this.currentCardRadius));
-    if (input) { input.max = String(limit); input.value = String(this.currentCardRadius); }
-    if (value) value.textContent = `${this.currentCardRadius}px`;
-  }
-
-  setCardRadius(radius) {
-    this.currentCardRadius = Math.min(this.getCardRadiusLimit(), Math.max(0, Math.round(radius)));
-    localStorage.setItem(this.cardRadiusKey, String(this.currentCardRadius));
-    this.syncCardRadiusControl();
+  setCardRadius(percent) {
+    this.currentCardRadiusPercent = toCardRadiusPercent(percent);
+    localStorage.setItem(this.cardRadiusKey, String(this.currentCardRadiusPercent));
+    const input = document.getElementById('card-radius');
+    const value = document.getElementById('card-radius-value');
+    if (input) input.value = String(this.currentCardRadiusPercent);
+    if (value) value.textContent = `${this.currentCardRadiusPercent}%`;
     this.applyCardRadius();
   }
 
@@ -331,12 +357,11 @@ class SettingsPanel {
   }
 
   applyCardRadius() {
-    document.documentElement.style.setProperty('--card-radius', `${this.currentCardRadius}px`);
+    document.documentElement.style.setProperty('--card-radius', `${this.currentCardRadiusPercent}%`);
   }
 
   applyCardPreferences() {
     this.setCardSize(this.currentCardSize);
-    this.currentCardRadius = Math.min(this.getCardRadiusLimit(), this.currentCardRadius);
     this.applyCardRadius();
     this.setGridPageMargin(this.currentGridPageMargin);
     this.setCardGap(this.currentCardGap);

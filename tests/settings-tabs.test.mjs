@@ -80,19 +80,21 @@ function parsePage(html) {
   return { document, ids };
 }
 
-async function setupSettings() {
+async function setupSettings(overrides = {}) {
   const [html, settings, busSource] = await Promise.all([read('index.html'), read('components/SettingsPanel.js'), read('core/EventBus.js')]);
   const { document, ids } = parsePage(html);
   const stored = new Map(Object.entries({
-    themeMode: 'dark', headerOpacity: '82', cardSize: '160', cardRadius: '20',
+    themeMode: 'dark', headerOpacity: '82', cardSize: '160', cardRadiusPercent: '20',
     gridPageMargin: '36', cardGap: '32', cardFontFamily: 'yahei', cardTitleSize: '20',
     cardTitleTracking: '4', openMode: 'current', backgroundEffect: 'on', backgroundEffectStrength: '85',
-    custom_icon_cache: '{"keep":"custom"}'
+    custom_icon_cache: '{"keep":"custom"}',
+    ...overrides
   }));
   const writes = [];
   const localStorage = {
     getItem: key => stored.get(key) ?? null,
-    setItem(key, value) { writes.push(key); stored.set(key, String(value)); }
+    setItem(key, value) { writes.push(key); stored.set(key, String(value)); },
+    removeItem(key) { stored.delete(key); }
   };
   const trigger = ids.get('menu-trigger');
   document.activeElement = trigger;
@@ -229,13 +231,43 @@ test('appearance and text values survive repeated page switches and update the s
   assert.equal(h.ids.get('card-title-size').value, '18');
   assert.equal(h.ids.get('card-title-tracking').value, '2');
   assert.equal(h.stored.get('cardSize'), '180');
-  assert.equal(h.stored.get('cardRadius'), '24');
+  assert.equal(h.stored.get('cardRadiusPercent'), '24');
   assert.equal(h.stored.get('cardTitleSize'), '18');
   assert.equal(h.stored.get('openMode'), 'new');
   assert.equal(h.stored.get('backgroundEffect'), 'on');
   assert.equal(h.stored.get('backgroundEffectStrength'), '85');
   assert.equal(h.stored.get('custom_icon_cache'), '{"keep":"custom"}');
   assert.equal(h.document.documentElement.style.getPropertyValue('--card-title-size'), '18px');
+});
+
+test('card radius is a percentage of the card side and survives card size changes', async () => {
+  const h = await setupSettings();
+  assert.equal(h.ids.get('card-radius').value, '20');
+  assert.equal(h.document.documentElement.style.getPropertyValue('--card-radius'), '20%');
+
+  h.input('card-size', '180');
+  assert.equal(h.document.documentElement.style.getPropertyValue('--card-size'), '180px');
+  assert.equal(h.document.documentElement.style.getPropertyValue('--card-radius'), '20%');
+  assert.equal(h.stored.get('cardRadiusPercent'), '20');
+
+  // 50% 是上限（圆形），超出直接夹取。
+  h.input('card-radius', '50');
+  assert.equal(h.document.documentElement.style.getPropertyValue('--card-radius'), '50%');
+  h.input('card-radius', '80');
+  assert.equal(h.stored.get('cardRadiusPercent'), '50');
+  assert.equal(h.ids.get('card-radius-value').textContent, '50%');
+});
+
+test('legacy pixel card radius migrates once into a percentage of the card width', async () => {
+  // 旧键 18px、卡片尺寸 160 → 卡片宽 232px → 8%。
+  const h = await setupSettings({ cardRadiusPercent: undefined, cardRadius: '18' });
+  assert.equal(h.stored.get('cardRadiusPercent'), '8');
+  assert.equal(h.stored.has('cardRadius'), false);
+  assert.equal(h.document.documentElement.style.getPropertyValue('--card-radius'), '8%');
+
+  // 旧值超过卡片一半时按 50%（圆形）夹取。
+  const clamped = await setupSettings({ cardRadiusPercent: undefined, cardRadius: '200', cardSize: '80' });
+  assert.equal(clamped.stored.get('cardRadiusPercent'), '50');
 });
 
 test('theme and open behavior choices synchronize visual and pressed state from stored values and clicks', async () => {

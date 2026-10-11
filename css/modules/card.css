@@ -102,16 +102,16 @@
   transform: none;
 }
 
-/* 方形卡片里图标只占中间一块，避免品牌 SVG 贴到卡片边缘 */
+/* 图标内容默认铺满卡片，缩放 100% 就是填满；默认文件夹图标单独收窄。 */
 .card-icon svg {
-  width: 62%;
-  height: 62%;
+  width: 100%;
+  height: 100%;
   transform: scale(var(--icon-content-scale, 1));
 }
 
 .card-icon-image {
-  width: 44%;
-  height: 44%;
+  width: 100%;
+  height: 100%;
   display: block;
   object-fit: contain;
   transform: scale(var(--icon-content-scale, 1));

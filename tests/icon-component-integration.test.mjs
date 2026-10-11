@@ -24,6 +24,15 @@ test('website icons use an isolated image element and are not injected as remote
   assert.match(source, /image\.referrerPolicy = 'no-referrer'/);
 });
 
+test('icon content fills the card by default in both rendering paths', async () => {
+  const cardCss = await read('css/modules/card.css');
+
+  assert.match(cardCss, /\.card-icon svg \{[^}]*width: 100%;[^}]*height: 100%;[^}]*\}/);
+  assert.match(cardCss, /\.card-icon-image \{[^}]*width: 100%;[^}]*height: 100%;[^}]*object-fit: contain;[^}]*\}/);
+  // 缩放 100% 即填满；默认文件夹图标是应用自身的线性图形，保持原来的比例。
+  assert.match(cardCss, /\.card-icon\.folder-default \.card-folder-svg \{[^}]*width: 56%;[^}]*\}/);
+});
+
 test('IconStudio offers only curated candidates and original-file upload controls', async () => {
   const source = await read('components/IconStudio.js');
 

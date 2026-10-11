@@ -58,8 +58,8 @@ test('header keeps settings while creation actions belong to the grid', async ()
   assert.match(menuHtml, /<div class="menu-section-label">书签卡片<\/div>/);
   assert.match(menuHtml, /<div class="menu-section-label">顶部栏<\/div>/);
   assert.match(menuHtml, /id="header-opacity"/);
-  assert.match(menuHtml, /id="card-size"[^>]*min="80"[^>]*max="200"[^>]*step="20"/);
-  assert.match(menuHtml, /id="card-radius"/);
+  assert.match(menuHtml, /id="card-size"[^>]*min="80"[^>]*max="200"[^>]*step="1"/);
+  assert.match(menuHtml, /id="card-radius"[^>]*min="0"[^>]*max="50"[^>]*step="1"/);
   assert.match(menuHtml, /id="grid-page-margin"/);
   assert.match(menuHtml, /id="card-gap"[^>]*min="8"[^>]*max="64"[^>]*step="4"/);
   assert.match(menuHtml, /id="card-font-family"/);
@@ -83,8 +83,8 @@ test('header keeps settings while creation actions belong to the grid', async ()
   assert.match(settingsPanel, /setCardGap/);
   assert.match(gridCss, /gap:\s*var\(--card-gap\);/);
   assert.match(settingsPanel, /applyCardTypography/);
-  assert.match(settingsPanel, /getCardRadiusLimit\(\)/);
-  assert.match(settingsPanel, /getBoundingClientRect\(\)\.width/);
+  assert.match(settingsPanel, /--card-radius[^\n]*\$\{this\.currentCardRadiusPercent\}%/);
+  assert.doesNotMatch(settingsPanel, /getCardRadiusLimit|getBoundingClientRect/);
   assert.match(settingsPanel, /settings:adjustCardSize/);
   assert.doesNotMatch(settingsPanel, /wallpaper/i);
   assert.match(cardCss, /--card-radius/);

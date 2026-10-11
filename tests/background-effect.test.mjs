@@ -11,7 +11,7 @@ async function setupSettings(legacy = {}, { reducedMotion = false } = {}) {
     read('components/SettingsPanel.js'), read('core/EventBus.js'), read('index.html')
   ]);
   const stored = new Map(Object.entries({
-    themeMode: 'dark', headerOpacity: '82', cardSize: '160', cardRadius: '20',
+    themeMode: 'dark', headerOpacity: '82', cardSize: '160', cardRadiusPercent: '20',
     gridPageMargin: '36', cardGap: '32', cardFontFamily: 'yahei',
     cardTitleSize: '20', cardTitleTracking: '4', openMode: 'current',
     custom_icon_cache: '{"keep":"custom"}', site_icon_cache_v3: '{"keep":"website"}',
@@ -104,7 +104,7 @@ for (const [name, legacy] of legacyCases) {
       assert.equal(h.root.dataset.theme, 'dark');
       assert.equal(h.root.style.getPropertyValue('--toolbar-alpha'), '0.82');
       assert.equal(h.root.style.getPropertyValue('--card-size'), '160px');
-      assert.equal(h.root.style.getPropertyValue('--card-radius'), '20px');
+      assert.equal(h.root.style.getPropertyValue('--card-radius'), '20%');
       assert.equal(h.root.style.getPropertyValue('--card-title-size'), '20px');
       assert.equal(h.root.style.getPropertyValue('--card-title-tracking'), '0.04em');
       assert.equal(h.root.style.getPropertyValue('--grid-page-margin'), '36px');
@@ -141,7 +141,7 @@ test('existing appearance controls keep working without reading or rewriting leg
   h.input('card-font-family', 'serif', 'change');
   assert.equal(h.root.style.getPropertyValue('--toolbar-alpha'), '0.90');
   assert.equal(h.root.style.getPropertyValue('--card-size'), '180px');
-  assert.equal(h.root.style.getPropertyValue('--card-radius'), '24px');
+  assert.equal(h.root.style.getPropertyValue('--card-radius'), '24%');
   assert.equal(h.root.style.getPropertyValue('--grid-page-margin'), '40px');
   assert.equal(h.root.style.getPropertyValue('--card-gap'), '36px');
   assert.equal(h.root.style.getPropertyValue('--card-title-size'), '18px');
