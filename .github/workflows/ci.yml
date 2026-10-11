@@ -1,0 +1,20 @@
+name: CI
+
+# 扩展本身无构建步骤，测试只用 Node 内置模块，因此不需要安装依赖。
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - run: npm test

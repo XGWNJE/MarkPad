@@ -23,7 +23,7 @@
 | `components/CardNavigation.js` | 网页直接打开、重复操作防护与文件夹动效清理 |
 | `css/` / `icons/` / `assets/` | 样式、应用图标、展示资源；样式分工见[视觉规范](markpad-brand-visual-guide.md#样式维护) |
 | `vendor/` / `scripts/vendor-gsap.mjs` | 内置 GSAP 及其生成脚本 |
-| `tests/` / `docs/` | Node 行为测试与当前专题文档 |
+| `.github/workflows/` / `tests/` / `docs/` | CI 工作流、Node 行为测试与当前专题文档 |
 
 ## 书签与事件
 
@@ -96,7 +96,7 @@
 
 ## 验证
 
-仓库根目录执行 `npm test` 可运行全部 Node 行为测试，无需安装开发依赖。按修改范围也可选择以下命令。
+仓库根目录执行 `npm test` 可运行全部 Node 行为测试，无需安装开发依赖。推送到 GitHub 或提交合并请求时，`.github/workflows/ci.yml` 在 Node 24 上执行同一命令。按修改范围也可选择以下命令。
 
 | 范围 | 命令 |
 | --- | --- |

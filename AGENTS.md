@@ -31,6 +31,7 @@ MarkPad 的 Agent 协作入口。先遵循用户全局规则，再遵循本文�
 ## 验证与交付
 
 - 完成后按[验证清单](docs/engineering-guide.md#验证)执行快速检查，修复本次改动引入的问题。
+- 推送与合并请求由 [CI](.github/workflows/ci.yml) 执行 `npm test`。
 - 版本或 README 版本信息变化时运行 `node --test tests/version-system.test.mjs`。
 - 视觉检查或较长操作链路开始前，让用户选择由 Agent 验证或按验收步骤自行检查。
 - Chrome 运行态验证优先使用用户真实 session；涉及真实书签写入或删除时，先说明风险，采用只读路径、测试数据或用户确认的隔离方案。
