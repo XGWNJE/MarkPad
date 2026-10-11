@@ -800,16 +800,21 @@ class BookmarkCard {
     }
   }
 
-  /** 本地字节也解不出来时不保留破图：清除该地址缓存并自动重试一次。 */
+  /**
+   * 本地字节也解不出来时不留破图：无论第几次失败都退回文字面，并把该地址降级为
+   * 带退避的失败记录，避免每个新标签页重复下载同一份坏数据。
+   */
   handleSiteIconDisplayError(iconData) {
-    if (this.destroyed || iconData?.source !== 'site' || this.siteIconRetried) return;
-    this.siteIconRetried = true;
-    BookmarkStore.clearSiteIcon(this.data.url);
+    if (this.destroyed || iconData?.source !== 'site') return;
+    // 迟到的旧图片错误不能影响当前显示的图标。
+    if (this.siteIconModel?.value !== iconData.value) return;
     this.siteIconModel = null;
     this.setIconAvailable(false);
     const iconEl = this.element?.querySelector('.card-icon');
     if (iconEl) applyIconModelToElement(iconEl, null);
-    this.resolveSiteIconWhenVisible();
+    if (this.siteIconRetried) return;
+    this.siteIconRetried = true;
+    BookmarkStore.markSiteIconDisplayFailure(this.data.url, iconData.value);
   }
 
   async resolveAutoSiteBackground(iconData) {

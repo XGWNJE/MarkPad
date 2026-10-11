@@ -43,10 +43,14 @@ export async function resolveSiteIcon(pageUrl, options = {}) {
   }
 
   let downloaded = 0;
+  let failedDownloads = 0;
   for (const candidate of response.candidates) {
     if (!isHttpUrl(candidate?.url)) continue;
     const icon = await runtime.sendMessage({ type: 'site-icons:fetch', url: candidate.url });
-    if (!icon?.ok || !icon.dataUrl) continue;
+    if (!icon?.ok || !icon.dataUrl) {
+      failedDownloads += 1;
+      continue;
+    }
     downloaded += 1;
     if (!await validateImage(icon.dataUrl)) continue;
     return {
@@ -62,8 +66,8 @@ export async function resolveSiteIcon(pageUrl, options = {}) {
     };
   }
 
-  // 只有「网页读到了、图标字节也拿到了、但都不可解码」才算站点图标本身不可用，
-  // 退避更长；其余情况按网络问题处理，短时间内自动重试。
-  const unusable = response.reachable === true && downloaded > 0;
+  // 只有「网页读到了、每个候选都拿到了字节、但都不可解码」才算站点图标本身不可用，
+  // 退避更长；只要有一次下载失败（网络/超时）就按网络问题处理，短时间内自动重试。
+  const unusable = response.reachable === true && downloaded > 0 && failedDownloads === 0;
   return { model: null, failure: unusable ? 'unusable' : 'unreachable' };
 }

@@ -175,6 +175,35 @@ test('background download converts bytes to a data URL and refuses unusable resp
       arrayBuffer: () => assert.fail('Oversized icons must not be read into memory')
     })
   }), /size limit/);
+
+  // 谎报长度时按流式读取，超限立即中止下载。
+  let cancelled = false;
+  await assert.rejects(fetchSiteIconData('https://example.com/streamed.png', {
+    fetchImpl: async () => ({
+      ok: true,
+      url: 'https://example.com/streamed.png',
+      headers: { get: () => null },
+      body: { getReader: () => ({
+        read: async () => ({ done: false, value: new Uint8Array(SITE_ICON_MAX_BYTES) }),
+        cancel: async () => { cancelled = true; }
+      }) }
+    })
+  }), /size limit/);
+  assert.equal(cancelled, true);
+
+  // 远端 header 不能改写 data URL 结构，类型按来源推断。
+  const rewritten = await fetchSiteIconData('https://example.com/icon.svg', {
+    fetchImpl: async () => iconResponse(Uint8Array.from([1]), 'image/svg+xml,<svg onload="alert(1)">')
+  });
+  assert.equal(rewritten.contentType, 'image/svg+xml');
+  assert.equal(rewritten.dataUrl.split(',').length, 2);
+
+  const bogus = await fetchSiteIconData('https://example.com/icon', {
+    fetchImpl: async () => iconResponse(Uint8Array.from([1]), 'image/png,evil')
+  });
+  assert.equal(bogus.contentType, 'image/png');
+  assert.ok(bogus.dataUrl.startsWith('data:image/png;base64,'), bogus.dataUrl);
+  assert.equal(bogus.dataUrl.split(',').length, 2);
 });
 
 test('client rejects transport failures instead of returning a cacheable no-icon result', async () => {
@@ -236,4 +265,14 @@ test('client skips unsafe URLs and reports why no icon could be used', async () 
     validateImage: async () => false
   });
   assert.deepEqual(offline, { model: null, failure: 'unreachable' });
+
+  // 只要有一次候选下载失败，就按网络问题处理而不是把图标判成永久不可用。
+  const mixed = await resolveSiteIcon('https://example.com', {
+    runtime: backgroundFor(
+      [{ url: 'https://example.com/broken.png' }, { url: 'https://example.com/missing.png' }],
+      { 'https://example.com/broken.png': { dataUrl: 'data:image/png;base64,bm9wZQ==', byteLength: 4, contentType: 'image/png' } }
+    ).runtime,
+    validateImage: async () => false
+  });
+  assert.deepEqual(mixed, { model: null, failure: 'unreachable' });
 });

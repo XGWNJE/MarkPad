@@ -87,28 +87,48 @@ test('missing and failed website icons show text until an icon is applied', () =
   assert.equal(classes.has('iconless'), false);
 });
 
-test('an undecodable cached icon clears its address cache and retries once', () => {
+test('an undecodable cached icon always falls back to the text surface and is demoted once', () => {
   const { icon, classes, card } = prepare();
 
-  const cleared = [];
-  const retries = [];
-  BookmarkStore.clearSiteIcon = url => cleared.push(url);
-  card.resolveSiteIconWhenVisible = () => retries.push('retry');
+  const demoted = [];
+  BookmarkStore.markSiteIconDisplayFailure = (url, value) => demoted.push([url, value]);
 
   const model = { type: 'image', value: 'data:image/png;base64,broken', source: 'site' };
   card.updateIcon(model);
   assert.equal(card.siteIconModel, model);
 
-  // 解码失败时不留破图：清掉该地址缓存并自动重试一次。
+  // 解码失败时不留破图：退回文字面，并把这份字节降级为带退避的失败记录。
   icon.image.dispatch('error');
   assert.equal(classes.has('iconless'), true);
   assert.equal(icon.innerHTML, '');
   assert.equal(card.siteIconModel, null);
-  assert.deepEqual(cleared, ['https://example.com']);
-  assert.deepEqual(retries, ['retry']);
+  assert.deepEqual(demoted, [['https://example.com', model.value]]);
 
-  // 第二次失败不再循环重试。
+  // 第二次失败同样不留破图，但不会再写一次降级记录。
   card.updateIcon(model);
   icon.image.dispatch('error');
-  assert.deepEqual(retries, ['retry']);
+  assert.equal(classes.has('iconless'), true);
+  assert.equal(icon.innerHTML, '');
+  assert.equal(demoted.length, 1);
+});
+
+test('late errors from a replaced icon never clear the icon that is displayed now', () => {
+  const { icon, classes, card } = prepare();
+
+  const demoted = [];
+  BookmarkStore.markSiteIconDisplayFailure = (url, value) => demoted.push([url, value]);
+
+  const stale = { type: 'image', value: 'data:image/gif;base64,old', source: 'site' };
+  card.updateIcon(stale);
+  const staleImage = icon.image;
+
+  const current = { type: 'image', value: 'data:image/gif;base64,new', source: 'site' };
+  card.updateIcon(current);
+  assert.equal(card.siteIconModel, current);
+
+  // 旧图片的迟到 error 不能影响当前图标，也不能清掉当前地址的缓存。
+  staleImage.dispatch('error');
+  assert.equal(card.siteIconModel, current);
+  assert.equal(classes.has('iconless'), false);
+  assert.deepEqual(demoted, []);
 });

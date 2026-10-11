@@ -81,8 +81,11 @@ async function setupStore(t, handleMessage, { mockSave = true } = {}) {
   const { default: store } = await import('../core/BookmarkStore.js');
   if (store.siteIconSaveTimer !== null) clearTimeout(store.siteIconSaveTimer);
   store.siteIconSaveTimer = null;
+  store.storageInitialized = true;
   store.siteIcons = new Map();
   store.siteIconPending.clear();
+  store.siteIconEpochs.clear();
+  store.siteIconBudget = 2_000_000;
   if (mockSave) t.mock.method(store, '_saveSiteIcons', () => {});
   return { store, calls };
 }
@@ -189,4 +192,117 @@ test('a burst of icon resolutions and hidden pages write the cache only once per
   assert.equal(writes.length, 1);
   store._flushSiteIcons();
   assert.deepEqual(writes, [['site_icon_cache_v3', 3], ['site_icon_cache_v3', 4]]);
+});
+
+test('initStorage drops the v2 cache and every localStorage mirror of the icon cache', async t => {
+  const events = Object.fromEntries(['onCreated', 'onRemoved', 'onChanged', 'onMoved', 'onChildrenReordered'].map(name => [name, { addListener() {} }]));
+  const stored = {
+    site_icon_cache_v2: { 'https://legacy.example/': { model: { type: 'image', value: 'https://legacy.example/favicon.ico' } } },
+    site_icon_cache_v3: { 'https://kept.example/': { model: { type: 'image', value: 'data:image/png;base64,AA==' }, checkedAt: 1 } }
+  };
+  const removed = [];
+  const localStore = new Map([
+    ['site_icon_cache_v2', '{"legacy":true}'],
+    ['site_icon_cache_v3', '{"https://stale.example/":{"model":{"type":"image","value":"https://stale.example/favicon.ico"}}}']
+  ]);
+  globalThis.chrome = {
+    bookmarks: events,
+    storage: { local: {
+      get: async key => Object.fromEntries((Array.isArray(key) ? key : [key]).filter(k => stored[k] !== undefined).map(k => [k, stored[k]])),
+      set: async () => {},
+      remove: async key => { removed.push(key); delete stored[key]; }
+    } }
+  };
+  globalThis.localStorage = {
+    getItem: key => (localStore.has(key) ? localStore.get(key) : null),
+    setItem: (key, value) => localStore.set(key, String(value)),
+    removeItem: key => localStore.delete(key)
+  };
+  t.after(() => { delete globalThis.chrome; delete globalThis.localStorage; });
+
+  const { default: store } = await import('../core/BookmarkStore.js');
+  store.storageInitialized = false;
+  store.siteIcons = null;
+  await store.initStorage();
+
+  assert.deepEqual(removed, ['site_icon_cache_v2'], '只保存远程地址的 v2 缓存必须清除');
+  assert.deepEqual([...store.siteIcons.keys()], ['https://kept.example/'], 'localStorage 里的过期副本不能合并回来');
+  assert.equal(localStore.has('site_icon_cache_v2'), false);
+  assert.equal(localStore.has('site_icon_cache_v3'), false, '图标缓存的 localStorage 镜像不再保留');
+  assert.equal(store.getSiteIcon('https://stale.example'), null);
+});
+
+test('the site icon cache is never mirrored into localStorage', async t => {
+  const { store } = await setupStore(t, () => ({ ok: true, candidates: [], reachable: false }), { mockSave: false });
+  const writes = [];
+  const localWrites = [];
+  t.mock.method(store, '_writeChromeStorageObject', (key, value) => writes.push([key, Object.keys(value).length]));
+  const previousLocalStorage = globalThis.localStorage;
+  globalThis.localStorage = { getItem: () => null, setItem: key => localWrites.push(key), removeItem() {} };
+  t.after(() => { globalThis.localStorage = previousLocalStorage; });
+
+  await store.resolveSiteIcon('https://a.example');
+  store._flushSiteIcons();
+  assert.deepEqual(writes, [['site_icon_cache_v3', 1]]);
+  assert.deepEqual(localWrites, [], '过期副本会复活已淘汰或已清除的条目');
+});
+
+test('eviction keeps the most recently used bytes and drops failures last', async t => {
+  const { store } = await setupStore(t, () => ({ ok: true, candidates: [], reachable: false }));
+  const payload = `data:image/png;base64,${'A'.repeat(80_000)}`;
+  const iconEntry = checkedAt => ({ model: { type: 'image', value: payload, byteLength: 80_000, source: 'site' }, checkedAt });
+  store.siteIcons.set('https://a.example/', iconEntry(10));
+  store.siteIcons.set('https://b.example/', iconEntry(20));
+  store.siteIcons.set('https://c.example/', { model: null, failure: 'unreachable', checkedAt: 1, retryAt: Date.now() + 60_000 });
+  store.siteIconBudget = 200_000;
+
+  // 命中 a 后它成为最近使用，淘汰应落在 b 上，体积很小的失败记录留到最后。
+  store.getSiteIconEntry('https://a.example');
+  store._evictSiteIcons();
+  assert.deepEqual([...store.siteIcons.keys()], ['https://a.example/', 'https://c.example/']);
+});
+
+test('a rejected storage write halves the budget and flushes again', async t => {
+  const { store } = await setupStore(t, () => ({ ok: true, candidates: [], reachable: false }), { mockSave: false });
+  const payload = `data:image/png;base64,${'A'.repeat(80_000)}`;
+  const iconEntry = checkedAt => ({ model: { type: 'image', value: payload, byteLength: 80_000, source: 'site' }, checkedAt });
+  for (const [index, key] of ['https://a.example/', 'https://b.example/', 'https://c.example/', 'https://d.example/'].entries()) {
+    store.siteIcons.set(key, iconEntry(index + 1));
+  }
+  store.siteIconBudget = 500_000;
+  const attempted = [];
+  let rejectFirst = true;
+  t.mock.method(store, '_writeChromeStorageObject', (key, value) => {
+    attempted.push(Object.keys(value).length);
+    if (rejectFirst) {
+      rejectFirst = false;
+      return Promise.reject(new Error('QUOTA_BYTES exceeded'));
+    }
+    return Promise.resolve();
+  });
+
+  store._flushSiteIcons();
+  await new Promise(resolve => setImmediate(resolve));
+  assert.deepEqual(attempted, [4, 2], '写入被拒绝后应按半预算淘汰再写一次');
+  assert.equal(store.siteIconBudget, 250_000);
+});
+
+test('clearing an address discards the resolution that is still running', async t => {
+  const url = 'https://example.com/page';
+  const dataUrl = 'data:image/png;base64,AA==';
+  useImageStub(t);
+  const { store, calls } = await setupStore(t, message => message.type === 'site-icons:discover'
+    ? { ok: true, candidates: [{ url: 'https://example.com/icon.png', source: 'link:icon' }], reachable: true }
+    : { ok: true, dataUrl, byteLength: 2, contentType: 'image/png' });
+
+  const first = store.resolveSiteIcon(url);
+  store.clearSiteIcon(url);
+  assert.equal(store.siteIconPending.size, 0, '清除后不再复用进行中的旧请求');
+  assert.equal(await first, null, '迟到的结果必须丢弃');
+  assert.equal(store.siteIcons.has(url), false, '迟到的结果不能写回已清除的缓存');
+
+  const callsBefore = calls.length;
+  const model = await store.resolveSiteIcon(url);
+  assert.equal(model.value, dataUrl);
+  assert.ok(calls.length > callsBefore, '清除后的解析必须重新请求');
 });

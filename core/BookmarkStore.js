@@ -11,11 +11,13 @@ const SITE_ICON_STORAGE_KEY = 'site_icon_cache_v3';
 const LEGACY_SITE_ICON_STORAGE_KEYS = ['site_icon_cache_v2'];
 const SITE_ICON_BACKGROUND_STORAGE_KEY = 'site_icon_background_cache_v1';
 // 取不到图标时按失败原因退避重试：网络抖动只影响很短时间，站点图标本身不可用才拉长间隔。
-const SITE_ICON_RETRY_DELAYS = { unreachable: 2 * 60 * 1000, unusable: 6 * 60 * 60 * 1000 };
+const SITE_ICON_RETRY_DELAYS = { unreachable: 2 * 60 * 1000, unreadable: 2 * 60 * 1000, unusable: 6 * 60 * 60 * 1000 };
+const SITE_ICON_FAILURE_KINDS = Object.freeze(Object.keys(SITE_ICON_RETRY_DELAYS));
 const SITE_ICON_RETRY_MAX_DELAY = 24 * 60 * 60 * 1000;
-// 序列化后允许占用的字符上限，超出后淘汰最久未校验的条目。
+// 序列化后允许占用的字符上限，超出后淘汰最久未使用的条目；写入超限时按半预算重试。
 const SITE_ICON_CACHE_MAX_CHARS = 2_000_000;
-// 一批图标同时解析时合并写入，避免整份缓存被反复序列化和同步写入 localStorage。
+const SITE_ICON_CACHE_MIN_CHARS = 200_000;
+// 一批图标同时解析时合并写入，避免整份缓存被反复序列化和写入。
 const SITE_ICON_SAVE_DELAY = 300;
 
 class BookmarkStore {
@@ -36,7 +38,9 @@ class BookmarkStore {
     this.customIcons = null; // 延迟加载
     this.storageInitialized = false;
     this.siteIconPending = new Map();
+    this.siteIconEpochs = new Map();
     this.siteIconSaveTimer = null;
+    this.siteIconBudget = SITE_ICON_CACHE_MAX_CHARS;
     this.flushSiteIconsOnHide();
 
     // 监听 Chrome 书签变更
@@ -46,13 +50,16 @@ class BookmarkStore {
   async initStorage() {
     if (this.storageInitialized) return;
     await this._dropLegacySiteIcons();
-    this.siteIcons = await this._loadMapFromStorage(this.siteIconStorageKey);
+    this.siteIcons = await this._loadSiteIconsFromStorage();
     this.siteIconBackgrounds = await this._loadMapFromStorage(this.siteIconBackgroundStorageKey);
     this.customIcons = await this._loadMapFromStorage(this.customIconStorageKey);
     this.storageInitialized = true;
   }
 
-  /** v2 只保存远程 URL，无法离线显示；升级时清除，由可见卡片重新解析一次。 */
+  /**
+   * 网站图标缓存只以 chrome.storage.local 为准。v2 只保存远程 URL，已淘汰或已清除的
+   * 条目还可能留在 localStorage 镜像里，升级时一并清除，避免过期副本把它们合并回来。
+   */
   async _dropLegacySiteIcons() {
     let stored = {};
     try {
@@ -61,28 +68,33 @@ class BookmarkStore {
       console.warn('[MarkPad] 读取旧图标缓存失败', error);
     }
     for (const key of LEGACY_SITE_ICON_STORAGE_KEYS) {
-      let present = Boolean(stored?.[key]);
-      if (!present) {
-        try {
-          present = localStorage.getItem(key) !== null;
-        } catch (error) {
-          console.warn(`[MarkPad] 读取旧图标缓存 ${key} 失败`, error);
-        }
-      }
-      if (!present) continue;
+      if (!stored?.[key]) continue;
       try {
         await chrome.storage.local.remove(key);
       } catch (error) {
         console.warn(`[MarkPad] 清理旧图标缓存 ${key} 失败`, error);
       }
+    }
+    for (const key of [...LEGACY_SITE_ICON_STORAGE_KEYS, this.siteIconStorageKey]) {
       try {
-        localStorage.removeItem(key);
+        if (localStorage.getItem(key) !== null) localStorage.removeItem(key);
       } catch (error) {
-        console.warn(`[MarkPad] 清理旧图标缓存 ${key} 失败`, error);
+        console.warn(`[MarkPad] 清理图标缓存镜像 ${key} 失败`, error);
       }
     }
   }
 
+  async _loadSiteIconsFromStorage() {
+    let stored = null;
+    try {
+      stored = (await chrome.storage.local.get(this.siteIconStorageKey))?.[this.siteIconStorageKey] || null;
+    } catch (error) {
+      console.warn('[MarkPad] 读取网站图标缓存失败', error);
+    }
+    return new Map(Object.entries(stored || {}));
+  }
+
+  /** 图标偏好与自定义图标仍然合并已有 localStorage 数据，同键以 Chrome 存储为准。 */
   async _loadMapFromStorage(key) {
     const localValue = this._readLocalStorageObject(key);
     let storedValue = null;
@@ -117,9 +129,12 @@ class BookmarkStore {
       const result = chrome.storage.local.set({ [key]: value });
       if (result?.catch) {
         result.catch(error => console.warn(`[MarkPad] ${key} 写入 chrome.storage.local 失败`, error));
+        return result;
       }
+      return null;
     } catch (error) {
       console.warn(`[MarkPad] ${key} 写入 chrome.storage.local 失败`, error);
+      return null;
     }
   }
 
@@ -315,7 +330,8 @@ class BookmarkStore {
 
   _loadSiteIcons() {
     if (this.siteIcons !== null) return;
-    this.siteIcons = new Map(Object.entries(this._readLocalStorageObject(this.siteIconStorageKey) || {}));
+    // 网站图标缓存只来自 chrome.storage.local，由 initStorage() 加载。
+    this.siteIcons = new Map();
   }
 
   /** 页面隐藏或卸载时立即落盘，合并写入不会因为离开新标签页而丢失。 */
@@ -341,28 +357,38 @@ class BookmarkStore {
       clearTimeout(this.siteIconSaveTimer);
       this.siteIconSaveTimer = null;
     }
-    // 初始化完成前没有可写内容，页面提前卸载也不能抛错。
-    if (this.siteIcons === null) return;
+    // 初始化完成前没有可写内容，页面提前卸载也不能抛错或覆盖已有缓存。
+    if (this.siteIcons === null || !this.storageInitialized) return;
     this._evictSiteIcons();
     const value = Object.fromEntries(this.siteIcons);
-    this._writeChromeStorageObject(this.siteIconStorageKey, value);
-    this._writeLocalStorageObject(this.siteIconStorageKey, value);
+    const write = this._writeChromeStorageObject(this.siteIconStorageKey, value);
+    // 配额不足时按半预算重试，避免新图标当次可见、下次全部重下。
+    if (write?.catch) write.catch(() => this._shrinkSiteIconCache());
   }
 
-  /** 控制缓存体积：超过上限时按最久未校验优先淘汰。 */
+  _shrinkSiteIconCache() {
+    if (this.siteIconBudget <= SITE_ICON_CACHE_MIN_CHARS) return;
+    this.siteIconBudget = Math.max(SITE_ICON_CACHE_MIN_CHARS, Math.floor(this.siteIconBudget / 2));
+    this._flushSiteIcons();
+  }
+
+  /** 控制缓存体积：优先淘汰最久未使用的图标字节，其次才是失败记录。 */
   _evictSiteIcons() {
     const entries = [...this.siteIcons.entries()].map(([key, entry]) => ({
       key,
-      checkedAt: entry?.checkedAt || 0,
-      size: JSON.stringify(entry || null).length + key.length + 4
+      failure: !entry?.model,
+      usedAt: entry?.lastUsedAt || entry?.checkedAt || 0,
+      size: entry?.model?.byteLength
+        ? Math.ceil(entry.model.byteLength * 4 / 3) + key.length + 64
+        : JSON.stringify(entry || null).length + key.length + 4
     }));
     let total = entries.reduce((sum, entry) => sum + entry.size, 0);
-    if (total <= SITE_ICON_CACHE_MAX_CHARS) return;
-    entries.sort((a, b) => a.checkedAt - b.checkedAt);
+    if (total <= this.siteIconBudget) return;
+    entries.sort((a, b) => Number(a.failure) - Number(b.failure) || a.usedAt - b.usedAt);
     for (const entry of entries) {
       this.siteIcons.delete(entry.key);
       total -= entry.size;
-      if (total <= SITE_ICON_CACHE_MAX_CHARS) return;
+      if (total <= this.siteIconBudget) return;
     }
   }
 
@@ -372,9 +398,12 @@ class BookmarkStore {
     this._loadSiteIcons();
     const entry = this.siteIcons.get(key);
     if (!entry) return null;
-    // 已保存本地字节的条目永久命中，不再请求网站。失败条目只在退避期内命中，
-    // 退避到期后返回 null，让卡片自动重新解析一次。
-    if (entry.model) return entry;
+    // 已保存本地字节的条目永久命中，不再请求网站；命中即刷新使用时间，供淘汰排序。
+    if (entry.model) {
+      entry.lastUsedAt = Date.now();
+      return entry;
+    }
+    // 失败条目只在退避期内命中，退避到期后返回 null，让卡片自动重新解析一次。
     return (entry.retryAt || 0) > Date.now() ? entry : null;
   }
 
@@ -387,7 +416,7 @@ class BookmarkStore {
     if (result?.model) return { model: result.model, checkedAt };
 
     const previous = this.siteIcons.get(key);
-    const failure = result?.failure === 'unusable' ? 'unusable' : 'unreachable';
+    const failure = SITE_ICON_FAILURE_KINDS.includes(result?.failure) ? result.failure : 'unreachable';
     const attempts = (Number(previous?.attempts) || 0) + 1;
     const baseDelay = SITE_ICON_RETRY_DELAYS[failure] || SITE_ICON_RETRY_DELAYS.unreachable;
     return {
@@ -397,6 +426,17 @@ class BookmarkStore {
       checkedAt,
       retryAt: checkedAt + Math.min(baseDelay * 2 ** (attempts - 1), SITE_ICON_RETRY_MAX_DELAY)
     };
+  }
+
+  /** 卡片无法把这份字节渲染成图片时降级为带退避的失败记录，避免每个新标签页重复下载。 */
+  markSiteIconDisplayFailure(url, value) {
+    const key = this.getSiteIconCacheKey(url);
+    if (!key) return;
+    this._loadSiteIcons();
+    const entry = this.siteIcons.get(key);
+    if (!entry?.model || (value && entry.model.value !== value)) return;
+    this.siteIcons.set(key, this._createSiteIconEntry(key, { failure: 'unreadable' }));
+    this._saveSiteIcons();
   }
 
   _loadSiteIconBackgrounds() {
@@ -433,6 +473,9 @@ class BookmarkStore {
     if (!key) return;
     this._loadSiteIcons();
     this.siteIcons.delete(key);
+    // 仍在进行的旧解析必须作废，否则用户点「重新获取」后会拿回清除前的结果。
+    this.siteIconPending.delete(key);
+    this.siteIconEpochs.set(key, (this.siteIconEpochs.get(key) || 0) + 1);
     this._saveSiteIcons();
   }
 
@@ -443,14 +486,16 @@ class BookmarkStore {
     if (cached) return cached.model || null;
     if (this.siteIconPending.has(key)) return await this.siteIconPending.get(key);
 
+    const epoch = this.siteIconEpochs.get(key) || 0;
     const request = resolveSiteIconResource(key).then(result => {
+      if ((this.siteIconEpochs.get(key) || 0) !== epoch) return null;
       this._loadSiteIcons();
       const entry = this._createSiteIconEntry(key, result);
       this.siteIcons.set(key, entry);
       this._saveSiteIcons();
       return entry.model || null;
     }).finally(() => {
-      this.siteIconPending.delete(key);
+      if ((this.siteIconEpochs.get(key) || 0) === epoch) this.siteIconPending.delete(key);
     });
     this.siteIconPending.set(key, request);
     return await request;

@@ -175,7 +175,8 @@ export async function discoverSiteIcons(pageUrl, options = {}) {
 
 function iconContentType(response, iconUrl) {
   const header = String(response?.headers?.get?.('content-type') || '').split(';')[0].trim().toLowerCase();
-  if (header.startsWith('image/')) return header;
+  // 只接受结构完整的 image 类型，避免远端头部改写 data URL 结构。
+  if (/^image\/[a-z0-9.+-]{1,40}$/.test(header)) return header;
   try {
     const extension = new URL(iconUrl).pathname.split('.').pop()?.toLowerCase();
     if (CONTENT_TYPE_BY_EXTENSION[extension]) return CONTENT_TYPE_BY_EXTENSION[extension];
@@ -190,6 +191,38 @@ function toBase64(bytes) {
     binary += String.fromCharCode(...bytes.subarray(index, index + chunkSize));
   }
   return btoa(binary);
+}
+
+/** 超限立即中止下载，不把超大响应读进内存。 */
+async function readBoundedBytes(response, maxBytes) {
+  const reader = response?.body?.getReader?.();
+  if (!reader) {
+    const bytes = new Uint8Array(await response.arrayBuffer());
+    if (bytes.length > maxBytes) throw new Error('Website icon exceeds the cache size limit');
+    return bytes;
+  }
+  const chunks = [];
+  let total = 0;
+  try {
+    for (;;) {
+      const { done, value } = await reader.read();
+      if (done) break;
+      total += value.byteLength;
+      if (total > maxBytes) throw new Error('Website icon exceeds the cache size limit');
+      chunks.push(value);
+    }
+  } finally {
+    try {
+      await reader.cancel();
+    } catch {}
+  }
+  const bytes = new Uint8Array(total);
+  let offset = 0;
+  for (const chunk of chunks) {
+    bytes.set(chunk, offset);
+    offset += chunk.byteLength;
+  }
+  return bytes;
 }
 
 /**
@@ -218,9 +251,8 @@ export async function fetchSiteIconData(iconUrl, options = {}) {
     if (Number.isFinite(declaredBytes) && declaredBytes > maxBytes) {
       throw new Error('Website icon exceeds the cache size limit');
     }
-    const bytes = new Uint8Array(await response.arrayBuffer());
+    const bytes = await readBoundedBytes(response, maxBytes);
     if (!bytes.length) throw new Error('Website icon response was empty');
-    if (bytes.length > maxBytes) throw new Error('Website icon exceeds the cache size limit');
     const contentType = iconContentType(response, iconUrl);
     return {
       dataUrl: `data:${contentType};base64,${toBase64(bytes)}`,

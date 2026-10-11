@@ -97,7 +97,8 @@ test('website icon cache keeps downloaded bytes permanently and retries failures
   const card = await read('components/BookmarkCard.js');
 
   const cacheBlock = store.match(/getSiteIconEntry\(url\) \{[\s\S]*?\n  \}/)?.[0] || '';
-  assert.match(cacheBlock, /if \(entry\.model\) return entry;/);
+  assert.match(cacheBlock, /entry\.lastUsedAt = Date\.now\(\);/);
+  assert.match(cacheBlock, /return entry;/);
   assert.match(cacheBlock, /return \(entry\.retryAt \|\| 0\) > Date\.now\(\) \? entry : null;/);
   assert.match(store, /SITE_ICON_RETRY_DELAYS = \{ unreachable:/);
   assert.match(store, /SITE_ICON_CACHE_MAX_CHARS/);
@@ -105,13 +106,14 @@ test('website icon cache keeps downloaded bytes permanently and retries failures
   assert.match(card, /BookmarkStore\.clearSiteIcon\(this\.data\.url\)/);
 });
 
-test('a website icon that cannot be displayed falls back to the text surface and retries once', async () => {
+test('a website icon that cannot be displayed falls back to the text surface and is not re-downloaded', async () => {
   const card = await read('components/BookmarkCard.js');
 
   assert.match(card, /image\.addEventListener\('error'/);
   assert.match(card, /handleSiteIconDisplayError\(iconData\)/);
-  assert.match(card, /BookmarkStore\.clearSiteIcon\(this\.data\.url\)/);
+  assert.match(card, /BookmarkStore\.markSiteIconDisplayFailure\(this\.data\.url, iconData\.value\)/);
   assert.match(card, /siteIconRetried/);
+  assert.doesNotMatch(card, /handleSiteIconDisplayError\(iconData\) \{[\s\S]{0,400}?clearSiteIcon/);
 });
 
 test('applying a saved custom-icon record re-resolves it before assigning image source', async () => {
