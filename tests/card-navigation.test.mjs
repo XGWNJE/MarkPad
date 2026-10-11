@@ -14,6 +14,14 @@ test('background navigation opens immediately without animation and suppresses a
   assert.equal(card.opening, false);
 });
 
+test('a missing open preference opens the bookmark in the current page', async () => {
+  const h = await setupNavigation({ mode: null }); const card = await h.makeBookmarkCard();
+  h.setActiveTab(12);
+  assert.equal(await card.open(), true);
+  assert.deepEqual(h.calls, [['getCurrent'], ['update', 12, { url: 'https://a.example/' }]]);
+  assert.equal(card.opening, false);
+});
+
 test('current-page navigation immediately updates the source tab without animation or a timer', async () => {
   const h = await setupNavigation({ mode: 'current' }); const card = await h.makeBookmarkCard();
   const opening = card.open();

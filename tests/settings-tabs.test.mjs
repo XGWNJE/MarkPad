@@ -85,7 +85,7 @@ async function setupSettings(overrides = {}) {
   const { document, ids } = parsePage(html);
   const stored = new Map(Object.entries({
     themeMode: 'dark', headerOpacity: '82', cardSize: '160', cardRadiusPercent: '20',
-    gridPageMargin: '36', cardGap: '32', cardFontFamily: 'yahei', cardTitleSize: '20',
+    cardGap: '32', cardFontFamily: 'yahei', cardTitleSize: '20',
     cardTitleTracking: '4', openMode: 'current', backgroundEffect: 'on', backgroundEffectStrength: '85',
     custom_icon_cache: '{"keep":"custom"}',
     ...overrides
@@ -159,7 +159,8 @@ test('settings group all existing controls into three linked panes while keeping
     assert.equal(h.tab(page).getAttribute('role'), 'tab');
     assert.equal(h.pane(page).getAttribute('role'), 'tabpanel');
   }
-  for (const id of ['theme-group', 'card-size', 'card-radius', 'grid-page-margin', 'card-gap', 'header-opacity']) assert.ok(h.pane('appearance').contains(h.ids.get(id)));
+  for (const id of ['theme-group', 'card-size', 'card-radius', 'card-gap', 'header-opacity']) assert.ok(h.pane('appearance').contains(h.ids.get(id)));
+  assert.doesNotMatch(h.html, /grid-page-margin/);
   for (const id of ['card-font-family', 'card-title-size', 'card-title-tracking']) assert.ok(h.pane('text').contains(h.ids.get(id)));
   assert.ok(h.pane('behavior').contains(h.ids.get('open-mode-group')));
   assert.ok(h.pane('behavior').querySelector('.shortcuts-list'));
@@ -268,6 +269,24 @@ test('legacy pixel card radius migrates once into a percentage of the card width
   // 旧值超过卡片一半时按 50%（圆形）夹取。
   const clamped = await setupSettings({ cardRadiusPercent: undefined, cardRadius: '200', cardSize: '80' });
   assert.equal(clamped.stored.get('cardRadiusPercent'), '50');
+});
+
+test('first run defaults to 84px cards with 52px gaps and opens bookmarks in the current page', async () => {
+  const h = await setupSettings({ cardSize: undefined, cardGap: undefined, openMode: undefined });
+  assert.equal(h.ids.get('card-size').value, '84');
+  assert.equal(h.ids.get('card-size-value').textContent, '84px');
+  assert.equal(h.ids.get('card-gap').value, '52');
+  assert.equal(h.ids.get('card-gap-value').textContent, '52px');
+  assert.equal(h.document.documentElement.style.getPropertyValue('--card-size'), '84px');
+  assert.equal(h.document.documentElement.style.getPropertyValue('--card-gap'), '52px');
+  assert.equal(h.stored.get('cardSize'), '84');
+  assert.equal(h.stored.get('cardGap'), '52');
+  assert.equal(h.stored.get('openMode'), undefined, '默认打开方式不额外写入存储键');
+  for (const value of ['new', 'current']) {
+    const button = h.ids.get('open-mode-' + value);
+    assert.equal(button.getAttribute('aria-pressed'), String(value === 'current'));
+    assert.equal(button.classList.contains('active'), value === 'current');
+  }
 });
 
 test('theme and open behavior choices synchronize visual and pressed state from stored values and clicks', async () => {

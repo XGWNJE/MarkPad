@@ -8,11 +8,13 @@ async function read(path) {
 
 test('card text overlays icons and stays visible when no icon is available', async () => {
   const cardCss = await read('css/modules/card.css');
-  const infoBlock = cardCss.match(/\.card-info \{[\s\S]*?\n\}/)?.[0] || '';
+  const infoBlock = (cardCss.match(/\.card-info \{[\s\S]*?\n\}/)?.[0] || '').replace(/\/\*[\s\S]*?\*\//g, '');
 
   assert.match(infoBlock, /position: absolute;/);
   assert.match(infoBlock, /inset: 0;/);
-  assert.match(infoBlock, /backdrop-filter: blur\(var\(--card-overlay-blur\)\);/);
+  // 悬停时 .card-surface 带 3D 变换，文字层再叠 backdrop-filter 会把没有按圆角裁切的
+  // 模糊底图铺到卡片边缘（圆角毛刺与漏光）；磨砂效果由图标层自身的模糊负责。
+  assert.doesNotMatch(infoBlock, /backdrop-filter/);
   assert.match(infoBlock, /background: var\(--card-overlay-bg\);/);
   assert.doesNotMatch(infoBlock, /clip-path:|border-radius:/);
   const surfaceBlock = cardCss.match(/\.card-surface \{[\s\S]*?\n\}/)?.[0] || '';

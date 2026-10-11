@@ -39,7 +39,6 @@ class SettingsPanel {
     this.cardFontFamilyKey = 'cardFontFamily';
     this.cardTitleSizeKey = 'cardTitleSize';
     this.cardTitleTrackingKey = 'cardTitleTracking';
-    this.gridPageMarginKey = 'gridPageMargin';
     this.cardGapKey = 'cardGap';
     this.openModeKey = 'openMode';
     this.cardSizeMin = 80;
@@ -49,14 +48,13 @@ class SettingsPanel {
     // theme-init.js 已在首次绘制前写好 data-theme，这里只同步界面状态
     this.currentTheme = document.documentElement.dataset.theme === 'dark' ? 'dark' : 'light';
     this.currentHeaderOpacity = this.readPercent(this.headerOpacityKey, 94, 55, 100);
-    this.currentCardSize = this.readNumber(this.cardSizeKey, 120, this.cardSizeMin, this.cardSizeMax);
+    this.currentCardSize = this.readNumber(this.cardSizeKey, 84, this.cardSizeMin, this.cardSizeMax);
     this.currentCardRadiusPercent = this.readCardRadiusPercent();
     this.currentCardFontFamily = this.readChoice(this.cardFontFamilyKey, 'system', CARD_FONT_FAMILIES);
     this.currentCardTitleSize = this.readNumber(this.cardTitleSizeKey, 16, 14, 20);
     this.currentCardTitleTracking = this.readNumber(this.cardTitleTrackingKey, 1, -2, 8);
-    this.currentGridPageMargin = this.readNumber(this.gridPageMarginKey, 24, 12, 160);
-    this.currentCardGap = this.readNumber(this.cardGapKey, 28, 8, 64);
-    this.currentOpenMode = this.readChoice(this.openModeKey, 'new', { new: true, current: true });
+    this.currentCardGap = this.readNumber(this.cardGapKey, 52, 8, 64);
+    this.currentOpenMode = this.readChoice(this.openModeKey, 'current', { new: true, current: true });
 
     this.init();
   }
@@ -266,13 +264,6 @@ class SettingsPanel {
     if (radiusInput) radiusInput.value = String(this.currentCardRadiusPercent);
     if (radiusValue) radiusValue.textContent = `${this.currentCardRadiusPercent}%`;
     radiusInput?.addEventListener('input', () => this.setCardRadius(Number(radiusInput.value)));
-    const marginInput = document.getElementById('grid-page-margin');
-    const marginValue = document.getElementById('grid-page-margin-value');
-    if (marginInput && marginValue) {
-      marginInput.value = String(this.currentGridPageMargin);
-      marginValue.textContent = `${this.currentGridPageMargin}px`;
-      marginInput.addEventListener('input', () => this.setGridPageMargin(Number(marginInput.value)));
-    }
     const gapInput = document.getElementById('card-gap');
     const gapValue = document.getElementById('card-gap-value');
     if (gapInput && gapValue) {
@@ -340,14 +331,6 @@ class SettingsPanel {
     this.applyCardRadius();
   }
 
-  setGridPageMargin(margin) {
-    this.currentGridPageMargin = Math.min(160, Math.max(12, Math.round(margin / 4) * 4));
-    localStorage.setItem(this.gridPageMarginKey, String(this.currentGridPageMargin));
-    document.documentElement.style.setProperty('--grid-page-margin', `${this.currentGridPageMargin}px`);
-    const value = document.getElementById('grid-page-margin-value');
-    if (value) value.textContent = `${this.currentGridPageMargin}px`;
-  }
-
   setCardGap(gap) {
     this.currentCardGap = Math.min(64, Math.max(8, Math.round(gap / 4) * 4));
     localStorage.setItem(this.cardGapKey, String(this.currentCardGap));
@@ -363,7 +346,6 @@ class SettingsPanel {
   applyCardPreferences() {
     this.setCardSize(this.currentCardSize);
     this.applyCardRadius();
-    this.setGridPageMargin(this.currentGridPageMargin);
     this.setCardGap(this.currentCardGap);
     this.applyCardTypography();
   }

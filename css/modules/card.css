@@ -152,9 +152,10 @@
   padding: clamp(8px, calc(var(--card-width) * 0.07), 16px);
   text-align: center;
   color: var(--card-overlay-text);
+  /* 底图已由 .card-icon-wrapper 预先模糊，这里不再叠加 backdrop-filter：
+     卡片悬停时 .card-surface 带 3D 变换，backdrop-filter 会把没有按圆角裁切的
+     模糊底图铺到卡片边缘，圆角处出现毛刺和漏光。 */
   background: var(--card-overlay-bg);
-  -webkit-backdrop-filter: blur(var(--card-overlay-blur));
-  backdrop-filter: blur(var(--card-overlay-blur));
   /* 保持矩形覆盖，圆角仅由共同的 .card-surface 裁切。 */
   opacity: 0;
   visibility: hidden;
@@ -181,8 +182,6 @@
 
 .bookmark-card.iconless .card-info {
   background: var(--card-iconless-bg);
-  -webkit-backdrop-filter: none;
-  backdrop-filter: none;
 }
 
 .bookmark-card.interaction-paused:not(.iconless):not(.text-revealed) .card-info {

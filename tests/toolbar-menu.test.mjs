@@ -58,10 +58,11 @@ test('header keeps settings while creation actions belong to the grid', async ()
   assert.match(menuHtml, /<div class="menu-section-label">书签卡片<\/div>/);
   assert.match(menuHtml, /<div class="menu-section-label">顶部栏<\/div>/);
   assert.match(menuHtml, /id="header-opacity"/);
-  assert.match(menuHtml, /id="card-size"[^>]*min="80"[^>]*max="200"[^>]*step="1"/);
+  assert.match(menuHtml, /id="card-size"[^>]*min="80"[^>]*max="200"[^>]*step="1"[^>]*value="84"/);
   assert.match(menuHtml, /id="card-radius"[^>]*min="0"[^>]*max="50"[^>]*step="1"/);
-  assert.match(menuHtml, /id="grid-page-margin"/);
-  assert.match(menuHtml, /id="card-gap"[^>]*min="8"[^>]*max="64"[^>]*step="4"/);
+  // 卡片容器边距设定已移除，页面留白由 --grid-page-margin 令牌固定
+  assert.doesNotMatch(menuHtml, /grid-page-margin|卡片容器边距/);
+  assert.match(menuHtml, /id="card-gap"[^>]*min="8"[^>]*max="64"[^>]*step="4"[^>]*value="52"/);
   assert.match(menuHtml, /id="card-font-family"/);
   assert.match(menuHtml, /id="card-title-size"/);
   assert.doesNotMatch(menuHtml, /id="card-title-weight"/);
@@ -77,8 +78,7 @@ test('header keeps settings while creation actions belong to the grid', async ()
   assert.match(settingsPanel, /headerOpacityKey/);
   assert.match(settingsPanel, /cardRadiusKey/);
   assert.match(settingsPanel, /cardFontFamilyKey/);
-  assert.match(settingsPanel, /gridPageMarginKey/);
-  assert.match(settingsPanel, /setGridPageMargin/);
+  assert.doesNotMatch(settingsPanel, /gridPageMargin/);
   assert.match(settingsPanel, /cardGapKey/);
   assert.match(settingsPanel, /setCardGap/);
   assert.match(gridCss, /gap:\s*var\(--card-gap\);/);

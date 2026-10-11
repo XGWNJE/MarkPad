@@ -61,13 +61,13 @@
 | --- | --- |
 | `themeMode` | `light` / `dark` |
 | `cardSize` / `cardRadiusPercent` | 卡片尺寸（无级）；圆角为卡片边长的百分比，改尺寸不改圆角 |
-| `gridPageMargin` / `cardGap` | 网格四周留白与卡片间距 |
+| `cardGap` | 卡片间距；页面四周留白由 `--grid-page-margin` 令牌固定 |
 | `cardFontFamily` | 全局字体选择 |
 | `cardTitleSize` / `cardTitleTracking` | 卡片标题字号与字距 |
 | `headerOpacity` | 顶部栏背景强度 |
-| `openMode` | `new` / `current`，默认在后台新标签页打开 |
+| `openMode` | `new` / `current`，默认在当前页打开 |
 
-页面背景直接使用主题底色。已有 `backgroundEffect` / `backgroundEffectStrength` 值保留在本地，不再读取或写入；其他外观与图标偏好继续使用原键。
+页面背景直接使用主题底色。已有 `backgroundEffect` / `backgroundEffectStrength` / `gridPageMargin` 值保留在本地，不再读取或写入；其他外观与图标偏好继续使用原键。
 
 图标数据优先写入 `chrome.storage.local`。自定义图标和网站图标背景读取时合并已有 `localStorage` 数据，同键内容以 Chrome 存储为准；网站图标缓存只以 `chrome.storage.local` 为准，初始化会清除 `localStorage` 里的同名镜像，避免过期副本把已淘汰或已清除的条目合并回来。
 

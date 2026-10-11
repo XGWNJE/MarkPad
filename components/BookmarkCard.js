@@ -483,7 +483,8 @@ class BookmarkCard {
       });
     } else {
       const url = this.data.url;
-      const openInCurrent = localStorage.getItem('openMode') === 'current';
+      // 未保存偏好时默认在来源标签页打开，只有显式选择「新标签页」才后台新建。
+      const openInCurrent = localStorage.getItem('openMode') !== 'new';
       if (openInCurrent) {
         return CardNavigation.open(this, {
           mode: 'current',

@@ -125,9 +125,8 @@
   --card-spotlight-blend: multiply;
   --card-spotlight-peak: 0.1;
 
-  --gap: var(--space-7);
-  --card-gap: var(--gap);
-  --card-size: 164px;
+  --card-gap: 52px;
+  --card-size: 84px;
   --card-width: clamp(116px, calc(var(--card-size) * 1.45), 320px);
   --card-radius: 10%;
   --card-corner-shape: squircle;
