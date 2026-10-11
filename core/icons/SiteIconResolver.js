@@ -24,8 +24,14 @@ function isHttpUrl(value) {
   }
 }
 
+/**
+ * Resolves a website icon into locally cached bytes: the background discovers
+ * candidates and then downloads the bytes of each one, so the card never reloads a
+ * third-party favicon. Transport failures reject (never cached); everything else
+ * reports a failure reason that BookmarkStore turns into a timed retry.
+ */
 export async function resolveSiteIcon(pageUrl, options = {}) {
-  if (!isHttpUrl(pageUrl)) return null;
+  if (!isHttpUrl(pageUrl)) return { model: null, failure: 'unreachable' };
   const runtime = options.runtime || globalThis.chrome?.runtime;
   const validateImage = options.validateImage || preloadImage;
   if (!runtime?.sendMessage) throw new Error('Website icon background service is unavailable');
@@ -35,11 +41,29 @@ export async function resolveSiteIcon(pageUrl, options = {}) {
   if (!response?.ok || !Array.isArray(response.candidates)) {
     throw new Error(response?.error || 'Invalid website icon background response');
   }
+
+  let downloaded = 0;
   for (const candidate of response.candidates) {
     if (!isHttpUrl(candidate?.url)) continue;
-    if (await validateImage(candidate.url)) {
-      return { type: 'image', value: candidate.url, source: 'site', sourceLabel: '网站图标', matchReason: candidate.source };
-    }
+    const icon = await runtime.sendMessage({ type: 'site-icons:fetch', url: candidate.url });
+    if (!icon?.ok || !icon.dataUrl) continue;
+    downloaded += 1;
+    if (!await validateImage(icon.dataUrl)) continue;
+    return {
+      model: {
+        type: 'image',
+        value: icon.dataUrl,
+        byteLength: icon.byteLength,
+        source: 'site',
+        sourceLabel: '网站图标',
+        matchReason: candidate.source
+      },
+      failure: null
+    };
   }
-  return null;
+
+  // 只有「网页读到了、图标字节也拿到了、但都不可解码」才算站点图标本身不可用，
+  // 退避更长；其余情况按网络问题处理，短时间内自动重试。
+  const unusable = response.reachable === true && downloaded > 0;
+  return { model: null, failure: unusable ? 'unusable' : 'unreachable' };
 }

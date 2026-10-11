@@ -14,7 +14,7 @@ async function setupSettings(legacy = {}, { reducedMotion = false } = {}) {
     themeMode: 'dark', headerOpacity: '82', cardSize: '160', cardRadius: '20',
     gridPageMargin: '36', cardGap: '32', cardFontFamily: 'yahei',
     cardTitleSize: '20', cardTitleTracking: '4', openMode: 'current',
-    custom_icon_cache: '{"keep":"custom"}', site_icon_cache_v2: '{"keep":"website"}',
+    custom_icon_cache: '{"keep":"custom"}', site_icon_cache_v3: '{"keep":"website"}',
     ...legacy
   }));
   const before = new Map(stored);
@@ -152,7 +152,7 @@ test('existing appearance controls keep working without reading or rewriting leg
   assert.ok([...h.reads, ...h.writes].every(key => !key.startsWith('backgroundEffect')));
   assert.equal(h.stored.get('openMode'), 'current');
   assert.equal(h.stored.get('custom_icon_cache'), h.before.get('custom_icon_cache'));
-  assert.equal(h.stored.get('site_icon_cache_v2'), h.before.get('site_icon_cache_v2'));
+  assert.equal(h.stored.get('site_icon_cache_v3'), h.before.get('site_icon_cache_v3'));
   h.idle();
   assert.deepEqual(h.activity, { canvases: 0, webgl: 0, observers: 0, frames: 0, timers: 0 });
 });

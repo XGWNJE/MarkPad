@@ -25,12 +25,13 @@ function applySvgToElement(el, svgText) {
   }
 }
 
-/** 以受限图片元素展示远程或位图图标，保留浏览器原生动画播放。 */
-function applyImageToElement(el, url) {
+/** 以受限图片元素展示位图或 SVG 图标，保留浏览器原生动画播放。 */
+function applyImageToElement(el, url, options = {}) {
   el.innerHTML = '';
   el.style.backgroundImage = '';
   const image = document.createElement('img');
   image.className = 'card-icon-image';
+  image.addEventListener('error', () => options.onError?.());
   image.src = url;
   image.alt = '';
   image.referrerPolicy = 'no-referrer';
@@ -52,7 +53,7 @@ function clearIconElement(el) {
   el.style.removeProperty('--icon-content-scale');
 }
 
-function applyIconModelToElement(el, model) {
+function applyIconModelToElement(el, model, options = {}) {
   if (!model) {
     clearIconElement(el);
     return;
@@ -64,7 +65,7 @@ function applyIconModelToElement(el, model) {
   if (model.type === 'svg') {
     applySvgToElement(el, model.value);
   } else if (model.type === 'image') {
-    applyImageToElement(el, model.value);
+    applyImageToElement(el, model.value, options);
   } else {
     clearIconElement(el);
   }
@@ -112,6 +113,7 @@ class BookmarkCard {
     this.textRevealed = false;
     this.siteIconModel = null;
     this.siteBackgroundPreview = null;
+    this.siteIconRetried = false;
     this.destroyed = false;
     this.interactionPaused = false;
     this.opening = false;
@@ -542,6 +544,7 @@ class BookmarkCard {
     } else {
       metaEl.textContent = this.getDomain(this.data.url);
       if (previousTitle !== this.data.title || previousUrl !== this.data.url) {
+        if (previousUrl !== this.data.url) this.siteIconRetried = false;
         const localIcon = resolveBookmarkIcon(this.data, { storage: BookmarkStore });
         const siteIcon = localIcon ? null : BookmarkStore.getSiteIcon(this.data.url);
         this.siteIconModel = siteIcon;
@@ -718,6 +721,7 @@ class BookmarkCard {
     if (iconEl) iconEl.style.opacity = '0';
     BookmarkStore.clearSiteIcon(this.data.url);
     this.siteIconModel = null;
+    this.siteIconRetried = false;
     const background = BookmarkStore.getSiteIconBackground(this.data.id);
     if (background.mode === 'auto') BookmarkStore.setSiteIconBackground(this.data.id, { mode: 'auto' });
     this.updateIcon(resolveBookmarkIcon(this.data, { storage: BookmarkStore }));
@@ -746,18 +750,21 @@ class BookmarkCard {
     }
 
     if (iconData && typeof iconData === 'object' && iconData.type) {
-      const displayIcon = iconData.source === 'site'
+      const isSiteIcon = iconData.source === 'site';
+      const displayIcon = isSiteIcon
         ? { ...iconData, background: this.siteBackgroundPreview || BookmarkStore.getSiteIconBackground(this.data.id) }
         : iconData;
-      if (iconData.source === 'site') this.siteIconModel = iconData;
+      if (isSiteIcon) this.siteIconModel = iconData;
       this.setIconAvailable(true);
       if (this.isFolder && iconData.type === 'initial') {
         iconEl.classList.add('folder-default');
         applyDefaultFolderIcon(iconEl);
       } else {
         iconEl.classList.remove('folder-default');
-        applyIconModelToElement(iconEl, displayIcon);
-        if (iconData.source === 'site' && displayIcon.background?.mode === 'auto' && (!displayIcon.background.result || displayIcon.background.sourceValue !== iconData.value)) {
+        applyIconModelToElement(iconEl, displayIcon, isSiteIcon
+          ? { onError: () => this.handleSiteIconDisplayError(iconData) }
+          : {});
+        if (isSiteIcon && displayIcon.background?.mode === 'auto' && (!displayIcon.background.result || displayIcon.background.sourceValue !== iconData.value)) {
           void this.resolveAutoSiteBackground(iconData);
         }
       }
@@ -791,6 +798,18 @@ class BookmarkCard {
         applyIconModelToElement(iconEl, fallbackIcon);
       }
     }
+  }
+
+  /** 本地字节也解不出来时不保留破图：清除该地址缓存并自动重试一次。 */
+  handleSiteIconDisplayError(iconData) {
+    if (this.destroyed || iconData?.source !== 'site' || this.siteIconRetried) return;
+    this.siteIconRetried = true;
+    BookmarkStore.clearSiteIcon(this.data.url);
+    this.siteIconModel = null;
+    this.setIconAvailable(false);
+    const iconEl = this.element?.querySelector('.card-icon');
+    if (iconEl) applyIconModelToElement(iconEl, null);
+    this.resolveSiteIconWhenVisible();
   }
 
   async resolveAutoSiteBackground(iconData) {

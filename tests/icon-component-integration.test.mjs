@@ -92,15 +92,26 @@ test('BookmarkGrid starts website-icon visibility observation only after each ca
   assert.doesNotMatch(loadFolderBlock, /BookmarkStore\.resolveSiteIcon\(/);
 });
 
-test('website icon cache remains valid until the user manually requests a refresh', async () => {
+test('website icon cache keeps downloaded bytes permanently and retries failures on a schedule', async () => {
   const store = await read('core/BookmarkStore.js');
   const card = await read('components/BookmarkCard.js');
 
   const cacheBlock = store.match(/getSiteIconEntry\(url\) \{[\s\S]*?\n  \}/)?.[0] || '';
-  assert.doesNotMatch(cacheBlock, /TTL|checkedAt|Date\.now/);
-  assert.match(cacheBlock, /return this\.siteIcons\.get\(key\) \|\| null;/);
+  assert.match(cacheBlock, /if \(entry\.model\) return entry;/);
+  assert.match(cacheBlock, /return \(entry\.retryAt \|\| 0\) > Date\.now\(\) \? entry : null;/);
+  assert.match(store, /SITE_ICON_RETRY_DELAYS = \{ unreachable:/);
+  assert.match(store, /SITE_ICON_CACHE_MAX_CHARS/);
   assert.match(card, /label: '重新获取网站图标'/);
   assert.match(card, /BookmarkStore\.clearSiteIcon\(this\.data\.url\)/);
+});
+
+test('a website icon that cannot be displayed falls back to the text surface and retries once', async () => {
+  const card = await read('components/BookmarkCard.js');
+
+  assert.match(card, /image\.addEventListener\('error'/);
+  assert.match(card, /handleSiteIconDisplayError\(iconData\)/);
+  assert.match(card, /BookmarkStore\.clearSiteIcon\(this\.data\.url\)/);
+  assert.match(card, /siteIconRetried/);
 });
 
 test('applying a saved custom-icon record re-resolves it before assigning image source', async () => {

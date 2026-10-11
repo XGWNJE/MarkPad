@@ -5,6 +5,22 @@ const ICON_REL_PRIORITY = Object.freeze({
   'shortcut icon': 390
 });
 
+// 单个网站图标的字节上限；超出时换下一个候选，避免把大图写进缓存。
+export const SITE_ICON_MAX_BYTES = 256 * 1024;
+
+const CONTENT_TYPE_BY_EXTENSION = Object.freeze({
+  svg: 'image/svg+xml',
+  ico: 'image/x-icon',
+  png: 'image/png',
+  apng: 'image/apng',
+  gif: 'image/gif',
+  jpg: 'image/jpeg',
+  jpeg: 'image/jpeg',
+  webp: 'image/webp',
+  avif: 'image/avif',
+  bmp: 'image/bmp'
+});
+
 function isHttpUrl(value, baseUrl) {
   if (typeof value !== 'string' || !value.trim()) return null;
   try {
@@ -103,16 +119,32 @@ async function readResource(url, format, fetchImpl, timeoutMs) {
   }
 }
 
-/** Background-only discovery: never attach remote documents to the new-tab page. */
+/**
+ * Background-only discovery: never attach remote documents to the new-tab page.
+ * `reachable` reports whether the page document itself could be read, so the caller
+ * can tell a transient network failure apart from a site without usable icons.
+ */
 export async function discoverSiteIcons(pageUrl, options = {}) {
-  if (!isHttpUrl(pageUrl)) return [];
+  if (!isHttpUrl(pageUrl)) return { candidates: [], reachable: false };
   const fetchImpl = options.fetchImpl || globalThis.fetch;
   const timeoutMs = options.timeoutMs ?? 8000;
   if (!fetchImpl) throw new Error('Website icon fetching is unavailable');
 
+  let page = null;
   try {
-    const page = await readResource(pageUrl, 'text', fetchImpl, timeoutMs);
-    if (!page) return [];
+    page = await readResource(pageUrl, 'text', fetchImpl, timeoutMs);
+  } catch {
+    // Network, permission, redirect and timeout failures fall through to the fallback.
+    page = null;
+  }
+
+  // 网页读不到时仍尝试同源 /favicon.ico：站点正文被拦截并不代表图标也不可用。
+  if (!page) {
+    const fallback = fallbackFaviconCandidate(pageUrl);
+    return { candidates: fallback ? [fallback] : [], reachable: false };
+  }
+
+  try {
     const { candidates, manifestUrls } = extractSiteIconCandidates(page.body, page.url);
     const manifestCandidates = [];
 
@@ -130,10 +162,72 @@ export async function discoverSiteIcons(pageUrl, options = {}) {
     }
 
     const fallback = fallbackFaviconCandidate(page.url);
-    return uniqueCandidates([...candidates, ...manifestCandidates, ...(fallback ? [fallback] : [])])
-      .sort((a, b) => b.priority - a.priority);
+    return {
+      candidates: uniqueCandidates([...candidates, ...manifestCandidates, ...(fallback ? [fallback] : [])])
+        .sort((a, b) => b.priority - a.priority),
+      reachable: true
+    };
   } catch {
-    // Network and permission failures resolve to the documented no-icon state.
+    // Parsing failures behave like an unreachable page: retried later, never cached forever.
+    return { candidates: [], reachable: false };
   }
-  return [];
+}
+
+function iconContentType(response, iconUrl) {
+  const header = String(response?.headers?.get?.('content-type') || '').split(';')[0].trim().toLowerCase();
+  if (header.startsWith('image/')) return header;
+  try {
+    const extension = new URL(iconUrl).pathname.split('.').pop()?.toLowerCase();
+    if (CONTENT_TYPE_BY_EXTENSION[extension]) return CONTENT_TYPE_BY_EXTENSION[extension];
+  } catch {}
+  return 'image/png';
+}
+
+function toBase64(bytes) {
+  const chunkSize = 0x8000;
+  let binary = '';
+  for (let index = 0; index < bytes.length; index += chunkSize) {
+    binary += String.fromCharCode(...bytes.subarray(index, index + chunkSize));
+  }
+  return btoa(binary);
+}
+
+/**
+ * Background-only download. Returning a data URL keeps the icon bytes on the device,
+ * so cards never re-request a third-party favicon on every new tab.
+ */
+export async function fetchSiteIconData(iconUrl, options = {}) {
+  if (!isHttpUrl(iconUrl)) throw new Error('Invalid website icon URL');
+  const fetchImpl = options.fetchImpl || globalThis.fetch;
+  const timeoutMs = options.timeoutMs ?? 8000;
+  const maxBytes = options.maxBytes ?? SITE_ICON_MAX_BYTES;
+  if (!fetchImpl) throw new Error('Website icon fetching is unavailable');
+
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), timeoutMs);
+  try {
+    const response = await fetchImpl(iconUrl, {
+      credentials: 'omit',
+      referrerPolicy: 'no-referrer',
+      redirect: 'follow',
+      signal: controller.signal
+    });
+    if (!response?.ok) throw new Error('Website icon request failed');
+    // 先看声明长度，超大图标不必下载到内存。
+    const declaredBytes = Number(response?.headers?.get?.('content-length'));
+    if (Number.isFinite(declaredBytes) && declaredBytes > maxBytes) {
+      throw new Error('Website icon exceeds the cache size limit');
+    }
+    const bytes = new Uint8Array(await response.arrayBuffer());
+    if (!bytes.length) throw new Error('Website icon response was empty');
+    if (bytes.length > maxBytes) throw new Error('Website icon exceeds the cache size limit');
+    const contentType = iconContentType(response, iconUrl);
+    return {
+      dataUrl: `data:${contentType};base64,${toBase64(bytes)}`,
+      byteLength: bytes.length,
+      contentType
+    };
+  } finally {
+    clearTimeout(timer);
+  }
 }
