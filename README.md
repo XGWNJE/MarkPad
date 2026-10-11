@@ -9,7 +9,7 @@
 
 [功能](#功能) · [安装](#安装) · [使用](#使用) · [快捷键](#快捷键) · [项目结构](#项目结构) · [验证](#验证) · [权限与数据](#权限与数据)
 
-[![版本：0.4.1](https://img.shields.io/badge/version-0.4.1-444444)](manifest.json) [![平台：桌面版 Chrome](https://img.shields.io/badge/platform-Chrome-444444)](#安装) [![扩展格式：Manifest V3](https://img.shields.io/badge/Manifest-V3-444444)](manifest.json)
+[![版本：0.4.2](https://img.shields.io/badge/version-0.4.2-444444)](manifest.json) [![平台：桌面版 Chrome](https://img.shields.io/badge/platform-Chrome-444444)](#安装) [![扩展格式：Manifest V3](https://img.shields.io/badge/Manifest-V3-444444)](manifest.json)
 
 </div>
 
@@ -21,7 +21,7 @@
 - **触控操作**：点按展开卡片文字，长按打开操作菜单；也支持鼠标和键盘。
 - **调整外观**：切换浅色／深色，调整卡片大小、圆角、间距、全局字体、标题排版和顶部栏；上传图标并调整背景与缩放。
 
-当前版本：`0.4.1`，以 [manifest.json](manifest.json) 为准。
+当前版本：`0.4.2`，以 [manifest.json](manifest.json) 为准。
 
 ## 安装
 

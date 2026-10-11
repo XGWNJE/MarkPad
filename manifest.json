@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "MarkPad",
-  "version": "0.4.1",
+  "version": "0.4.2",
   "description": "面向触控操作的新标签页书签面板",
   "chrome_url_overrides": {
     "newtab": "index.html"
