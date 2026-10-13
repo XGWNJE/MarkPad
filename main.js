@@ -253,6 +253,8 @@ class App {
     const EXIT_MARGIN = 24;
     let edgeTimer = null;
     let pendingEdge = null;
+    // 本次拖拽是否被主动取消（Escape、失焦、切换页面）：取消后松手不再补投放。
+    let dragCancelled = false;
     const cancelEdgeActivation = () => {
       if (edgeTimer !== null) clearTimeout(edgeTimer);
       edgeTimer = null;
@@ -268,12 +270,18 @@ class App {
 
     // ── 监听 dragstart/dragend 获取被拖拽项信息 ──
     EventBus.on('card:dragstart', ({ id, isFolder }) => {
+      dragCancelled = false;
       this._hideDragZones(movePanel, deleteZone);
       activeDragId = id;
       activeDragIsFolder = isFolder;
     });
     EventBus.on('card:dragend', endSession);
     EventBus.on('drag:sessionEnd', endSession);
+    document.addEventListener('keydown', (event) => {
+      if (event.key === 'Escape' && activeDragId) dragCancelled = true;
+    }, true);
+    window.addEventListener('blur', () => { if (activeDragId) dragCancelled = true; });
+    document.addEventListener('visibilitychange', () => { if (document.hidden && activeDragId) dragCancelled = true; });
 
     const keepsPanelOpen = (panel, event) => {
       if (!panel.classList.contains('visible')) return false;
@@ -291,6 +299,16 @@ class App {
       return containsRoundedPoint(panel.getBoundingClientRect(), event.clientX, event.clientY,
         parseFloat(style.borderTopLeftRadius) || 0);
     };
+
+    // 浏览器只在当前 dragover 目标上派发 drop，而目标由命中测试决定；这里再按光标的实际
+    // 坐标复核一次，只要松手位置落在删除区域内（含小幅容差），这次投放就照常算数。
+    const insideDeleteZone = (x, y, margin = 0) => containsRoundedPoint(
+      deleteZone.getBoundingClientRect(), x, y,
+      (parseFloat(getComputedStyle(deleteZone).borderTopLeftRadius) || 0) + margin);
+    const acceptsDeleteDrop = (event, margin = 0) => Boolean(
+      activeDragId && deleteZone.classList.contains('visible')
+        && Number(getComputedStyle(deleteZone).opacity) !== 0
+        && insideDeleteZone(event.clientX, event.clientY, margin));
 
     // ── 全局 dragover：检测是否进入边缘区域 ──
     document.addEventListener('dragover', (e) => {
@@ -312,16 +330,22 @@ class App {
         cancelEdgeActivation();
         return;
       }
+      // 删除区域只是投放面，第一次进入右侧触发区就点亮，快速拖到边缘松手也不会落空。
+      if (side === 'delete') {
+        cancelEdgeActivation();
+        deleteZone.classList.add('visible');
+        return;
+      }
       if (pendingEdge === side) return;
       cancelEdgeActivation();
       pendingEdge = side;
       const requestedId = activeDragId;
+      // 左侧面板要读文件夹树，保留停留延迟，避免只是路过也触发读取。
       edgeTimer = setTimeout(() => {
         edgeTimer = null;
         pendingEdge = null;
         if (activeDragId !== requestedId) return;
-        if (side === 'move') this._showMovePanel(movePanel, folderTree, requestedId);
-        else deleteZone.classList.add('visible');
+        this._showMovePanel(movePanel, folderTree, requestedId);
       }, EDGE_DELAY);
     });
 
@@ -399,31 +423,56 @@ class App {
     };
     deleteRetryBtn.addEventListener('click', () => { void loadDeleteConfirmation(); });
 
+    let lastDeletePointer = null;
+    const requestDragDelete = (id) => {
+      lastDeletePointer = null;
+      deleteZone.classList.remove('over');
+      this._hideDragZones(movePanel, deleteZone);
+      EventBus.emit('card:requestDelete', { id, isFolder: activeDragIsFolder });
+    };
+
     deleteZone.addEventListener('dragover', (e) => {
       if (!acceptsDrop(deleteZone, e)) {
         deleteZone.classList.remove('over');
+        lastDeletePointer = null;
         e.dataTransfer.dropEffect = 'none';
         return;
       }
       e.preventDefault();
       e.dataTransfer.dropEffect = 'move';
       deleteZone.classList.add('over');
+      // dragend 不保证带上松手坐标，这里记住最近一次位于删除区域内的光标位置。
+      lastDeletePointer = { x: e.clientX, y: e.clientY };
     });
     deleteZone.addEventListener('dragleave', (e) => {
       if (!deleteZone.contains(e.relatedTarget)) {
         deleteZone.classList.remove('over');
+        lastDeletePointer = null;
       }
     });
     deleteZone.addEventListener('drop', (e) => {
       e.preventDefault();
       e.stopPropagation();
-      const id = e.dataTransfer.getData('text/plain');
-      if (id && id === activeDragId && acceptsDrop(deleteZone, e)) {
-        EventBus.emit('card:requestDelete', { id, isFolder: activeDragIsFolder });
+      const id = e.dataTransfer.getData('text/plain') || activeDragId || '';
+      // 命中测试可能把落点判给下层元素：只要坐标仍在区域内，就按这一次投放处理。
+      if (id && id === activeDragId && acceptsDeleteDrop(e, 8)) requestDragDelete(id);
+      else {
+        deleteZone.classList.remove('over');
+        this._hideDragZones(movePanel, deleteZone);
       }
-      deleteZone.classList.remove('over');
-      this._hideDragZones(movePanel, deleteZone);
     });
+    // 兜底：浏览器没有派发 drop（目标被判定为下层元素）时，用最后一次区域内的位置补一次确认。
+    document.addEventListener('dragend', () => {
+      const pointer = lastDeletePointer;
+      const id = activeDragId;
+      const cancelled = dragCancelled;
+      lastDeletePointer = null;
+      dragCancelled = false;
+      if (!pointer || !id || cancelled || !deleteZone.classList.contains('visible')) return;
+      if (Number(getComputedStyle(deleteZone).opacity) === 0) return;
+      if (!insideDeleteZone(pointer.x, pointer.y, 8)) return;
+      requestDragDelete(id);
+    }, true);
 
     // 删除确认弹窗确认按钮
     deleteConfirmBtn.addEventListener('click', () => {

@@ -84,8 +84,16 @@ async function setup() {
     }
   };
   const bookmarkStore = { getNode: async id => ({ id, title: '当前文件夹', children: [] }), countDescendants: () => 11 };
+  const windowListeners = new Map();
+  const window = {
+    innerWidth: 1000,
+    matchMedia: () => ({ matches: false }),
+    addEventListener(name, listener) { if (!windowListeners.has(name)) windowListeners.set(name, []); windowListeners.get(name).push(listener); },
+    removeEventListener() {}
+  };
+  window.fire = (name, event) => { for (const listener of windowListeners.get(name) || []) listener({ target: document, ...event }); };
   const context = vm.createContext({
-    document, window: { innerWidth: 1000 }, EventBus, containsRoundedPoint,
+    document, window, EventBus, containsRoundedPoint,
     BookmarkStore: bookmarkStore,
     getComputedStyle: element => ({ display: 'flex', visibility: 'visible', opacity: element.opacity ?? '1', borderTopLeftRadius: '18px' }),
     setTimeout, clearTimeout,
@@ -107,7 +115,7 @@ async function setup() {
   });
   const status = footer.children[0];
   const retry = footer.children.find(child => child.textContent === '重试');
-  return { app, actualDeleteMessage: context.App.prototype._getDeleteConfirmMessage, bookmarkStore, deleteMessages, move, tree, folder, remove, dialog, cancel, confirm, message, retry, status, document, EventBus, emitted, start, event, advance, grid, menuTrigger };
+  return { app, actualDeleteMessage: context.App.prototype._getDeleteConfirmMessage, bookmarkStore, deleteMessages, move, tree, folder, remove, dialog, cancel, confirm, message, retry, status, document, window, EventBus, emitted, start, event, advance, grid, menuTrigger };
 }
 
 test('delete requires the visible rounded surface, excluding margins and clipped corners', async () => {
@@ -299,17 +307,68 @@ test('24px exit buffer keeps a panel open but never enlarges its accepted drop a
   assert.equal(h.emitted.some(([name]) => name === 'card:requestDelete'), false);
 });
 
-test('edge activation retains its 180ms delay and cancellation clears both panels', async () => {
+test('the delete zone appears on the first edge dragover while the folder panel keeps its delay', async () => {
   const h = await setup();
   h.start();
   h.document.fire('dragover', h.event(h.document, 990, 436));
+  assert.equal(h.remove.classList.contains('visible'), true);
+  assert.equal(h.move.classList.contains('visible'), false);
+  h.document.fire('dragover', h.event(h.document, 10, 436));
   h.advance(179);
+  assert.equal(h.move.classList.contains('visible'), false);
   assert.equal(h.remove.classList.contains('visible'), false);
   h.advance(1);
-  assert.equal(h.remove.classList.contains('visible'), true);
+  assert.equal(h.move.classList.contains('visible'), true);
   h.EventBus.emit('drag:sessionEnd');
   assert.equal(h.remove.classList.contains('visible'), false);
   assert.equal(h.move.classList.contains('visible'), false);
+});
+
+test('a drop whose hit test landed on a lower element still counts while the pointer is inside the zone', async () => {
+  const h = await setup();
+  h.app.grid.cards.set('A', { isFolder: true, data: { title: '待删除的文件夹' } });
+  h.start('A', true);
+  h.remove.classList.add('visible');
+  const event = h.event(h.document, 864, 436);
+  h.remove.fire('drop', event);
+  assert.deepEqual(h.emitted.filter(([name]) => name === 'card:requestDelete'), [
+    ['card:requestDelete', { id: 'A', isFolder: true }]
+  ]);
+  assert.equal(event.prevented, true);
+});
+
+test('a drag released inside the zone without a drop event still asks for confirmation once', async () => {
+  const h = await setup();
+  h.app.grid.cards.set('A', { isFolder: true, data: { title: '待删除的文件夹' } });
+  h.start('A', true);
+  h.remove.classList.add('visible');
+  h.remove.fire('dragover', h.event(h.remove, 864, 436));
+  h.document.fire('dragend', h.event(h.document, 864, 436));
+  assert.deepEqual(h.emitted.filter(([name]) => name === 'card:requestDelete'), [
+    ['card:requestDelete', { id: 'A', isFolder: true }]
+  ]);
+  h.document.fire('dragend', h.event(h.document, 864, 436));
+  assert.equal(h.emitted.filter(([name]) => name === 'card:requestDelete').length, 1);
+});
+
+test('a drag that leaves the zone before release never asks for deletion through the dragend fallback', async () => {
+  const h = await setup();
+  h.start();
+  h.remove.classList.add('visible');
+  h.remove.fire('dragover', h.event(h.remove, 864, 436));
+  h.document.fire('dragover', h.event(h.document, 400, 436));
+  h.document.fire('dragend', h.event(h.document, 400, 436));
+  assert.equal(h.emitted.some(([name]) => name === 'card:requestDelete'), false);
+});
+
+test('a drag canceled with Escape never asks for deletion through the dragend fallback', async () => {
+  const h = await setup();
+  h.start();
+  h.remove.classList.add('visible');
+  h.remove.fire('dragover', h.event(h.remove, 864, 436));
+  h.document.fire('keydown', { key: 'Escape' });
+  h.document.fire('dragend', h.event(h.document, 864, 436));
+  assert.equal(h.emitted.some(([name]) => name === 'card:requestDelete'), false);
 });
 
 test('hidden, transparent, stale-source, and canceled panels cannot request deletion', async () => {
