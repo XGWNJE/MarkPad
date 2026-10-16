@@ -231,8 +231,12 @@ export default class GridDragController {
   async onDrop(event) {
     if (!this.session) return;
     if (this.isSideTarget(event)) {
-      // 侧栏需要先读 activeDragId 并派发自己的动作。
-      queueMicrotask(() => this.cancel());
+      // 原生事件在捕获与目标监听器之间也会执行微任务；留到下一任务
+      // 清理，确保侧栏先读取拖拽来源并派发动作，且不影响后续会话。
+      const session = this.session;
+      setTimeout(() => {
+        if (this.session === session) this.cancel();
+      }, 0);
       return;
     }
     const hit = this.candidateAt(event);
