@@ -342,6 +342,47 @@ for (const kind of ['no session', 'external payload', 'outside grid', 'source sl
   });
 }
 
+for (const [panelId, action, payload] of [
+  ['drag-move-panel', 'card:drop', { draggedId: 'A', targetId: 'F', action: 'into' }],
+  ['drag-delete-zone', 'card:requestDelete', { id: 'A', isFolder: false }]
+]) {
+  test(`${panelId} keeps its drag session through the capture-to-target microtask checkpoint`, async () => {
+    const h = await setup();
+    const panel = new DragElement(h.clock);
+    panel.id = panelId;
+    const child = new DragElement(h.clock);
+    panel.appendChild(child);
+    h.document.body.appendChild(panel);
+    h.begin();
+    await h.document.fire('drop', h.event('A', 0.5, { target: child }));
+    // Native dispatch runs microtasks between the document capture listener and
+    // the side panel listener; dispatchEvent alone does not reproduce that gap.
+    await h.flush();
+    assert.equal(h.controller.session?.id, 'A', 'the side panel must still be able to read its source');
+    assert.equal(h.emitted.some(([name]) => name === 'drag:sessionEnd'), false);
+    h.EventBus.emit(action, payload);
+    await h.advance(0);
+    assert.deepEqual(h.emitted.slice(-2).map(([name]) => name), [action, 'drag:sessionEnd']);
+    await h.advance(180);
+    h.assertIdle();
+  });
+}
+
+test('cleanup from a side drop cannot cancel a subsequent drag session', async () => {
+  const h = await setup();
+  const panel = new DragElement(h.clock);
+  panel.id = 'drag-move-panel';
+  h.document.body.appendChild(panel);
+  h.begin();
+  await h.document.fire('drop', h.event('A', 0.5, { target: panel }));
+  h.begin('B');
+  await h.advance(0);
+  assert.equal(h.controller.session?.id, 'B');
+  h.controller.cancel();
+  await h.advance(180);
+  h.assertIdle();
+});
+
 test('a new drag is declined while its predecessor is being saved without leaving source styles behind', async () => {
   const gate = deferred();
   const h = await setup({ move: () => gate.promise });
