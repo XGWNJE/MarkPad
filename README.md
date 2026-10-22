@@ -7,11 +7,30 @@
 面向鼠标和触控操作的 Chrome 新标签页书签面板。<br>
 把书签栏变成方形卡片，直接打开和整理 Chrome 原生书签，无需导入。
 
-[功能](#功能) · [安装](#安装) · [使用](#使用) · [快捷键](#快捷键) · [路线规划](#路线规划) · [项目结构](#项目结构) · [验证](#验证) · [权限与数据](#权限与数据)
+[预览](#界面预览) · [功能](#功能) · [安装](#安装) · [使用](#使用) · [快捷键](#快捷键) · [路线规划](#路线规划) · [项目结构](#项目结构) · [验证](#验证) · [权限与数据](#权限与数据)
 
 [![版本：0.4.3](https://img.shields.io/badge/version-0.4.3-2da44e)](manifest.json) [![平台：桌面版 Chrome](https://img.shields.io/badge/platform-Chrome-0969da)](#安装) [![扩展格式：Manifest V3](https://img.shields.io/badge/Manifest-V3-8250df)](manifest.json) [![CI](https://github.com/XGWNJE/MarkPad/actions/workflows/ci.yml/badge.svg)](https://github.com/XGWNJE/MarkPad/actions/workflows/ci.yml)
 
 </div>
+
+## 界面预览
+
+截图使用公开站点的示例书签，直接截取当前界面；浅深主题与图标风格可分别切换。
+
+![MarkPad 深色界面：品牌软陶图标、文件夹与新建入口](assets/readme/markpad-dark-preview.png)
+
+**深色 · 品牌软陶** — 书签与文件夹排成方形卡片，保留品牌颜色、统一留白与圆角。
+
+<table>
+<tr>
+<td width="50%"><a href="assets/readme/markpad-light-preview.png"><img src="assets/readme/markpad-light-preview.png" alt="浅色界面与彩色扁平图标，悬停 GitHub 卡片显示标题和域名"></a></td>
+<td width="50%"><a href="assets/readme/markpad-icon-studio.png"><img src="assets/readme/markpad-icon-studio.png" alt="图标工坊：搜索内置图标、上传图片、生成提示词和缩放预览"></a></td>
+</tr>
+<tr>
+<td><b>浅色 · 彩色扁平</b><br>轻盈的平面图标；悬停查看标题，触控首次点按展开文字。</td>
+<td><b>图标工坊</b><br>搜索内置图标、上传图片，或复制提示词自行生成；应用前查看效果。</td>
+</tr>
+</table>
 
 ## 功能
 
