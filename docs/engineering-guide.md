@@ -51,7 +51,7 @@
 - 缓存按序列化字符数限制体积（约 2M 字符），超限时优先淘汰最久未使用的图标字节，其次才是体积很小的失败记录；写入超限时按半预算重试一次。同一批解析合并为一次写入，页面隐藏或卸载时立即落盘；写入失败会在控制台记录原因。
 - 网站图标背景和缩放按书签 ID 保存，不复制为自定义图标。
 - 网站 SVG 以受限图片元素加载。自定义 SVG 保存前经过 `IconSanitizer.js`，过滤脚本、嵌入对象、事件、外链及危险 URL；具体上传规则见[图标工坊](touch-icon-guide.md#图标工坊)。
-- 内置书签图标库只允许人工加入审核后的 SVG 与名称关键词，匹配输入仅为书签名称。
+- 内置图标目录在 `BuiltinIconCatalog.js`，资产位于 `assets/bookmark-icons/{clay,flat}`；软陶为 256px 透明 PNG，扁平 SVG 经过现有清理器，两者均通过图片元素加载。自动匹配只使用名称，多品牌名称优先靠前的词，同位置优先长词；自定义上传优先，软陶加载失败时使用同项扁平资产。
 
 ## 本地存储
 
@@ -60,6 +60,7 @@
 | 键 | 内容 |
 | --- | --- |
 | `themeMode` | `light` / `dark` |
+| `bookmarkIconStyle` | `clay` / `flat`，默认 `clay`，独立于浅深主题 |
 | `cardSize` / `cardRadiusPercent` | 卡片尺寸（无级）；圆角为卡片边长的百分比，改尺寸不改圆角 |
 | `cardGap` | 卡片间距；页面四周留白由 `--grid-page-margin` 令牌固定 |
 | `cardFontFamily` | 全局字体选择 |
@@ -73,7 +74,7 @@
 
 | 键 | 索引与内容 |
 | --- | --- |
-| `custom_icon_cache` | 书签 ID → 用户图标及显示元数据 |
+| `custom_icon_cache` | 书签 ID → 上传图标及显示元数据，或 `{ kind: 'builtin', iconId, scale }` 内置选择 |
 | `site_icon_cache_v3` | 完整书签 URL → 本地图标字节，或带退避时间的失败记录 |
 | `site_icon_background_cache_v1` | 书签 ID → 网站图标背景与缩放 |
 

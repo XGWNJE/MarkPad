@@ -1,0 +1,357 @@
+{
+  "sheetId": "mid-3",
+  "generator": "built-in image_gen__imagegen",
+  "attempts": 1,
+  "ids": [
+    "runninghub",
+    "photomosh",
+    "ps6b",
+    "pencil",
+    "stitch",
+    "gptimages",
+    "aiart"
+  ],
+  "emptyCells": [
+    8,
+    9
+  ],
+  "contentReference": "design/builtin-icons/sheets/mid-3-reference.png",
+  "materialReference": "design/icon-style-study/icons/e-brand-clay/figma.png",
+  "rawGeneratedPath": "C:\\Users\\xgwnj\\.codex\\generated_images\\01a156fb-3c4d-76b0-946f-f6c5cfb0e1c6\\exec-c67a0b60-77b0-466b-ad9b-a03834ebeb7c.png",
+  "sheet": "design/builtin-icons/sheets/mid-3-generated.png",
+  "prompt": "Use case: style-transfer. Deliver ONE square transparent PNG contact sheet with an EXACT fixed 3-column by 3-row grid. There are SEVEN icons, occupying cells 1-7 in strict row-major order; cells 8 and 9 (bottom-middle and bottom-right) must remain completely EMPTY and TRANSPARENT. Input image 1 is CONTENT/SHAPE/COLOR reference, not background; its blank cells are transparency. Input image 2 (Figma) is MATERIAL/FINISH REFERENCE ONLY, never copy its five-color logo shape. Re-render the SEVEN source marks as the same premium matte soft-clay 3D family: exact front view, thin softly rounded extrusion, tactile fine ceramic-clay finish, gentle upper-left studio light, restrained tiny shadows, preserve original brand colors and all recognizable geometry. Fixed content/order: row 1 green RunningHub R-like arrow/letter mark, charcoal PhotoMosh square with white angular broken-M emblem, blue rounded P initial tile; row 2 neutral silver-grey Pencil shield/pen-nib silhouette with a double border (render as matte clay, NOT shiny metal), black/dark Stitch rounded tile with a pale horizontal pill and two dark circular eyes, GPT Images three overlapping dark outlined portrait cards with one small orange circle at upper right; row 3 charcoal rounded A initial tile at left, EMPTY, EMPTY. Preserve all already embedded letters and holes; GPT Images outlined cards must stay open with transparent centers, not filled solid cards. Keep strict equal 3x3 cells and exact centers. Each whole icon maximum extent 72%-76% of its cell, constant generous margin, no cross-cell drift, no cropped edges. NO grid lines, cell backgrounds, label text, captions, extra frames, pedestals, loose parts. Retain tiles already intrinsic to reference marks; add no additional tile. Genuine transparent alpha around marks and in negative spaces, smooth clean perimeter, no checkerboard, no background scene. Single 3x3 sheet, preferably >=1536x1536.",
+  "sourceRecords": "design/builtin-icons/sources/mid-sources.json",
+  "provenance": "Native ImageGen sheet generated with explicit user permission for multiple icons per sheet. Each regular cell is cropped, then centered on a 256px transparent canvas by the shared helper using its visible-alpha bounds and a 1.5% buffer; maximum rendered edge 196px. No matting, background removal, repaint or recoloring.",
+  "sheetValidation": {
+    "width": 1254,
+    "height": 1254,
+    "hasAlpha": true,
+    "sha256MatchesRaw": true
+  },
+  "crop": [
+    {
+      "id": "runninghub",
+      "target": "C:\\Users\\xgwnj\\Documents\\XGWNJE\\MarkPad\\assets\\bookmark-icons\\clay\\runninghub.png",
+      "crop": {
+        "left": 0,
+        "top": 0,
+        "width": 418,
+        "height": 418
+      },
+      "placement": {
+        "bounds": {
+          "left": 68,
+          "top": 85,
+          "width": 306,
+          "height": 328
+        },
+        "rendered": {
+          "width": 183,
+          "height": 196
+        },
+        "position": {
+          "left": 37,
+          "top": 30
+        }
+      },
+      "validation": {
+        "width": 256,
+        "height": 256,
+        "cornerAlpha": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "bytes": 71998
+      }
+    },
+    {
+      "id": "photomosh",
+      "target": "C:\\Users\\xgwnj\\Documents\\XGWNJE\\MarkPad\\assets\\bookmark-icons\\clay\\photomosh.png",
+      "crop": {
+        "left": 418,
+        "top": 0,
+        "width": 418,
+        "height": 418
+      },
+      "placement": {
+        "bounds": {
+          "left": 36,
+          "top": 84,
+          "width": 345,
+          "height": 331
+        },
+        "rendered": {
+          "width": 196,
+          "height": 188
+        },
+        "position": {
+          "left": 30,
+          "top": 34
+        }
+      },
+      "validation": {
+        "width": 256,
+        "height": 256,
+        "cornerAlpha": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "bytes": 58263
+      }
+    },
+    {
+      "id": "ps6b",
+      "target": "C:\\Users\\xgwnj\\Documents\\XGWNJE\\MarkPad\\assets\\bookmark-icons\\clay\\ps6b.png",
+      "crop": {
+        "left": 836,
+        "top": 0,
+        "width": 418,
+        "height": 418
+      },
+      "placement": {
+        "bounds": {
+          "left": 39,
+          "top": 84,
+          "width": 334,
+          "height": 334
+        },
+        "rendered": {
+          "width": 196,
+          "height": 196
+        },
+        "position": {
+          "left": 30,
+          "top": 30
+        }
+      },
+      "validation": {
+        "width": 256,
+        "height": 256,
+        "cornerAlpha": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "bytes": 73350
+      }
+    },
+    {
+      "id": "pencil",
+      "target": "C:\\Users\\xgwnj\\Documents\\XGWNJE\\MarkPad\\assets\\bookmark-icons\\clay\\pencil.png",
+      "crop": {
+        "left": 0,
+        "top": 418,
+        "width": 418,
+        "height": 418
+      },
+      "placement": {
+        "bounds": {
+          "left": 73,
+          "top": 75,
+          "width": 286,
+          "height": 328
+        },
+        "rendered": {
+          "width": 171,
+          "height": 196
+        },
+        "position": {
+          "left": 43,
+          "top": 30
+        }
+      },
+      "validation": {
+        "width": 256,
+        "height": 256,
+        "cornerAlpha": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "bytes": 54059
+      }
+    },
+    {
+      "id": "stitch",
+      "target": "C:\\Users\\xgwnj\\Documents\\XGWNJE\\MarkPad\\assets\\bookmark-icons\\clay\\stitch.png",
+      "crop": {
+        "left": 418,
+        "top": 418,
+        "width": 418,
+        "height": 418
+      },
+      "placement": {
+        "bounds": {
+          "left": 42,
+          "top": 66,
+          "width": 333,
+          "height": 332
+        },
+        "rendered": {
+          "width": 196,
+          "height": 195
+        },
+        "position": {
+          "left": 30,
+          "top": 31
+        }
+      },
+      "validation": {
+        "width": 256,
+        "height": 256,
+        "cornerAlpha": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "bytes": 55930
+      }
+    },
+    {
+      "id": "gptimages",
+      "target": "C:\\Users\\xgwnj\\Documents\\XGWNJE\\MarkPad\\assets\\bookmark-icons\\clay\\gptimages.png",
+      "crop": {
+        "left": 836,
+        "top": 418,
+        "width": 418,
+        "height": 418
+      },
+      "placement": {
+        "bounds": {
+          "left": 32,
+          "top": 64,
+          "width": 349,
+          "height": 331
+        },
+        "rendered": {
+          "width": 196,
+          "height": 186
+        },
+        "position": {
+          "left": 30,
+          "top": 35
+        }
+      },
+      "validation": {
+        "width": 256,
+        "height": 256,
+        "cornerAlpha": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "bytes": 51386
+      }
+    },
+    {
+      "id": "aiart",
+      "target": "C:\\Users\\xgwnj\\Documents\\XGWNJE\\MarkPad\\assets\\bookmark-icons\\clay\\aiart.png",
+      "crop": {
+        "left": 0,
+        "top": 836,
+        "width": 418,
+        "height": 418
+      },
+      "placement": {
+        "bounds": {
+          "left": 52,
+          "top": 44,
+          "width": 330,
+          "height": 326
+        },
+        "rendered": {
+          "width": 196,
+          "height": 194
+        },
+        "position": {
+          "left": 30,
+          "top": 31
+        }
+      },
+      "validation": {
+        "width": 256,
+        "height": 256,
+        "cornerAlpha": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "bytes": 57580
+      }
+    }
+  ],
+  "sources": [
+    {
+      "id": "runninghub",
+      "kind": "reviewed-vector-redraw",
+      "sourceUrl": "https://www.runninghub.ai/assets/images/logo.png",
+      "license": "Brand artwork rights retained by its owner; no separate reuse license was published.",
+      "note": "Editable simplified vector redraw from the official public mark; not a claim of an official supplied vector.",
+      "flat": "assets/bookmark-icons/flat/runninghub.svg",
+      "reference": "design/builtin-icons/references/runninghub.png"
+    },
+    {
+      "id": "photomosh",
+      "kind": "downloaded-vector",
+      "sourceUrl": "https://moshpro.app/favicon.svg",
+      "license": "Brand artwork rights retained by its owner; no separate reuse license was published.",
+      "flat": "assets/bookmark-icons/flat/photomosh.svg",
+      "reference": "design/builtin-icons/references/photomosh.png"
+    },
+    {
+      "id": "ps6b",
+      "kind": "initial-fallback",
+      "initial": "P",
+      "sourceUrl": "https://help2.ps6b.com/",
+      "license": "Original MarkPad initial artwork.",
+      "note": "Public origin has an expired TLS certificate; no certificate bypass was used.",
+      "flat": "assets/bookmark-icons/flat/ps6b.svg",
+      "reference": "design/builtin-icons/references/ps6b.png"
+    },
+    {
+      "id": "pencil",
+      "kind": "reviewed-vector-redraw",
+      "sourceUrl": "https://www.pen.dev/apple-touch-icon.png",
+      "license": "Brand artwork rights retained by its owner; no separate reuse license was published.",
+      "note": "Editable simplified vector redraw from the official public mark; not a claim of an official supplied vector.",
+      "flat": "assets/bookmark-icons/flat/pencil.svg",
+      "reference": "design/builtin-icons/references/pencil.png"
+    },
+    {
+      "id": "stitch",
+      "kind": "reviewed-vector-redraw",
+      "sourceUrl": "https://www.gstatic.com/labs-code/stitch/favicon-192x192.png",
+      "license": "Brand artwork rights retained by its owner; no separate reuse license was published.",
+      "note": "Editable simplified vector redraw from the official public mark; not a claim of an official supplied vector.",
+      "flat": "assets/bookmark-icons/flat/stitch.svg",
+      "reference": "design/builtin-icons/references/stitch.png"
+    },
+    {
+      "id": "gptimages",
+      "kind": "downloaded-vector",
+      "sourceUrl": "https://gptimges.com/favicon.svg",
+      "license": "Brand artwork rights retained by its owner; no separate reuse license was published.",
+      "flat": "assets/bookmark-icons/flat/gptimages.svg",
+      "reference": "design/builtin-icons/references/gptimages.png"
+    },
+    {
+      "id": "aiart",
+      "kind": "initial-fallback",
+      "initial": "A",
+      "sourceUrl": "https://aiart.pics/",
+      "license": "Original MarkPad initial artwork.",
+      "note": "Official 32px stacked wordmark has no reusable vector source; an editable A initial is used.",
+      "flat": "assets/bookmark-icons/flat/aiart.svg",
+      "reference": "design/builtin-icons/references/aiart.png"
+    }
+  ]
+}

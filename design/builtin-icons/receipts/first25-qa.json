@@ -1,0 +1,493 @@
+{
+  "count": 25,
+  "pixabayTransparentCounterProbe": {
+    "sourcePoint": {
+      "x": 520,
+      "y": 650
+    },
+    "exportedPoint": {
+      "x": 64,
+      "y": 125
+    },
+    "alpha": 0
+  },
+  "visualReview": "All 25 reviewed on light and dark backgrounds at 80px. No neighbouring-cell color lines remain. Charcoal Laogou and negative-space Pixabay have reduced contrast on dark backgrounds; source brand colors retained.",
+  "checks": [
+    {
+      "id": "123community",
+      "size": [
+        256,
+        256
+      ],
+      "channels": 4,
+      "cornerAlpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "edgeMaxAlpha": 0,
+      "svgSanitized": true,
+      "creamBackground": true,
+      "clayBytes": 70027,
+      "flatBytes": 439
+    },
+    {
+      "id": "civitai",
+      "size": [
+        256,
+        256
+      ],
+      "channels": 4,
+      "cornerAlpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "edgeMaxAlpha": 0,
+      "svgSanitized": true,
+      "creamBackground": true,
+      "clayBytes": 61369,
+      "flatBytes": 492
+    },
+    {
+      "id": "jpsmile",
+      "size": [
+        256,
+        256
+      ],
+      "channels": 4,
+      "cornerAlpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "edgeMaxAlpha": 0,
+      "svgSanitized": true,
+      "creamBackground": true,
+      "clayBytes": 80344,
+      "flatBytes": 20077
+    },
+    {
+      "id": "imyshare",
+      "size": [
+        256,
+        256
+      ],
+      "channels": 4,
+      "cornerAlpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "edgeMaxAlpha": 0,
+      "svgSanitized": true,
+      "creamBackground": true,
+      "clayBytes": 49635,
+      "flatBytes": 2994
+    },
+    {
+      "id": "ghxi",
+      "size": [
+        256,
+        256
+      ],
+      "channels": 4,
+      "cornerAlpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "edgeMaxAlpha": 0,
+      "svgSanitized": true,
+      "creamBackground": true,
+      "clayBytes": 75044,
+      "flatBytes": 434
+    },
+    {
+      "id": "laogou",
+      "size": [
+        256,
+        256
+      ],
+      "channels": 4,
+      "cornerAlpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "edgeMaxAlpha": 0,
+      "svgSanitized": true,
+      "creamBackground": true,
+      "clayBytes": 39392,
+      "flatBytes": 12440
+    },
+    {
+      "id": "rutracker",
+      "size": [
+        256,
+        256
+      ],
+      "channels": 4,
+      "cornerAlpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "edgeMaxAlpha": 0,
+      "svgSanitized": true,
+      "creamBackground": true,
+      "clayBytes": 49124,
+      "flatBytes": 1363
+    },
+    {
+      "id": "byrut",
+      "size": [
+        256,
+        256
+      ],
+      "channels": 4,
+      "cornerAlpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "edgeMaxAlpha": 0,
+      "svgSanitized": true,
+      "creamBackground": true,
+      "clayBytes": 61363,
+      "flatBytes": 4521
+    },
+    {
+      "id": "kkpans",
+      "size": [
+        256,
+        256
+      ],
+      "channels": 4,
+      "cornerAlpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "edgeMaxAlpha": 0,
+      "svgSanitized": true,
+      "creamBackground": true,
+      "clayBytes": 75443,
+      "flatBytes": 1453
+    },
+    {
+      "id": "xclient",
+      "size": [
+        256,
+        256
+      ],
+      "channels": 4,
+      "cornerAlpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "edgeMaxAlpha": 0,
+      "svgSanitized": true,
+      "creamBackground": true,
+      "clayBytes": 57206,
+      "flatBytes": 1802
+    },
+    {
+      "id": "ipastore",
+      "size": [
+        256,
+        256
+      ],
+      "channels": 4,
+      "cornerAlpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "edgeMaxAlpha": 0,
+      "svgSanitized": true,
+      "creamBackground": true,
+      "clayBytes": 73625,
+      "flatBytes": 383
+    },
+    {
+      "id": "greasyfork",
+      "size": [
+        256,
+        256
+      ],
+      "channels": 4,
+      "cornerAlpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "edgeMaxAlpha": 0,
+      "svgSanitized": true,
+      "creamBackground": true,
+      "clayBytes": 57528,
+      "flatBytes": 634
+    },
+    {
+      "id": "macked",
+      "size": [
+        256,
+        256
+      ],
+      "channels": 4,
+      "cornerAlpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "edgeMaxAlpha": 0,
+      "svgSanitized": true,
+      "creamBackground": true,
+      "clayBytes": 68004,
+      "flatBytes": 393
+    },
+    {
+      "id": "cgown",
+      "size": [
+        256,
+        256
+      ],
+      "channels": 4,
+      "cornerAlpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "edgeMaxAlpha": 0,
+      "svgSanitized": true,
+      "creamBackground": true,
+      "clayBytes": 57464,
+      "flatBytes": 1362
+    },
+    {
+      "id": "adobeae",
+      "size": [
+        256,
+        256
+      ],
+      "channels": 4,
+      "cornerAlpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "edgeMaxAlpha": 0,
+      "svgSanitized": true,
+      "creamBackground": true,
+      "clayBytes": 78149,
+      "flatBytes": 1692
+    },
+    {
+      "id": "c4dsky",
+      "size": [
+        256,
+        256
+      ],
+      "channels": 4,
+      "cornerAlpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "edgeMaxAlpha": 0,
+      "svgSanitized": true,
+      "creamBackground": true,
+      "clayBytes": 75321,
+      "flatBytes": 424
+    },
+    {
+      "id": "gfxcamp",
+      "size": [
+        256,
+        256
+      ],
+      "channels": 4,
+      "cornerAlpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "edgeMaxAlpha": 0,
+      "svgSanitized": true,
+      "creamBackground": true,
+      "clayBytes": 56537,
+      "flatBytes": 2415
+    },
+    {
+      "id": "wszyk",
+      "size": [
+        256,
+        256
+      ],
+      "channels": 4,
+      "cornerAlpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "edgeMaxAlpha": 0,
+      "svgSanitized": true,
+      "creamBackground": true,
+      "clayBytes": 71639,
+      "flatBytes": 398
+    },
+    {
+      "id": "aplaybox",
+      "size": [
+        256,
+        256
+      ],
+      "channels": 4,
+      "cornerAlpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "edgeMaxAlpha": 0,
+      "svgSanitized": true,
+      "creamBackground": true,
+      "clayBytes": 84074,
+      "flatBytes": 3949
+    },
+    {
+      "id": "lookae",
+      "size": [
+        256,
+        256
+      ],
+      "channels": 4,
+      "cornerAlpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "edgeMaxAlpha": 0,
+      "svgSanitized": true,
+      "creamBackground": true,
+      "clayBytes": 65465,
+      "flatBytes": 1463
+    },
+    {
+      "id": "blenderco",
+      "size": [
+        256,
+        256
+      ],
+      "channels": 4,
+      "cornerAlpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "edgeMaxAlpha": 0,
+      "svgSanitized": true,
+      "creamBackground": true,
+      "clayBytes": 70845,
+      "flatBytes": 935
+    },
+    {
+      "id": "lanzou",
+      "size": [
+        256,
+        256
+      ],
+      "channels": 4,
+      "cornerAlpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "edgeMaxAlpha": 0,
+      "svgSanitized": true,
+      "creamBackground": true,
+      "clayBytes": 36021,
+      "flatBytes": 353
+    },
+    {
+      "id": "pixabay",
+      "size": [
+        256,
+        256
+      ],
+      "channels": 4,
+      "cornerAlpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "edgeMaxAlpha": 0,
+      "svgSanitized": true,
+      "creamBackground": true,
+      "clayBytes": 57486,
+      "flatBytes": 817
+    },
+    {
+      "id": "aigei",
+      "size": [
+        256,
+        256
+      ],
+      "channels": 4,
+      "cornerAlpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "edgeMaxAlpha": 0,
+      "svgSanitized": true,
+      "creamBackground": true,
+      "clayBytes": 75030,
+      "flatBytes": 396
+    },
+    {
+      "id": "heiliaowang",
+      "size": [
+        256,
+        256
+      ],
+      "channels": 4,
+      "cornerAlpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "edgeMaxAlpha": 0,
+      "svgSanitized": true,
+      "creamBackground": true,
+      "clayBytes": 55485,
+      "flatBytes": 382
+    }
+  ],
+  "flatNormalization": "Traced sources use visible-symbol bounds before buildFlat(size=180), with #f5f3ed background."
+}

@@ -3,6 +3,8 @@ import vm from 'node:vm';
 import { Element as BaseElement } from './grid-harness.mjs';
 import { createCustomIconRecord, isValidHexColor, normalizeIconScale } from '../../core/icons/IconUploadProcessor.js';
 import { backgroundCssValue, cloneIconBackground, getIconScale } from '../../core/icons/IconBackground.js';
+import { getLibraryIconById, searchLibraryIcons } from '../../core/icons/IconLibraryProvider.js';
+import { buildIconPrompt } from '../../core/icons/IconPrompt.js';
 
 // A small DOM stand-in for state tests. Layout, clipping, and focus-ring rendering
 // are intentionally left to browser acceptance rather than simulated here.
@@ -110,6 +112,7 @@ export async function setupDialog(name, storeOverrides = {}, dependencyOverrides
   const context = vm.createContext({
     document, EventBus, BookmarkStore: store, Router: { getCurrent: () => ({ id: 'root' }) },
     iconSvg: () => '', getLibraryIconCandidates: () => ({ candidates: [] }),
+    getLibraryIconById, searchLibraryIcons, buildIconPrompt,
     createCustomIconRecord, isValidHexColor, normalizeIconScale, backgroundCssValue, cloneIconBackground, getIconScale,
     readIconUpload: async () => ({ ok: true, kind: 'svg', data: '<svg></svg>' }),
     analyzeIconBackground: async () => ({ ok: true, result: { type: 'solid', color: '#445566' } }),

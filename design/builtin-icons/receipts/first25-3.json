@@ -1,0 +1,250 @@
+{
+  "sheetId": "first25-3",
+  "ids": [
+    "aplaybox",
+    "lookae",
+    "blenderco",
+    "lanzou",
+    "pixabay",
+    "aigei",
+    "heiliaowang"
+  ],
+  "grid": {
+    "columns": 3,
+    "rows": 3,
+    "emptyCellIndexes": [
+      7,
+      8
+    ]
+  },
+  "tool": "built-in image_gen__imagegen",
+  "transparentBackground": true,
+  "defaultSelectedAttempt": 2,
+  "perIconSelection": {
+    "pixabay": {
+      "attempt": 1,
+      "manualCrop": true,
+      "reason": "Second native revision repaired layout but made px holes opaque black. First native render preserves transparent counters; a safe manual crop removes neighbouring row fragments."
+    }
+  },
+  "attempts": [
+    {
+      "attempt": 1,
+      "prompt": "Create an icon contact sheet on a SQUARE true-transparent RGBA canvas, 1536×1536 preferred. EXACT fixed 3 columns × 3 rows, with SEVEN icons and the FINAL TWO CELLS COMPLETELY EMPTY TRANSPARENT. Image 1 specifies exact brand geometry, colors, identity and positions. The white-looking bottom middle/right reference areas have zero alpha and mean EMPTY CELLS, not white tiles. Image 2 is ONLY the approved clay material/lighting reference; do not include its Figma mark.\nGive the seven marks the same premium matte soft-clay 3D treatment: fine tactile ceramic/clay texture, subtly rounded shallow extrusion, smooth clean edges, upper-left soft studio light, restrained self-shadow, orthographic FRONT VIEW, no tilt or large perspective. Keep original brand colors, silhouettes, letters, counters and recognizable features.\nSTRICT row-major positions:\nrow 1 col 1 APlayBox cyan/white anime girl head with cat-ear shapes; col 2 LookAE coral round ae mark; col 3 Blenderco blue tile with white italic lowercase b.\nrow 2 col 1 Lanzou white cloud with red outline; col 2 Pixabay dark-charcoal rounded square with lowercase p and x as genuine transparent cutouts; col 3 mint-green A initial tile.\nrow 3 col 1 charcoal H initial tile; col 2 EMPTY; col 3 EMPTY.\nOne icon centered in its equal cell. Every complete icon must remain within central 72–76% of that cell, with generous fully empty transparent padding and gutters. No merging, no crossing cell boundaries, no cut edges, no rearranging. No added plates, bases, pedestals or app tiles beyond original reference shapes. No grid lines, no labels, no captions, no scene, no background, no floor, no checkerboard, no watermark, no particles or color fringe. Every empty pixel including the last two cells must have EXACTLY ZERO alpha. Seven icons only.",
+      "nativeOriginal": "C:\\Users\\xgwnj\\.codex\\generated_images\\01a156fb-11d4-7553-abf3-0dd9082c7f58\\exec-82375cb0-b74e-45c9-bb23-a42b4ffc1144.png",
+      "savedOriginal": "C:/Users/xgwnj/Documents/XGWNJE/MarkPad/design/builtin-icons/sheets/first25-3-attempt1.png",
+      "referenceInputs": [
+        "C:/Users/xgwnj/Documents/XGWNJE/MarkPad/design/builtin-icons/sheets/first25-3-reference.png",
+        "C:/Users/xgwnj/Documents/XGWNJE/MarkPad/design/icon-style-study/icons/e-brand-clay/figma.png"
+      ]
+    },
+    {
+      "attempt": 2,
+      "prompt": "Precise layout repair of this SEVEN-icon clay contact sheet. Image 1 is the existing sheet to edit; Image 2 is the clean intended fixed-grid reference.\nKeep the same seven icons, brand shapes, colors, materials, frontal view, lighting and row-major identity positions. Do not redesign, merge, add lettering or add icons.\nIMPORTANT CONCRETE CHANGE: move the ENTIRE FIRST ROW (APlayBox head, coral ae disc, blue b tile) UPWARD by 5% of the full canvas height. Their full silhouettes currently cross the horizontal 1/3 divider; all three must end ABOVE 31% of canvas height, with clear empty space before the 33.333% divider. Aim for top-row centers at y=16.667% of canvas. Slightly reduce these three icons only if needed so every body stays inside its own equal cell, at least 10% cell padding from boundaries.\nRows 2 and 3 stay in their current cells: row2 cloud, dark px tile, green A tile; row3 H tile at left, last two cells empty. Maintain their current complete shapes and centers. No part of ANY icon or shadow is allowed to cross x=33.333%, x=66.667%, y=33.333%, or y=66.667% cell boundaries. Fully empty transparent gutters. Delete all stray colored particles and fragments in empty areas.\nExactly fixed 3 columns × 3 equal rows; 7 icons; last two bottom cells fully transparent. True RGBA transparent square PNG; no background, no floor, no checkerboard, no labels, no grid lines, no watermark or extra tiles.",
+      "nativeOriginal": "C:\\Users\\xgwnj\\.codex\\generated_images\\01a156fb-11d4-7553-abf3-0dd9082c7f58\\exec-4bdd5830-6550-4660-9cb7-8e2ce8400204.png",
+      "savedOriginal": "C:/Users/xgwnj/Documents/XGWNJE/MarkPad/design/builtin-icons/sheets/first25-3-attempt2.png",
+      "referenceInputs": [
+        "C:\\Users\\xgwnj\\.codex\\generated_images\\01a156fb-11d4-7553-abf3-0dd9082c7f58\\exec-82375cb0-b74e-45c9-bb23-a42b4ffc1144.png",
+        "C:/Users/xgwnj/Documents/XGWNJE/MarkPad/design/builtin-icons/sheets/first25-3-reference.png"
+      ]
+    }
+  ],
+  "cropsFile": "C:/Users/xgwnj/Documents/XGWNJE/MarkPad/design/builtin-icons/receipts/first25-3-crops.json",
+  "provenanceFile": "C:/Users/xgwnj/Documents/XGWNJE/MarkPad/design/builtin-icons/receipts/first25-provenance.json",
+  "sourceFileInventory": "C:/Users/xgwnj/Documents/XGWNJE/MarkPad/design/builtin-icons/receipts/first25-source-files.json",
+  "exportScript": "C:/Users/xgwnj/Documents/XGWNJE/MarkPad/design/builtin-icons/sources/first25-export.mjs",
+  "postProcessing": "Crop and centered placement only via shared helper. No alpha masking, background extraction, recoloring, or redraw applied to native clay icons.",
+  "exports": [
+    {
+      "id": "aplaybox",
+      "target": "C:\\Users\\xgwnj\\Documents\\XGWNJE\\MarkPad\\assets\\bookmark-icons\\clay\\aplaybox.png",
+      "crop": {
+        "left": 0,
+        "top": 0,
+        "width": 418,
+        "height": 418
+      },
+      "placement": {
+        "bounds": {
+          "left": 72,
+          "top": 64,
+          "width": 318,
+          "height": 326
+        },
+        "rendered": {
+          "width": 191,
+          "height": 196
+        },
+        "position": {
+          "left": 33,
+          "top": 30
+        }
+      },
+      "sourceSheet": "C:\\Users\\xgwnj\\Documents\\XGWNJE\\MarkPad\\design\\builtin-icons\\sheets\\first25-3-attempt2.png"
+    },
+    {
+      "id": "lookae",
+      "target": "C:\\Users\\xgwnj\\Documents\\XGWNJE\\MarkPad\\assets\\bookmark-icons\\clay\\lookae.png",
+      "crop": {
+        "left": 418,
+        "top": 0,
+        "width": 418,
+        "height": 418
+      },
+      "placement": {
+        "bounds": {
+          "left": 46,
+          "top": 59,
+          "width": 337,
+          "height": 334
+        },
+        "rendered": {
+          "width": 196,
+          "height": 194
+        },
+        "position": {
+          "left": 30,
+          "top": 31
+        }
+      },
+      "sourceSheet": "C:\\Users\\xgwnj\\Documents\\XGWNJE\\MarkPad\\design\\builtin-icons\\sheets\\first25-3-attempt2.png"
+    },
+    {
+      "id": "blenderco",
+      "target": "C:\\Users\\xgwnj\\Documents\\XGWNJE\\MarkPad\\assets\\bookmark-icons\\clay\\blenderco.png",
+      "crop": {
+        "left": 836,
+        "top": 0,
+        "width": 418,
+        "height": 418
+      },
+      "placement": {
+        "bounds": {
+          "left": 46,
+          "top": 58,
+          "width": 329,
+          "height": 333
+        },
+        "rendered": {
+          "width": 194,
+          "height": 196
+        },
+        "position": {
+          "left": 31,
+          "top": 30
+        }
+      },
+      "sourceSheet": "C:\\Users\\xgwnj\\Documents\\XGWNJE\\MarkPad\\design\\builtin-icons\\sheets\\first25-3-attempt2.png"
+    },
+    {
+      "id": "lanzou",
+      "target": "C:\\Users\\xgwnj\\Documents\\XGWNJE\\MarkPad\\assets\\bookmark-icons\\clay\\lanzou.png",
+      "crop": {
+        "left": 0,
+        "top": 418,
+        "width": 418,
+        "height": 418
+      },
+      "placement": {
+        "bounds": {
+          "left": 41,
+          "top": 103,
+          "width": 369,
+          "height": 239
+        },
+        "rendered": {
+          "width": 196,
+          "height": 127
+        },
+        "position": {
+          "left": 30,
+          "top": 65
+        }
+      },
+      "sourceSheet": "C:\\Users\\xgwnj\\Documents\\XGWNJE\\MarkPad\\design\\builtin-icons\\sheets\\first25-3-attempt2.png"
+    },
+    {
+      "id": "pixabay",
+      "target": "C:\\Users\\xgwnj\\Documents\\XGWNJE\\MarkPad\\assets\\bookmark-icons\\clay\\pixabay.png",
+      "sourceSheet": "C:\\Users\\xgwnj\\Documents\\XGWNJE\\MarkPad\\design\\builtin-icons\\sheets\\first25-3-attempt1.png",
+      "crop": {
+        "left": 450,
+        "top": 460,
+        "width": 360,
+        "height": 370
+      },
+      "placement": {
+        "bounds": {
+          "left": 14,
+          "top": 34,
+          "width": 326,
+          "height": 325
+        },
+        "rendered": {
+          "width": 196,
+          "height": 195
+        },
+        "position": {
+          "left": 30,
+          "top": 31
+        }
+      },
+      "manualCrop": true,
+      "reason": "Preserve the original native transparent px counters; exclude neighbouring top-row content. Crop and placement only; no alpha masking or repainting."
+    },
+    {
+      "id": "aigei",
+      "target": "C:\\Users\\xgwnj\\Documents\\XGWNJE\\MarkPad\\assets\\bookmark-icons\\clay\\aigei.png",
+      "crop": {
+        "left": 836,
+        "top": 418,
+        "width": 418,
+        "height": 418
+      },
+      "placement": {
+        "bounds": {
+          "left": 43,
+          "top": 52,
+          "width": 333,
+          "height": 327
+        },
+        "rendered": {
+          "width": 196,
+          "height": 192
+        },
+        "position": {
+          "left": 30,
+          "top": 32
+        }
+      },
+      "sourceSheet": "C:\\Users\\xgwnj\\Documents\\XGWNJE\\MarkPad\\design\\builtin-icons\\sheets\\first25-3-attempt2.png"
+    },
+    {
+      "id": "heiliaowang",
+      "target": "C:\\Users\\xgwnj\\Documents\\XGWNJE\\MarkPad\\assets\\bookmark-icons\\clay\\heiliaowang.png",
+      "crop": {
+        "left": 0,
+        "top": 836,
+        "width": 418,
+        "height": 418
+      },
+      "placement": {
+        "bounds": {
+          "left": 59,
+          "top": 30,
+          "width": 339,
+          "height": 323
+        },
+        "rendered": {
+          "width": 196,
+          "height": 187
+        },
+        "position": {
+          "left": 30,
+          "top": 35
+        }
+      },
+      "sourceSheet": "C:\\Users\\xgwnj\\Documents\\XGWNJE\\MarkPad\\design\\builtin-icons\\sheets\\first25-3-attempt2.png"
+    }
+  ]
+}

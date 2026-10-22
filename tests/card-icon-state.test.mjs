@@ -132,3 +132,41 @@ test('late errors from a replaced icon never clear the icon that is displayed no
   assert.equal(classes.has('iconless'), false);
   assert.deepEqual(demoted, []);
 });
+
+test('a bundled clay PNG loading failure falls back to the same flat icon', () => {
+  const { icon, classes, card } = prepare();
+  const value = 'https://extension.test/clay/github.png';
+  const fallbackValue = 'https://extension.test/flat/github.svg';
+  card.updateIcon({ type: 'image', value, fallbackValue, source: 'curated-library' });
+  assert.equal(icon.style.background, 'var(--color-builtin-icon-bg)');
+  icon.image.dispatch('error');
+  assert.equal(icon.image.src, fallbackValue);
+  assert.equal(classes.has('iconless'), false);
+});
+
+test('removing a folder override restores its named built-in rather than the generic folder', () => {
+  const { icon, classes, card } = prepare();
+  card.isFolder = true;
+  card.data = { id: 'folder-1', title: '长期留存' };
+  card.updateIcon(null);
+  assert.ok(icon.image.src.endsWith('/clay/archive.png'));
+  assert.equal(classes.has('icon:folder-default'), false);
+});
+
+test('renaming a named folder immediately updates its built-in identity', async () => {
+  const { icon, card } = prepare();
+  card.isFolder = true;
+  card.data = { id: 'folder-1', title: '长期留存' };
+  await card.update({ title: '分享', childCount: 0 });
+  assert.ok(icon.image.src.endsWith('/clay/share.png'));
+});
+
+test('renaming a named folder to an ordinary name restores the default theme background', async () => {
+  const { icon, classes, card } = prepare();
+  card.isFolder = true;
+  card.data = { id: 'folder-1', title: '长期留存' };
+  card.updateIcon(null);
+  await card.update({ title: '其他资料', childCount: 0 });
+  assert.equal(classes.has('icon:folder-default'), true);
+  assert.equal(icon.style.background, '');
+});

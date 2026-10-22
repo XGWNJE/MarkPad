@@ -1,0 +1,365 @@
+{
+  "sheetId": "suffix3-02",
+  "generationTool": "built-in image_gen__imagegen",
+  "style": "品牌软陶",
+  "order": [
+    "reactbits",
+    "vibehub",
+    "novixlink",
+    "tripo",
+    "discord",
+    "bybit",
+    "pornhub",
+    "pandascrcpy",
+    "superflash"
+  ],
+  "selectedAttempt": 2,
+  "sourcePaths": [
+    "sources/reactbits.source.svg",
+    "sources/vibehub.source.svg",
+    "sources/novixlink.source.svg",
+    "sources/tripo.source.svg",
+    "sources/discord.source.svg",
+    "sources/bybit.source.svg",
+    "sources/pornhub.source.svg",
+    "sources/pandascrcpy.source.svg",
+    "sources/superflash.source.svg"
+  ],
+  "rawSheet": "sheets/suffix3-02-raw.png",
+  "sourceReceipt": "receipts/suffix3-sources.json",
+  "exportMethod": "User-authorized contact-sheet generation and equal-grid cropping; exportCenteredIcon crops alpha>=64 subject bounds with 1.5% buffer, preserves native colors/alpha, scales longest edge to 196px, centers on transparent 256x256. No matte, background removal or repainting.",
+  "attempts": [
+    {
+      "attempt": 1,
+      "prompt": "Create ONE transparent square 3-by-3 contact sheet, exactly NINE separate brand bookmark icons. Image 1 gives the precise marks in fixed row-major order; Image 2 is MATERIAL reference only, do NOT include Figma.\nRow 1: React Bits black orbital mark; VibeHub interlocked blue/charcoal ribbons; blue N fallback.\nRow 2: Tripo yellow/charcoal triangular mark; Discord purple controller face; BYBIT wordmark with orange tall I.\nRow 3: Pornhub plain brand wordmark (just lettering and its intrinsic black/orange logo blocks, NO adult content or pictures); PandaScrcpy panda seal; Superflash monochrome double lightning.\nKeep every logo's reference silhouette, proportions, intrinsic brand glyphs and original colors. Black is black/charcoal clay, white remains white details; no arbitrary palette inversion. Use same premium matte soft-clay material as Image 2: tactile fine clay, modest shallow rounded extrusion, FRONT VIEW, restrained edge rounding, soft upper-left studio light, faint shading, clean antialiased transparent edges without colored/white fragments.\nSTRICT equal-cell layout: centers at 1/6,1/2,5/6 in x AND y. Each subject's longest dimension 24%-25% of full canvas (72%-75% of cell). All parts including shadow remain inside their own cell with transparent margin on every side. Wordmarks remain wordmarks, no vertical stacking.\nTRUE transparent alpha everywhere between and around icons. NO additional backing tile, square panel, plate, app card, pedestal, frame, scene, text labels, grid lines, watermark, or checkerboard. An intrinsic colored shape already present in Image 1 stays; add no backing shape to a free-standing source mark. Keep fixed order, no crossing cell boundaries, no clipping. Square at least 1024px.",
+      "referencePaths": [
+        "C:/Users/xgwnj/Documents/XGWNJE/MarkPad/design/builtin-icons/sheets/suffix3-02-reference.png",
+        "C:/Users/xgwnj/Documents/XGWNJE/MarkPad/design/icon-style-study/icons/e-brand-clay/figma.png"
+      ],
+      "nativeGeneratedPath": "C:\\Users\\xgwnj\\.codex\\generated_images\\01a156fb-676e-7521-92c9-dccdf6e2861b\\exec-e264f957-e176-448e-9ba4-de8f5a3bd156.png",
+      "localRawPath": "sheets/suffix3-02-attempt1-raw.png",
+      "selected": false
+    },
+    {
+      "attempt": 2,
+      "prompt": "Repair the transparent 3x3 icon contact sheet using Image 1 for exact logos and Image 2 for the already-good matte soft-clay appearance. Keep all nine subjects in fixed order: row1 React Bits orbital mark, VibeHub ribbons, blue N; row2 Tripo, Discord, BYBIT; row3 Pornhub BRAND WORDMARK ONLY, PandaScrcpy panda, Superflash lightning.\nFix only spacing and transparent edges. In the previous sheet, the Pornhub wordmark crossed from cell (3,1) into Panda cell (3,2), and lightning tip crossed up into BYBIT cell. THIS MUST BE FIXED. NO part of any subject, extrusion, shadow or alpha fragment may cross its equal 1/3 cell boundary.\nPlace subject centers exactly at x=16.667%,50%,83.333% and y=16.667%,50%,83.333%. Make EVERY subject longest dimension ONLY 20%-21% of entire canvas (60%-63% of a cell) to leave generous transparent isolation. The final export will center and resize each subject separately, so large gaps now are intentional. Preserve wide wordmark aspect ratio. No change to logo geometry, intrinsic details, brand colors or front-view shallow matte-clay material. Use soft upper-left light, subtle depth, fine clay surface and clean smooth alpha contours without white flecks or colored fragments.\nTRUE TRANSPARENT ALPHA BACKGROUND, transparent holes and transparent gaps. No extra plate/app tile/frame/pedestal behind any free-standing logo, no labels, no additional symbols, no explicit adult imagery, no grid lines, no watermark, no background scene or checkerboard. Square output 1254x1254 or 1536x1536, 3 columns and 3 rows.",
+      "referencePaths": [
+        "C:/Users/xgwnj/Documents/XGWNJE/MarkPad/design/builtin-icons/sheets/suffix3-02-reference.png",
+        "C:\\Users\\xgwnj\\.codex\\generated_images\\01a156fb-676e-7521-92c9-dccdf6e2861b\\exec-e264f957-e176-448e-9ba4-de8f5a3bd156.png"
+      ],
+      "nativeGeneratedPath": "C:\\Users\\xgwnj\\.codex\\generated_images\\01a156fb-676e-7521-92c9-dccdf6e2861b\\exec-446d9a72-4d58-436a-8063-ca0754a39b26.png",
+      "localRawPath": "sheets/suffix3-02-raw.png",
+      "selected": true
+    }
+  ],
+  "review": {
+    "backgrounds": [
+      "#f1f0ec",
+      "#282b2c"
+    ],
+    "preview": "references/suffix3-02-review.png",
+    "reviewedDisplaySize": 128,
+    "notes": "Second attempt removes neighboring-cell contamination in Bybit/Panda; brand geometry and clean display reviewed."
+  },
+  "exports": [
+    {
+      "id": "reactbits",
+      "target": "C:\\Users\\xgwnj\\Documents\\XGWNJE\\MarkPad\\assets\\bookmark-icons\\clay\\reactbits.png",
+      "crop": {
+        "left": 0,
+        "top": 0,
+        "width": 418,
+        "height": 418
+      },
+      "placement": {
+        "bounds": {
+          "left": 95,
+          "top": 121,
+          "width": 300,
+          "height": 290
+        },
+        "rendered": {
+          "width": 196,
+          "height": 189
+        },
+        "position": {
+          "left": 30,
+          "top": 34
+        }
+      },
+      "validation": {
+        "width": 256,
+        "height": 256,
+        "alphaMin": 0,
+        "alphaMax": 255,
+        "borderAlphaMax": 0
+      }
+    },
+    {
+      "id": "vibehub",
+      "target": "C:\\Users\\xgwnj\\Documents\\XGWNJE\\MarkPad\\assets\\bookmark-icons\\clay\\vibehub.png",
+      "crop": {
+        "left": 418,
+        "top": 0,
+        "width": 418,
+        "height": 418
+      },
+      "placement": {
+        "bounds": {
+          "left": 77,
+          "top": 133,
+          "width": 273,
+          "height": 273
+        },
+        "rendered": {
+          "width": 196,
+          "height": 196
+        },
+        "position": {
+          "left": 30,
+          "top": 30
+        }
+      },
+      "validation": {
+        "width": 256,
+        "height": 256,
+        "alphaMin": 0,
+        "alphaMax": 255,
+        "borderAlphaMax": 0
+      }
+    },
+    {
+      "id": "novixlink",
+      "target": "C:\\Users\\xgwnj\\Documents\\XGWNJE\\MarkPad\\assets\\bookmark-icons\\clay\\novixlink.png",
+      "crop": {
+        "left": 836,
+        "top": 0,
+        "width": 418,
+        "height": 418
+      },
+      "placement": {
+        "bounds": {
+          "left": 57,
+          "top": 129,
+          "width": 279,
+          "height": 284
+        },
+        "rendered": {
+          "width": 193,
+          "height": 196
+        },
+        "position": {
+          "left": 32,
+          "top": 30
+        }
+      },
+      "validation": {
+        "width": 256,
+        "height": 256,
+        "alphaMin": 0,
+        "alphaMax": 255,
+        "borderAlphaMax": 0
+      }
+    },
+    {
+      "id": "tripo",
+      "target": "C:\\Users\\xgwnj\\Documents\\XGWNJE\\MarkPad\\assets\\bookmark-icons\\clay\\tripo.png",
+      "crop": {
+        "left": 0,
+        "top": 418,
+        "width": 418,
+        "height": 418
+      },
+      "placement": {
+        "bounds": {
+          "left": 85,
+          "top": 116,
+          "width": 296,
+          "height": 251
+        },
+        "rendered": {
+          "width": 196,
+          "height": 166
+        },
+        "position": {
+          "left": 30,
+          "top": 45
+        }
+      },
+      "validation": {
+        "width": 256,
+        "height": 256,
+        "alphaMin": 0,
+        "alphaMax": 255,
+        "borderAlphaMax": 0
+      }
+    },
+    {
+      "id": "discord",
+      "target": "C:\\Users\\xgwnj\\Documents\\XGWNJE\\MarkPad\\assets\\bookmark-icons\\clay\\discord.png",
+      "crop": {
+        "left": 418,
+        "top": 418,
+        "width": 418,
+        "height": 418
+      },
+      "placement": {
+        "bounds": {
+          "left": 57,
+          "top": 124,
+          "width": 312,
+          "height": 230
+        },
+        "rendered": {
+          "width": 196,
+          "height": 144
+        },
+        "position": {
+          "left": 30,
+          "top": 56
+        }
+      },
+      "validation": {
+        "width": 256,
+        "height": 256,
+        "alphaMin": 0,
+        "alphaMax": 255,
+        "borderAlphaMax": 0
+      }
+    },
+    {
+      "id": "bybit",
+      "target": "C:\\Users\\xgwnj\\Documents\\XGWNJE\\MarkPad\\assets\\bookmark-icons\\clay\\bybit.png",
+      "crop": {
+        "left": 836,
+        "top": 418,
+        "width": 418,
+        "height": 418
+      },
+      "placement": {
+        "bounds": {
+          "left": 25,
+          "top": 166,
+          "width": 332,
+          "height": 135
+        },
+        "rendered": {
+          "width": 196,
+          "height": 80
+        },
+        "position": {
+          "left": 30,
+          "top": 88
+        }
+      },
+      "validation": {
+        "width": 256,
+        "height": 256,
+        "alphaMin": 0,
+        "alphaMax": 255,
+        "borderAlphaMax": 0
+      }
+    },
+    {
+      "id": "pornhub",
+      "target": "C:\\Users\\xgwnj\\Documents\\XGWNJE\\MarkPad\\assets\\bookmark-icons\\clay\\pornhub.png",
+      "crop": {
+        "left": 0,
+        "top": 836,
+        "width": 418,
+        "height": 418
+      },
+      "placement": {
+        "bounds": {
+          "left": 80,
+          "top": 144,
+          "width": 335,
+          "height": 120
+        },
+        "rendered": {
+          "width": 196,
+          "height": 70
+        },
+        "position": {
+          "left": 30,
+          "top": 93
+        }
+      },
+      "validation": {
+        "width": 256,
+        "height": 256,
+        "alphaMin": 0,
+        "alphaMax": 255,
+        "borderAlphaMax": 0
+      }
+    },
+    {
+      "id": "pandascrcpy",
+      "target": "C:\\Users\\xgwnj\\Documents\\XGWNJE\\MarkPad\\assets\\bookmark-icons\\clay\\pandascrcpy.png",
+      "crop": {
+        "left": 418,
+        "top": 836,
+        "width": 418,
+        "height": 418
+      },
+      "placement": {
+        "bounds": {
+          "left": 94,
+          "top": 97,
+          "width": 278,
+          "height": 216
+        },
+        "rendered": {
+          "width": 196,
+          "height": 152
+        },
+        "position": {
+          "left": 30,
+          "top": 52
+        }
+      },
+      "validation": {
+        "width": 256,
+        "height": 256,
+        "alphaMin": 0,
+        "alphaMax": 255,
+        "borderAlphaMax": 0
+      }
+    },
+    {
+      "id": "superflash",
+      "target": "C:\\Users\\xgwnj\\Documents\\XGWNJE\\MarkPad\\assets\\bookmark-icons\\clay\\superflash.png",
+      "crop": {
+        "left": 836,
+        "top": 836,
+        "width": 418,
+        "height": 418
+      },
+      "placement": {
+        "bounds": {
+          "left": 109,
+          "top": 28,
+          "width": 200,
+          "height": 315
+        },
+        "rendered": {
+          "width": 124,
+          "height": 196
+        },
+        "position": {
+          "left": 66,
+          "top": 30
+        }
+      },
+      "validation": {
+        "width": 256,
+        "height": 256,
+        "alphaMin": 0,
+        "alphaMax": 255,
+        "borderAlphaMax": 0
+      }
+    }
+  ],
+  "rawSha256": "a210e6b5426734c43694cbb8b6c866339d0596ba392ffbb0aaec072a08f28655",
+  "rawMatchesNative": true
+}

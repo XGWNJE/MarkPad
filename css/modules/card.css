@@ -39,6 +39,7 @@
   position: absolute;
   inset: 0;
   overflow: hidden;
+  background: var(--color-bg-soft);
   border-radius: inherit;
   corner-shape: inherit;
   /* 图标和遮罩先合成，再统一裁圆角，避免底图从两层的抗锯齿边缘漏出。 */

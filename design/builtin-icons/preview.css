@@ -1,0 +1,19 @@
+.preview-loading { padding: 48px; }
+.preview-controls { display: flex; flex: 0 0 auto; align-items: center; gap: 12px; flex-wrap: wrap; margin-top: var(--toolbar-height); padding: 12px 24px; border-bottom: 1px solid var(--color-border); background: var(--color-bg); }
+.grid-scroll { padding-top: var(--grid-page-margin); }
+.preview-controls strong { font-size: 14px; margin-right: auto; }
+.preview-controls button, .preview-controls select { min-height: 40px; padding: 7px 12px; border: 1px solid var(--color-border); border-radius: 8px; color: var(--text-primary); background: var(--color-surface); font: inherit; font-size: 12px; }
+.preview-controls label { display: flex; gap: 8px; align-items: center; font-size: 12px; }
+.preview-controls button[aria-pressed="true"] { background: var(--color-bg-soft); border-color: var(--color-border-strong); }
+.preview-caption { color: var(--text-secondary); font-size: 11px; }
+.preview-compare { width: min(760px, calc(100vw - 24px)); max-height: calc(100dvh - 24px); margin: auto; padding: 24px; overflow: auto; color: var(--text-primary); background: var(--color-bg); border: 1px solid var(--color-border); border-radius: 20px; }
+.preview-compare::backdrop { background: #0009; backdrop-filter: blur(6px); }
+.preview-compare header { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 20px; }
+.preview-compare h2 { margin: 0; font-size: 18px; }
+.preview-compare button { min-height: 44px; }
+.preview-pair { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+.preview-pair figure { margin: 0; min-width: 0; }
+.preview-pair img { display: block; width: 100%; height: auto; aspect-ratio: 1; object-fit: contain; border-radius: var(--card-radius); background: var(--color-builtin-icon-bg); }
+.preview-pair figcaption { margin-top: 10px; font-size: 13px; text-align: center; }
+.preview-footnote { font-size: 12px; color: var(--text-secondary); margin-top: 20px; }
+@media (max-width: 600px) { .preview-controls { padding: 10px 16px; gap: 8px; } .preview-controls strong { width: 100%; } .preview-caption { width: 100%; } .preview-pair { gap: 12px; } .preview-compare { padding: 16px; } }

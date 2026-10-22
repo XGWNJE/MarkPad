@@ -1,0 +1,441 @@
+{
+  "sheetId": "mid-2",
+  "generator": "built-in image_gen__imagegen",
+  "attempts": 1,
+  "ids": [
+    "zcool",
+    "afdian",
+    "iconfont",
+    "dribbble",
+    "awwwards",
+    "funletu",
+    "comfyui",
+    "liblib",
+    "jimeng"
+  ],
+  "contentReference": "design/builtin-icons/sheets/mid-2-reference.png",
+  "materialReference": "design/icon-style-study/icons/e-brand-clay/figma.png",
+  "rawGeneratedPath": "C:\\Users\\xgwnj\\.codex\\generated_images\\01a156fb-3c4d-76b0-946f-f6c5cfb0e1c6\\exec-2baddd83-9ad4-4a37-984c-b7fff6f4036d.png",
+  "sheet": "design/builtin-icons/sheets/mid-2-generated.png",
+  "prompt": "Use case: style-transfer. Deliver ONE square transparent PNG contact sheet with an EXACT fixed 3-column by 3-row grid of NINE separate bookmark icons. Input image 1 is CONTENT/SHAPE/COLOR reference for the nine cells in row-major order. Input image 2 (Figma) is MATERIAL/FINISH REFERENCE ONLY; do not copy its shape or colors to other marks. Transform image 1's nine marks into premium matte soft-clay 3D matching image 2: exact front view, thin rounded edge extrusion, tactile fine ceramic-clay surface, gentle upper-left studio lighting, restrained shadows, preserve brand colors and precise recognizable silhouette/detail. Fixed order: row 1 yellow ZCOOL flame creature with dark eyes, violet AFDIAN continuous-line smiling rabbit/fish mark, cyan/teal iconfont pointed droplet mascot with two large angled dark-and-white eyes; row 2 pink Dribbble basketball open-line circle with exact inner curves, charcoal Awwwards W followed by its separate period, warm orange rounded F initial mark; row 3 neon-yellow-green ComfyUI abstract puzzle C shape, blue Liblib tile with exact white angular lightning/A-like cutout, multicolor Jimeng smooth concave triangular sail with a small separate blue lower flourish. Do not simplify or swap icons. Preserve all source contours and internal holes, line connections, already embedded letters and color placement. Center each icon at the exact center of its cell with its maximum extent 72%-76% of cell size. Keep equal margins and strict equal grid divisions; nothing crosses cell boundaries or gets cropped. NO grid lines, cell backgrounds, labels, captions, extra frames, pedestals, loose parts or invented text. Keep colored tiles already intrinsic to image 1; add no other tile. True transparent alpha outside icons and through all negative spaces, clean tight perimeter, no checkerboard, no background scene. Single 3x3 sheet, preferably >=1536x1536.",
+  "sourceRecords": "design/builtin-icons/sources/mid-sources.json",
+  "provenance": "Native ImageGen sheet generated with explicit user permission for multiple icons per sheet. Each regular cell is cropped, then centered on a 256px transparent canvas by the shared helper using its visible-alpha bounds and a 1.5% buffer; maximum rendered edge 196px. No matting, background removal, repaint or recoloring.",
+  "sheetValidation": {
+    "width": 1254,
+    "height": 1254,
+    "hasAlpha": true,
+    "sha256MatchesRaw": true
+  },
+  "crop": [
+    {
+      "id": "zcool",
+      "target": "C:\\Users\\xgwnj\\Documents\\XGWNJE\\MarkPad\\assets\\bookmark-icons\\clay\\zcool.png",
+      "crop": {
+        "left": 0,
+        "top": 0,
+        "width": 418,
+        "height": 418
+      },
+      "placement": {
+        "bounds": {
+          "left": 45,
+          "top": 58,
+          "width": 360,
+          "height": 352
+        },
+        "rendered": {
+          "width": 196,
+          "height": 192
+        },
+        "position": {
+          "left": 30,
+          "top": 32
+        }
+      },
+      "validation": {
+        "width": 256,
+        "height": 256,
+        "cornerAlpha": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "bytes": 56518
+      }
+    },
+    {
+      "id": "afdian",
+      "target": "C:\\Users\\xgwnj\\Documents\\XGWNJE\\MarkPad\\assets\\bookmark-icons\\clay\\afdian.png",
+      "crop": {
+        "left": 418,
+        "top": 0,
+        "width": 418,
+        "height": 418
+      },
+      "placement": {
+        "bounds": {
+          "left": 53,
+          "top": 86,
+          "width": 363,
+          "height": 307
+        },
+        "rendered": {
+          "width": 196,
+          "height": 166
+        },
+        "position": {
+          "left": 30,
+          "top": 45
+        }
+      },
+      "validation": {
+        "width": 256,
+        "height": 256,
+        "cornerAlpha": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "bytes": 44188
+      }
+    },
+    {
+      "id": "iconfont",
+      "target": "C:\\Users\\xgwnj\\Documents\\XGWNJE\\MarkPad\\assets\\bookmark-icons\\clay\\iconfont.png",
+      "crop": {
+        "left": 836,
+        "top": 0,
+        "width": 418,
+        "height": 418
+      },
+      "placement": {
+        "bounds": {
+          "left": 38,
+          "top": 63,
+          "width": 356,
+          "height": 353
+        },
+        "rendered": {
+          "width": 196,
+          "height": 194
+        },
+        "position": {
+          "left": 30,
+          "top": 31
+        }
+      },
+      "validation": {
+        "width": 256,
+        "height": 256,
+        "cornerAlpha": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "bytes": 67191
+      }
+    },
+    {
+      "id": "dribbble",
+      "target": "C:\\Users\\xgwnj\\Documents\\XGWNJE\\MarkPad\\assets\\bookmark-icons\\clay\\dribbble.png",
+      "crop": {
+        "left": 0,
+        "top": 418,
+        "width": 418,
+        "height": 418
+      },
+      "placement": {
+        "bounds": {
+          "left": 44,
+          "top": 38,
+          "width": 346,
+          "height": 345
+        },
+        "rendered": {
+          "width": 196,
+          "height": 195
+        },
+        "position": {
+          "left": 30,
+          "top": 31
+        }
+      },
+      "validation": {
+        "width": 256,
+        "height": 256,
+        "cornerAlpha": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "bytes": 63861
+      }
+    },
+    {
+      "id": "awwwards",
+      "target": "C:\\Users\\xgwnj\\Documents\\XGWNJE\\MarkPad\\assets\\bookmark-icons\\clay\\awwwards.png",
+      "crop": {
+        "left": 418,
+        "top": 418,
+        "width": 418,
+        "height": 418
+      },
+      "placement": {
+        "bounds": {
+          "left": 39,
+          "top": 120,
+          "width": 363,
+          "height": 208
+        },
+        "rendered": {
+          "width": 196,
+          "height": 112
+        },
+        "position": {
+          "left": 30,
+          "top": 72
+        }
+      },
+      "validation": {
+        "width": 256,
+        "height": 256,
+        "cornerAlpha": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "bytes": 29191
+      }
+    },
+    {
+      "id": "funletu",
+      "target": "C:\\Users\\xgwnj\\Documents\\XGWNJE\\MarkPad\\assets\\bookmark-icons\\clay\\funletu.png",
+      "crop": {
+        "left": 836,
+        "top": 418,
+        "width": 418,
+        "height": 418
+      },
+      "placement": {
+        "bounds": {
+          "left": 44,
+          "top": 45,
+          "width": 336,
+          "height": 345
+        },
+        "rendered": {
+          "width": 191,
+          "height": 196
+        },
+        "position": {
+          "left": 33,
+          "top": 30
+        }
+      },
+      "validation": {
+        "width": 256,
+        "height": 256,
+        "cornerAlpha": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "bytes": 71690
+      }
+    },
+    {
+      "id": "comfyui",
+      "target": "C:\\Users\\xgwnj\\Documents\\XGWNJE\\MarkPad\\assets\\bookmark-icons\\clay\\comfyui.png",
+      "crop": {
+        "left": 0,
+        "top": 836,
+        "width": 418,
+        "height": 418
+      },
+      "placement": {
+        "bounds": {
+          "left": 47,
+          "top": 30,
+          "width": 334,
+          "height": 342
+        },
+        "rendered": {
+          "width": 191,
+          "height": 196
+        },
+        "position": {
+          "left": 33,
+          "top": 30
+        }
+      },
+      "validation": {
+        "width": 256,
+        "height": 256,
+        "cornerAlpha": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "bytes": 50295
+      }
+    },
+    {
+      "id": "liblib",
+      "target": "C:\\Users\\xgwnj\\Documents\\XGWNJE\\MarkPad\\assets\\bookmark-icons\\clay\\liblib.png",
+      "crop": {
+        "left": 418,
+        "top": 836,
+        "width": 418,
+        "height": 418
+      },
+      "placement": {
+        "bounds": {
+          "left": 42,
+          "top": 35,
+          "width": 337,
+          "height": 342
+        },
+        "rendered": {
+          "width": 193,
+          "height": 196
+        },
+        "position": {
+          "left": 32,
+          "top": 30
+        }
+      },
+      "validation": {
+        "width": 256,
+        "height": 256,
+        "cornerAlpha": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "bytes": 64340
+      }
+    },
+    {
+      "id": "jimeng",
+      "target": "C:\\Users\\xgwnj\\Documents\\XGWNJE\\MarkPad\\assets\\bookmark-icons\\clay\\jimeng.png",
+      "crop": {
+        "left": 836,
+        "top": 836,
+        "width": 418,
+        "height": 418
+      },
+      "placement": {
+        "bounds": {
+          "left": 51,
+          "top": 38,
+          "width": 337,
+          "height": 334
+        },
+        "rendered": {
+          "width": 196,
+          "height": 194
+        },
+        "position": {
+          "left": 30,
+          "top": 31
+        }
+      },
+      "validation": {
+        "width": 256,
+        "height": 256,
+        "cornerAlpha": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "bytes": 52616
+      }
+    }
+  ],
+  "sources": [
+    {
+      "id": "zcool",
+      "kind": "downloaded-vector",
+      "sourceUrl": "https://cdn.simpleicons.org/zcool",
+      "license": "CC0-1.0 (Simple Icons); brand trademark rights remain with the owner.",
+      "flat": "assets/bookmark-icons/flat/zcool.svg",
+      "reference": "design/builtin-icons/references/zcool.png"
+    },
+    {
+      "id": "afdian",
+      "kind": "downloaded-vector",
+      "sourceUrl": "https://cdn.simpleicons.org/afdian",
+      "license": "CC0-1.0 (Simple Icons); brand trademark rights remain with the owner.",
+      "flat": "assets/bookmark-icons/flat/afdian.svg",
+      "reference": "design/builtin-icons/references/afdian.png"
+    },
+    {
+      "id": "iconfont",
+      "kind": "downloaded-vector",
+      "sourceUrl": "https://img.alicdn.com/imgextra/i4/O1CN01Z5paLz1O0zuCC7osS_!!6000000001644-55-tps-83-82.svg",
+      "license": "Brand artwork rights retained by its owner; no separate reuse license was published.",
+      "flat": "assets/bookmark-icons/flat/iconfont.svg",
+      "reference": "design/builtin-icons/references/iconfont.png"
+    },
+    {
+      "id": "dribbble",
+      "kind": "downloaded-vector",
+      "sourceUrl": "https://cdn.simpleicons.org/dribbble",
+      "license": "CC0-1.0 (Simple Icons); brand trademark rights remain with the owner.",
+      "flat": "assets/bookmark-icons/flat/dribbble.svg",
+      "reference": "design/builtin-icons/references/dribbble.png"
+    },
+    {
+      "id": "awwwards",
+      "kind": "downloaded-vector",
+      "sourceUrl": "https://cdn.simpleicons.org/awwwards",
+      "license": "CC0-1.0 (Simple Icons); brand trademark rights remain with the owner.",
+      "flat": "assets/bookmark-icons/flat/awwwards.svg",
+      "reference": "design/builtin-icons/references/awwwards.png"
+    },
+    {
+      "id": "funletu",
+      "kind": "initial-fallback",
+      "initial": "F",
+      "sourceUrl": "https://pan.funletu.com/",
+      "license": "Original MarkPad initial artwork.",
+      "note": "Original public origin redirects to an unrelated service; its mark was not adopted.",
+      "flat": "assets/bookmark-icons/flat/funletu.svg",
+      "reference": "design/builtin-icons/references/funletu.png"
+    },
+    {
+      "id": "comfyui",
+      "kind": "downloaded-vector",
+      "sourceUrl": "https://cdn.jsdelivr.net/npm/@lobehub/icons-static-svg@1.95.1/icons/comfyui-color.svg",
+      "license": "MIT (@lobehub/icons-static-svg 1.95.1); brand trademark rights remain with the owner.",
+      "flat": "assets/bookmark-icons/flat/comfyui.svg",
+      "reference": "design/builtin-icons/references/comfyui.png"
+    },
+    {
+      "id": "liblib",
+      "kind": "reviewed-vector-redraw",
+      "sourceUrl": "https://www.liblib.art/favicon.ico",
+      "license": "Brand artwork rights retained by its owner; no separate reuse license was published.",
+      "note": "Editable simplified vector redraw from the official public mark; not a claim of an official supplied vector.",
+      "flat": "assets/bookmark-icons/flat/liblib.svg",
+      "reference": "design/builtin-icons/references/liblib.png"
+    },
+    {
+      "id": "jimeng",
+      "kind": "downloaded-vector",
+      "sourceUrl": "https://cdn.jsdelivr.net/npm/@lobehub/icons-static-svg@1.95.1/icons/jimeng-color.svg",
+      "license": "MIT (@lobehub/icons-static-svg 1.95.1); brand trademark rights remain with the owner.",
+      "flat": "assets/bookmark-icons/flat/jimeng.svg",
+      "reference": "design/builtin-icons/references/jimeng.png"
+    }
+  ]
+}

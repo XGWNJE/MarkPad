@@ -1,0 +1,294 @@
+{
+  "sheetId": "first25-1",
+  "ids": [
+    "123community",
+    "civitai",
+    "jpsmile",
+    "imyshare",
+    "ghxi",
+    "laogou",
+    "rutracker",
+    "byrut",
+    "kkpans"
+  ],
+  "grid": {
+    "columns": 3,
+    "rows": 3,
+    "emptyCellIndexes": []
+  },
+  "tool": "built-in image_gen__imagegen",
+  "transparentBackground": true,
+  "defaultSelectedAttempt": 2,
+  "attempts": [
+    {
+      "attempt": 1,
+      "prompt": "Create a production icon contact sheet, exactly 3 columns by 3 rows on a SQUARE true-transparent RGBA canvas, 1536×1536 preferred. Image 1 is the exact nine-icon geometry/color/layout reference. Image 2 is ONLY the approved material and lighting reference; DO NOT include the Figma mark from image 2.\nTransform each of the NINE marks in Image 1 into the same premium matte soft-clay 3D style seen in Image 2: tactile fine ceramic/clay surface, softly rounded shallow extrusion, restrained soft self-shadow, soft upper-left studio light, orthographic FRONT VIEW, no tilt or strong perspective. Retain each reference's original brand colors, recognizable silhouette, internal geometry, letters, and small distinguishing features.\nSTRICT FIXED 3×3 order, row-major: 1 blue S brand-initial tile; 2 Civitai blue hexagonal C; 3 JPSmile yellow face/camera icon; 4 iMyShare blue interlocking/petal mark; 5 green G brand-initial tile; 6 Laogou black boy-profile silhouette; 7 RuTracker red lowercase ru monogram; 8 BYRUT red-gold pentagonal emblem; 9 KK multicolor double-K mark in its original dark shape.\nOne icon centered within each equal cell. Every icon including its tiny soft contact shadow stays inside the central 72–76% of its own cell. Fully empty transparent gutters. No shapes cross cell boundaries, no cutting, no rearranging, no merging. Preserve holes and cutouts as genuine transparent alpha. Do not add any plates, pedestals, bases or tiles beyond shapes already present in the supplied reference marks. No grid lines, no labels, no captions, no scene, no background colors, no floor, no checkerboard, no watermark, no floating particles. Clean, smooth antialiased icon edges. Nine icons only.",
+      "nativeOriginal": "C:\\Users\\xgwnj\\.codex\\generated_images\\01a156fb-11d4-7553-abf3-0dd9082c7f58\\exec-52474af8-d97a-4549-8ca0-cee82c442127.png",
+      "savedOriginal": "C:/Users/xgwnj/Documents/XGWNJE/MarkPad/design/builtin-icons/sheets/first25-1-attempt1.png",
+      "referenceInputs": [
+        "C:/Users/xgwnj/Documents/XGWNJE/MarkPad/design/builtin-icons/sheets/first25-1-reference.png",
+        "C:/Users/xgwnj/Documents/XGWNJE/MarkPad/design/icon-style-study/icons/e-brand-clay/figma.png"
+      ]
+    },
+    {
+      "attempt": 2,
+      "prompt": "Repair ONLY the transparency and stray edge pixels of this 3×3 soft-clay icon sheet. Image 1 is the existing sheet to edit, Image 2 is the exact clean original geometry/order reference.\nKeep the nine icons, the exact 3 columns × 3 rows, row-major identity order, materials, front view, original colors, soft upper-left light and positions. Do not add/remove/rearrange icons or change their brand shapes.\nRemove all floating colored debris, stray blue/red/yellow speckles, fringe, ragged chips and disconnected pixels from the gutters, borders and outside every icon. In particular remove the blue flecks touching the top edge above the S and all red flecks between the bottom-row icons. Every empty pixel must have EXACTLY ZERO alpha; no floor, no checkerboard, no background haze, no cast shadow. Leave each icon as a clean smooth antialiased cutout with its entire body inside the central 72% of its equal cell. Maintain generous empty transparent margins on every side of each cell. Any original lettering inside a brand mark stays intact. No labels, no caption, no watermark, no new tiles. Square true-transparent RGBA PNG.",
+      "nativeOriginal": "C:\\Users\\xgwnj\\.codex\\generated_images\\01a156fb-11d4-7553-abf3-0dd9082c7f58\\exec-4fe74d8b-0a70-4e41-b60d-ee9564cb5ac4.png",
+      "savedOriginal": "C:/Users/xgwnj/Documents/XGWNJE/MarkPad/design/builtin-icons/sheets/first25-1-attempt2.png",
+      "referenceInputs": [
+        "C:\\Users\\xgwnj\\.codex\\generated_images\\01a156fb-11d4-7553-abf3-0dd9082c7f58\\exec-52474af8-d97a-4549-8ca0-cee82c442127.png",
+        "C:/Users/xgwnj/Documents/XGWNJE/MarkPad/design/builtin-icons/sheets/first25-1-reference.png"
+      ]
+    }
+  ],
+  "cropsFile": "C:/Users/xgwnj/Documents/XGWNJE/MarkPad/design/builtin-icons/receipts/first25-1-crops.json",
+  "provenanceFile": "C:/Users/xgwnj/Documents/XGWNJE/MarkPad/design/builtin-icons/receipts/first25-provenance.json",
+  "sourceFileInventory": "C:/Users/xgwnj/Documents/XGWNJE/MarkPad/design/builtin-icons/receipts/first25-source-files.json",
+  "exportScript": "C:/Users/xgwnj/Documents/XGWNJE/MarkPad/design/builtin-icons/sources/first25-export.mjs",
+  "postProcessing": "Crop and centered placement only via shared helper. No alpha masking, background extraction, recoloring, or redraw applied to native clay icons.",
+  "exports": [
+    {
+      "id": "123community",
+      "target": "C:\\Users\\xgwnj\\Documents\\XGWNJE\\MarkPad\\assets\\bookmark-icons\\clay\\123community.png",
+      "crop": {
+        "left": 0,
+        "top": 0,
+        "width": 418,
+        "height": 418
+      },
+      "placement": {
+        "bounds": {
+          "left": 61,
+          "top": 71,
+          "width": 322,
+          "height": 321
+        },
+        "rendered": {
+          "width": 196,
+          "height": 195
+        },
+        "position": {
+          "left": 30,
+          "top": 31
+        }
+      },
+      "sourceSheet": "C:\\Users\\xgwnj\\Documents\\XGWNJE\\MarkPad\\design\\builtin-icons\\sheets\\first25-1-attempt2.png"
+    },
+    {
+      "id": "civitai",
+      "target": "C:\\Users\\xgwnj\\Documents\\XGWNJE\\MarkPad\\assets\\bookmark-icons\\clay\\civitai.png",
+      "crop": {
+        "left": 418,
+        "top": 0,
+        "width": 418,
+        "height": 418
+      },
+      "placement": {
+        "bounds": {
+          "left": 64,
+          "top": 73,
+          "width": 290,
+          "height": 326
+        },
+        "rendered": {
+          "width": 174,
+          "height": 196
+        },
+        "position": {
+          "left": 41,
+          "top": 30
+        }
+      },
+      "sourceSheet": "C:\\Users\\xgwnj\\Documents\\XGWNJE\\MarkPad\\design\\builtin-icons\\sheets\\first25-1-attempt2.png"
+    },
+    {
+      "id": "jpsmile",
+      "target": "C:\\Users\\xgwnj\\Documents\\XGWNJE\\MarkPad\\assets\\bookmark-icons\\clay\\jpsmile.png",
+      "crop": {
+        "left": 836,
+        "top": 0,
+        "width": 418,
+        "height": 418
+      },
+      "placement": {
+        "bounds": {
+          "left": 37,
+          "top": 71,
+          "width": 323,
+          "height": 321
+        },
+        "rendered": {
+          "width": 196,
+          "height": 195
+        },
+        "position": {
+          "left": 30,
+          "top": 31
+        }
+      },
+      "sourceSheet": "C:\\Users\\xgwnj\\Documents\\XGWNJE\\MarkPad\\design\\builtin-icons\\sheets\\first25-1-attempt2.png"
+    },
+    {
+      "id": "imyshare",
+      "target": "C:\\Users\\xgwnj\\Documents\\XGWNJE\\MarkPad\\assets\\bookmark-icons\\clay\\imyshare.png",
+      "crop": {
+        "left": 0,
+        "top": 418,
+        "width": 418,
+        "height": 418
+      },
+      "placement": {
+        "bounds": {
+          "left": 64,
+          "top": 99,
+          "width": 344,
+          "height": 235
+        },
+        "rendered": {
+          "width": 196,
+          "height": 134
+        },
+        "position": {
+          "left": 30,
+          "top": 61
+        }
+      },
+      "sourceSheet": "C:\\Users\\xgwnj\\Documents\\XGWNJE\\MarkPad\\design\\builtin-icons\\sheets\\first25-1-attempt2.png"
+    },
+    {
+      "id": "ghxi",
+      "target": "C:\\Users\\xgwnj\\Documents\\XGWNJE\\MarkPad\\assets\\bookmark-icons\\clay\\ghxi.png",
+      "crop": {
+        "left": 418,
+        "top": 418,
+        "width": 418,
+        "height": 418
+      },
+      "placement": {
+        "bounds": {
+          "left": 49,
+          "top": 49,
+          "width": 321,
+          "height": 329
+        },
+        "rendered": {
+          "width": 191,
+          "height": 196
+        },
+        "position": {
+          "left": 33,
+          "top": 30
+        }
+      },
+      "sourceSheet": "C:\\Users\\xgwnj\\Documents\\XGWNJE\\MarkPad\\design\\builtin-icons\\sheets\\first25-1-attempt2.png"
+    },
+    {
+      "id": "laogou",
+      "target": "C:\\Users\\xgwnj\\Documents\\XGWNJE\\MarkPad\\assets\\bookmark-icons\\clay\\laogou.png",
+      "crop": {
+        "left": 836,
+        "top": 418,
+        "width": 418,
+        "height": 418
+      },
+      "placement": {
+        "bounds": {
+          "left": 76,
+          "top": 51,
+          "width": 258,
+          "height": 346
+        },
+        "rendered": {
+          "width": 146,
+          "height": 196
+        },
+        "position": {
+          "left": 55,
+          "top": 30
+        }
+      },
+      "sourceSheet": "C:\\Users\\xgwnj\\Documents\\XGWNJE\\MarkPad\\design\\builtin-icons\\sheets\\first25-1-attempt2.png"
+    },
+    {
+      "id": "rutracker",
+      "target": "C:\\Users\\xgwnj\\Documents\\XGWNJE\\MarkPad\\assets\\bookmark-icons\\clay\\rutracker.png",
+      "crop": {
+        "left": 0,
+        "top": 836,
+        "width": 418,
+        "height": 418
+      },
+      "placement": {
+        "bounds": {
+          "left": 64,
+          "top": 79,
+          "width": 317,
+          "height": 226
+        },
+        "rendered": {
+          "width": 196,
+          "height": 140
+        },
+        "position": {
+          "left": 30,
+          "top": 58
+        }
+      },
+      "sourceSheet": "C:\\Users\\xgwnj\\Documents\\XGWNJE\\MarkPad\\design\\builtin-icons\\sheets\\first25-1-attempt2.png"
+    },
+    {
+      "id": "byrut",
+      "target": "C:\\Users\\xgwnj\\Documents\\XGWNJE\\MarkPad\\assets\\bookmark-icons\\clay\\byrut.png",
+      "crop": {
+        "left": 418,
+        "top": 836,
+        "width": 418,
+        "height": 418
+      },
+      "placement": {
+        "bounds": {
+          "left": 49,
+          "top": 27,
+          "width": 321,
+          "height": 309
+        },
+        "rendered": {
+          "width": 196,
+          "height": 189
+        },
+        "position": {
+          "left": 30,
+          "top": 34
+        }
+      },
+      "sourceSheet": "C:\\Users\\xgwnj\\Documents\\XGWNJE\\MarkPad\\design\\builtin-icons\\sheets\\first25-1-attempt2.png"
+    },
+    {
+      "id": "kkpans",
+      "target": "C:\\Users\\xgwnj\\Documents\\XGWNJE\\MarkPad\\assets\\bookmark-icons\\clay\\kkpans.png",
+      "crop": {
+        "left": 836,
+        "top": 836,
+        "width": 418,
+        "height": 418
+      },
+      "placement": {
+        "bounds": {
+          "left": 37,
+          "top": 27,
+          "width": 331,
+          "height": 317
+        },
+        "rendered": {
+          "width": 196,
+          "height": 188
+        },
+        "position": {
+          "left": 30,
+          "top": 34
+        }
+      },
+      "sourceSheet": "C:\\Users\\xgwnj\\Documents\\XGWNJE\\MarkPad\\design\\builtin-icons\\sheets\\first25-1-attempt2.png"
+    }
+  ]
+}

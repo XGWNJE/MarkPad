@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="none"><rect width="256" height="256" fill="#f5f3ed"/><g transform="translate(4.086956521739133 -3.7391304347826093) scale(2.608695652173913)" fill="#262825">
+  <g
+    fill="none"
+    stroke="#111111"
+    stroke-width="3.6"
+    stroke-linejoin="round"
+  >
+    <rect
+      x="20"
+      y="22"
+      width="46"
+      height="58"
+      rx="5"
+      transform="rotate(-9 43 51)"
+      opacity="0.42"
+    />
+    <rect
+      x="26"
+      y="22"
+      width="46"
+      height="58"
+      rx="5"
+      transform="rotate(-2 49 51)"
+      opacity="0.72"
+    />
+    <rect x="32" y="22" width="46" height="58" rx="5" />
+  </g>
+  <circle cx="70" cy="32" r="6.5" fill="#d96921" />
+</g></svg>

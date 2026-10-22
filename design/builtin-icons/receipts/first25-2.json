@@ -1,0 +1,284 @@
+{
+  "sheetId": "first25-2",
+  "ids": [
+    "xclient",
+    "ipastore",
+    "greasyfork",
+    "macked",
+    "cgown",
+    "adobeae",
+    "c4dsky",
+    "gfxcamp",
+    "wszyk"
+  ],
+  "grid": {
+    "columns": 3,
+    "rows": 3,
+    "emptyCellIndexes": []
+  },
+  "tool": "built-in image_gen__imagegen",
+  "transparentBackground": true,
+  "defaultSelectedAttempt": 1,
+  "attempts": [
+    {
+      "attempt": 1,
+      "prompt": "Create an icon contact sheet, exactly 3 columns by 3 rows on a SQUARE true-transparent RGBA canvas, 1536×1536 preferred. Image 1 is the exact nine-icon geometry/color/layout reference. Image 2 is ONLY the approved material/light reference; DO NOT include its Figma logo.\nTransform all NINE marks from Image 1 into the same premium matte soft-clay 3D treatment: tactile fine ceramic/clay texture, softly rounded shallow extrusion, smooth clean contours, soft upper-left studio light, restrained self-shadow, orthographic FRONT VIEW with no tilt or large perspective. Keep reference brand colors, silhouettes, internal shapes, letters and identity features.\nSTRICT FIXED 3×3 row-major order: 1 XClient cyan and blue X; 2 purple I initial tile; 3 Greasy Fork dark wine-red disc with diagonal fork-shaped transparent cutout; 4 slate M initial tile; 5 CGown orange/yellow isometric CG cube emblem; 6 AdobeAE purple square with white Ae glyph; 7 teal C initial tile; 8 GFXCamp red-orange G mark with thin stripes; 9 orange W initial tile. For Greasy Fork the fork is a clean HOLE through the red disc with genuine transparency, not black material.\nOne icon centered within each equal grid cell. Maximum icon width/height 72–76% of its own cell, generous fully transparent gutters and padding. No overlapping, no cut edges, no rearranging, no merging. Preserve intentional transparent holes. Do not add any plates, pedestals, bases or tiles beyond shapes already in the reference. No grid lines, no text labels, no caption, no background, no floor, no checkerboard, no watermark, no colored fringe, no floating particles. Empty pixels must be zero alpha. Exactly nine separate soft-clay icons.",
+      "nativeOriginal": "C:\\Users\\xgwnj\\.codex\\generated_images\\01a156fb-11d4-7553-abf3-0dd9082c7f58\\exec-869d7fbc-5b6f-4ad0-8aed-bbd60c486db6.png",
+      "savedOriginal": "C:/Users/xgwnj/Documents/XGWNJE/MarkPad/design/builtin-icons/sheets/first25-2-attempt1.png",
+      "referenceInputs": [
+        "C:/Users/xgwnj/Documents/XGWNJE/MarkPad/design/builtin-icons/sheets/first25-2-reference.png",
+        "C:/Users/xgwnj/Documents/XGWNJE/MarkPad/design/icon-style-study/icons/e-brand-clay/figma.png"
+      ]
+    }
+  ],
+  "cropsFile": "C:/Users/xgwnj/Documents/XGWNJE/MarkPad/design/builtin-icons/receipts/first25-2-crops.json",
+  "provenanceFile": "C:/Users/xgwnj/Documents/XGWNJE/MarkPad/design/builtin-icons/receipts/first25-provenance.json",
+  "sourceFileInventory": "C:/Users/xgwnj/Documents/XGWNJE/MarkPad/design/builtin-icons/receipts/first25-source-files.json",
+  "exportScript": "C:/Users/xgwnj/Documents/XGWNJE/MarkPad/design/builtin-icons/sources/first25-export.mjs",
+  "postProcessing": "Crop and centered placement only via shared helper. No alpha masking, background extraction, recoloring, or redraw applied to native clay icons.",
+  "exports": [
+    {
+      "id": "xclient",
+      "target": "C:\\Users\\xgwnj\\Documents\\XGWNJE\\MarkPad\\assets\\bookmark-icons\\clay\\xclient.png",
+      "crop": {
+        "left": 0,
+        "top": 0,
+        "width": 418,
+        "height": 418
+      },
+      "placement": {
+        "bounds": {
+          "left": 59,
+          "top": 101,
+          "width": 333,
+          "height": 282
+        },
+        "rendered": {
+          "width": 196,
+          "height": 166
+        },
+        "position": {
+          "left": 30,
+          "top": 45
+        }
+      },
+      "sourceSheet": "C:\\Users\\xgwnj\\Documents\\XGWNJE\\MarkPad\\design\\builtin-icons\\sheets\\first25-2-attempt1.png"
+    },
+    {
+      "id": "ipastore",
+      "target": "C:\\Users\\xgwnj\\Documents\\XGWNJE\\MarkPad\\assets\\bookmark-icons\\clay\\ipastore.png",
+      "crop": {
+        "left": 418,
+        "top": 0,
+        "width": 418,
+        "height": 418
+      },
+      "placement": {
+        "bounds": {
+          "left": 40,
+          "top": 71,
+          "width": 338,
+          "height": 334
+        },
+        "rendered": {
+          "width": 196,
+          "height": 194
+        },
+        "position": {
+          "left": 30,
+          "top": 31
+        }
+      },
+      "sourceSheet": "C:\\Users\\xgwnj\\Documents\\XGWNJE\\MarkPad\\design\\builtin-icons\\sheets\\first25-2-attempt1.png"
+    },
+    {
+      "id": "greasyfork",
+      "target": "C:\\Users\\xgwnj\\Documents\\XGWNJE\\MarkPad\\assets\\bookmark-icons\\clay\\greasyfork.png",
+      "crop": {
+        "left": 836,
+        "top": 0,
+        "width": 418,
+        "height": 418
+      },
+      "placement": {
+        "bounds": {
+          "left": 34,
+          "top": 57,
+          "width": 348,
+          "height": 352
+        },
+        "rendered": {
+          "width": 194,
+          "height": 196
+        },
+        "position": {
+          "left": 31,
+          "top": 30
+        }
+      },
+      "sourceSheet": "C:\\Users\\xgwnj\\Documents\\XGWNJE\\MarkPad\\design\\builtin-icons\\sheets\\first25-2-attempt1.png"
+    },
+    {
+      "id": "macked",
+      "target": "C:\\Users\\xgwnj\\Documents\\XGWNJE\\MarkPad\\assets\\bookmark-icons\\clay\\macked.png",
+      "crop": {
+        "left": 0,
+        "top": 418,
+        "width": 418,
+        "height": 418
+      },
+      "placement": {
+        "bounds": {
+          "left": 56,
+          "top": 51,
+          "width": 334,
+          "height": 334
+        },
+        "rendered": {
+          "width": 196,
+          "height": 196
+        },
+        "position": {
+          "left": 30,
+          "top": 30
+        }
+      },
+      "sourceSheet": "C:\\Users\\xgwnj\\Documents\\XGWNJE\\MarkPad\\design\\builtin-icons\\sheets\\first25-2-attempt1.png"
+    },
+    {
+      "id": "cgown",
+      "target": "C:\\Users\\xgwnj\\Documents\\XGWNJE\\MarkPad\\assets\\bookmark-icons\\clay\\cgown.png",
+      "crop": {
+        "left": 418,
+        "top": 418,
+        "width": 418,
+        "height": 418
+      },
+      "placement": {
+        "bounds": {
+          "left": 66,
+          "top": 72,
+          "width": 310,
+          "height": 297
+        },
+        "rendered": {
+          "width": 196,
+          "height": 188
+        },
+        "position": {
+          "left": 30,
+          "top": 34
+        }
+      },
+      "sourceSheet": "C:\\Users\\xgwnj\\Documents\\XGWNJE\\MarkPad\\design\\builtin-icons\\sheets\\first25-2-attempt1.png"
+    },
+    {
+      "id": "adobeae",
+      "target": "C:\\Users\\xgwnj\\Documents\\XGWNJE\\MarkPad\\assets\\bookmark-icons\\clay\\adobeae.png",
+      "crop": {
+        "left": 836,
+        "top": 418,
+        "width": 418,
+        "height": 418
+      },
+      "placement": {
+        "bounds": {
+          "left": 39,
+          "top": 51,
+          "width": 336,
+          "height": 333
+        },
+        "rendered": {
+          "width": 196,
+          "height": 194
+        },
+        "position": {
+          "left": 30,
+          "top": 31
+        }
+      },
+      "sourceSheet": "C:\\Users\\xgwnj\\Documents\\XGWNJE\\MarkPad\\design\\builtin-icons\\sheets\\first25-2-attempt1.png"
+    },
+    {
+      "id": "c4dsky",
+      "target": "C:\\Users\\xgwnj\\Documents\\XGWNJE\\MarkPad\\assets\\bookmark-icons\\clay\\c4dsky.png",
+      "crop": {
+        "left": 0,
+        "top": 836,
+        "width": 418,
+        "height": 418
+      },
+      "placement": {
+        "bounds": {
+          "left": 53,
+          "top": 23,
+          "width": 337,
+          "height": 334
+        },
+        "rendered": {
+          "width": 196,
+          "height": 194
+        },
+        "position": {
+          "left": 30,
+          "top": 31
+        }
+      },
+      "sourceSheet": "C:\\Users\\xgwnj\\Documents\\XGWNJE\\MarkPad\\design\\builtin-icons\\sheets\\first25-2-attempt1.png"
+    },
+    {
+      "id": "gfxcamp",
+      "target": "C:\\Users\\xgwnj\\Documents\\XGWNJE\\MarkPad\\assets\\bookmark-icons\\clay\\gfxcamp.png",
+      "crop": {
+        "left": 418,
+        "top": 836,
+        "width": 418,
+        "height": 418
+      },
+      "placement": {
+        "bounds": {
+          "left": 56,
+          "top": 57,
+          "width": 317,
+          "height": 257
+        },
+        "rendered": {
+          "width": 196,
+          "height": 159
+        },
+        "position": {
+          "left": 30,
+          "top": 49
+        }
+      },
+      "sourceSheet": "C:\\Users\\xgwnj\\Documents\\XGWNJE\\MarkPad\\design\\builtin-icons\\sheets\\first25-2-attempt1.png"
+    },
+    {
+      "id": "wszyk",
+      "target": "C:\\Users\\xgwnj\\Documents\\XGWNJE\\MarkPad\\assets\\bookmark-icons\\clay\\wszyk.png",
+      "crop": {
+        "left": 836,
+        "top": 836,
+        "width": 418,
+        "height": 418
+      },
+      "placement": {
+        "bounds": {
+          "left": 40,
+          "top": 25,
+          "width": 335,
+          "height": 331
+        },
+        "rendered": {
+          "width": 196,
+          "height": 194
+        },
+        "position": {
+          "left": 30,
+          "top": 31
+        }
+      },
+      "sourceSheet": "C:\\Users\\xgwnj\\Documents\\XGWNJE\\MarkPad\\design\\builtin-icons\\sheets\\first25-2-attempt1.png"
+    }
+  ]
+}

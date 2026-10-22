@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="zh-CN" data-theme="light">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light dark">
+  <meta name="referrer" content="no-referrer">
+  <title>MarkPad · 图标风格对照</title>
+  <link rel="icon" href="../../icons/tab-icon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="study.css">
+  <script src="study-data.js" defer></script>
+  <script src="study.js" defer></script>
+</head>
+<body>
+  <div class="study-shell">
+    <header class="masthead">
+      <a class="wordmark" href="index.html" aria-label="MarkPad 图标风格对照首页"><span class="mark" aria-hidden="true"><i></i><i></i><i></i><i></i></span>MarkPad<span class="wordmark-divider">/</span><span class="edition">ICON STUDY</span></a>
+      <div class="masthead-right"><span class="study-date">20 OCT 2026</span><button id="theme-toggle" class="theme-button" type="button" aria-label="切换为深色主题"><span aria-hidden="true">◐</span><span id="theme-label">浅色</span></button></div>
+    </header>
+    <section class="intro">
+      <div><p class="eyebrow">一组真实书签 · 六种视觉语言</p><h1>图标风格对照<span class="title-dot">.</span></h1><p class="intro-copy">先看整套的气质，再看每个入口的辨识度。</p></div>
+      <div class="study-count"><strong>06<span>套方向</span></strong><div></div><strong>15<span>个案例</span></strong></div>
+    </section>
+    <nav class="style-nav" id="style-nav" aria-label="图标风格"></nav>
+    <main>
+      <div class="view-controls">
+        <div class="segmented" role="group" aria-label="浏览方式"><button type="button" data-view="collection" aria-pressed="true">整套预览</button><button type="button" data-view="compare" aria-pressed="false">同项对比</button></div>
+        <div class="display-controls"><label class="panel-switch"><input type="checkbox" id="panel-mode">面板效果</label><span class="control-separator"></span><label class="size-control" for="card-size">尺寸 <input id="card-size" type="range" min="64" max="192" step="2" value="122"><output id="size-label" for="card-size">122px</output></label><button class="reset-size" id="reset-size" type="button" title="恢复 MarkPad 默认尺寸" aria-label="恢复默认尺寸">↺</button></div>
+      </div>
+      <section class="collection-view" id="collection-view" aria-labelledby="style-heading">
+        <div class="section-heading"><div><p class="eyebrow" id="style-meta"></p><h2 id="style-heading"></h2><p class="style-description" id="style-description"></p></div><div class="palette" id="palette" aria-label="风格配色"></div></div>
+        <div class="canvas"><div class="icon-grid" id="collection-grid"></div><div class="canvas-footer"><span><i></i>真实卡片比例 · 连续圆角裁切</span><span>点按图标，查看放大细节</span></div></div>
+      </section>
+      <section class="compare-view" id="compare-view" aria-labelledby="compare-heading" hidden>
+        <div class="section-heading compare-heading"><div><p class="eyebrow">同一案例 · 六套并排</p><h2 id="compare-heading">同项对比</h2></div><div class="case-picker"><button id="prev-case" type="button" aria-label="上一个案例">←</button><label for="case-select" class="sr-only">选择对比案例</label><select id="case-select"></select><button id="next-case" type="button" aria-label="下一个案例">→</button></div></div>
+        <div class="canvas compare-canvas"><div class="compare-grid" id="compare-grid"></div><div class="canvas-footer"><span>同一底板、同一尺寸，直接比较图形与材质。</span><span>小屏可横向滚动</span></div></div>
+        <div class="case-strip" id="case-strip" aria-label="切换对比案例"></div>
+      </section>
+    </main>
+    <footer class="page-footer"><p>正式书签中选取 12 个网站 + 3 个文件夹。本页用于风格选型，尚未接入扩展。</p><a href="README.md">素材与来源说明 <span aria-hidden="true">↗</span></a></footer>
+  </div>
+  <dialog id="detail-dialog" aria-labelledby="detail-title">
+    <div class="detail-heading"><div><p class="eyebrow" id="detail-meta"></p><h2 id="detail-title"></h2></div><button id="close-detail" type="button" aria-label="关闭放大预览">✕</button></div>
+    <div class="detail-surfaces"><div class="detail-surface light"><span>浅色底板</span><div class="detail-art" id="detail-light"></div></div><div class="detail-surface dark"><span>深色底板</span><div class="detail-art" id="detail-dark"></div></div></div>
+    <div class="detail-styles" id="detail-styles" aria-label="切换放大图风格"></div>
+    <div class="detail-footer"><span id="detail-status"></span><a id="asset-link" target="_blank" rel="noopener">打开原始图标 ↗</a></div>
+  </dialog>
+</body>
+</html>

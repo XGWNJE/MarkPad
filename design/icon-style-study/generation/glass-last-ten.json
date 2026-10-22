@@ -1,0 +1,449 @@
+{
+  "generationTool": "built-in image_gen__imagegen",
+  "style": "F 原创磨砂玻璃",
+  "imagePolicy": "Native generated PNG copied byte-for-byte; no pixel editing, resampling, compositing or re-encoding.",
+  "assets": [
+    {
+      "id": "bilibili",
+      "reference": "C:/Users/xgwnj/Documents/XGWNJE/MarkPad/design/icon-style-study/references/original/bilibili.png",
+      "output": "C:/Users/xgwnj/Documents/XGWNJE/MarkPad/design/icon-style-study/icons/f-original-glass/bilibili.png",
+      "selectedGeneratedPath": "C:\\Users\\xgwnj\\.codex\\generated_images\\01a156fb-676e-7521-92c9-dccdf6e2861b\\exec-d13ba28e-9d81-45b4-ba96-3083f522592a.png",
+      "attempts": [
+        {
+          "attempt": 1,
+          "prompt": "Use case: style-transfer.\nAsset type: single transparent PNG bookmark icon, square 1024x1024.\nInput image 1 is the exact shape and composition reference. Transform this one icon into premium translucent frosted glass. Preserve the television shape, two antenna stalks, two small slanted screen eyes, and two apricot feet, all their proportions and positions. EXACT reference symbol silhouette and small interior details.\nStyle: thick milky frosted sea-glass teal primary body; warm translucent apricot accent parts; cream screen; soft internal refraction, luminous beveled edge highlights, legible dark-teal structural details; modest rounded extrusion. FRONT VIEW with no dramatic perspective. Soft upper-left studio light and extremely subtle shadow. Real tactile volumetric glass appearance.\nComposition: one isolated icon centered, object fits within central 76% of square at consistent optical scale; ample clean transparent margin.\nBackground: true transparent alpha, no backdrop.\nConstraints: only this one icon. Do not add an app tile, border, scene, text, extra object, watermark, checkerboard. No collage or grid. Preserve reference composition; change material only.",
+          "referencedImagePaths": [
+            "C:/Users/xgwnj/Documents/XGWNJE/MarkPad/design/icon-style-study/references/original/bilibili.png"
+          ],
+          "generatedPath": "C:\\Users\\xgwnj\\.codex\\generated_images\\01a156fb-676e-7521-92c9-dccdf6e2861b\\exec-d13ba28e-9d81-45b4-ba96-3083f522592a.png",
+          "selected": true
+        }
+      ],
+      "validation": {
+        "id": "bilibili",
+        "width": 1254,
+        "height": 1254,
+        "mode": "RGBA",
+        "bytes": 1042246,
+        "alpha_extrema": [
+          0,
+          255
+        ],
+        "alpha_gt16_bbox": [
+          201,
+          148,
+          1052,
+          1090
+        ],
+        "corner_alpha": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "source_hash_matches": true
+      },
+      "visualReview": "Inspected individual output: expected subject and interior details preserved, front-facing volumetric frosted teal and apricot glass, transparent margins, no collage."
+    },
+    {
+      "id": "youtube",
+      "reference": "C:/Users/xgwnj/Documents/XGWNJE/MarkPad/design/icon-style-study/references/original/youtube.png",
+      "output": "C:/Users/xgwnj/Documents/XGWNJE/MarkPad/design/icon-style-study/icons/f-original-glass/youtube.png",
+      "selectedGeneratedPath": "C:\\Users\\xgwnj\\.codex\\generated_images\\01a156fb-676e-7521-92c9-dccdf6e2861b\\exec-0776dcb0-03bb-401c-bd58-e2bf83fa6ffd.png",
+      "attempts": [
+        {
+          "attempt": 1,
+          "prompt": "Use case: style-transfer.\nAsset type: one isolated transparent PNG bookmark icon, 1024x1024 square.\nInput image 1 is the exact shape and composition reference. Render this one symbol as premium translucent frosted glass, preserving its exact silhouette, layout and proportions: a teal circular video disk, an apricot right-pointing play triangle centered within, and a horizontal rounded apricot viewing-progress bar crossing low on the disk. Do not replace the circle with a rectangle.\nThick milky frosted sea-glass teal primary volume, warm translucent apricot triangle and progress bar; soft internal refraction and luminous beveled edge highlights, dark teal structural depth. Modest rounded extrusion, FRONT VIEW, no dramatic perspective. Soft upper-left studio lighting and very subtle shadow. Tactile volumetric glass rather than flat 2D.\nOne icon centered in central 76% of square with clean margin, true transparent alpha backdrop. No extra app tile, text, watermark, scene, border, checkerboard, collage, grid, or extra object. Preserve reference composition; change material only.",
+          "referencedImagePaths": [
+            "C:/Users/xgwnj/Documents/XGWNJE/MarkPad/design/icon-style-study/references/original/youtube.png"
+          ],
+          "generatedPath": "C:\\Users\\xgwnj\\.codex\\generated_images\\01a156fb-676e-7521-92c9-dccdf6e2861b\\exec-0776dcb0-03bb-401c-bd58-e2bf83fa6ffd.png",
+          "selected": true
+        }
+      ],
+      "validation": {
+        "id": "youtube",
+        "width": 1254,
+        "height": 1254,
+        "mode": "RGBA",
+        "bytes": 1116931,
+        "alpha_extrema": [
+          0,
+          255
+        ],
+        "alpha_gt16_bbox": [
+          172,
+          158,
+          1082,
+          1067
+        ],
+        "corner_alpha": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "source_hash_matches": true
+      },
+      "visualReview": "Inspected individual output: expected subject and interior details preserved, front-facing volumetric frosted teal and apricot glass, transparent margins, no collage."
+    },
+    {
+      "id": "123pan",
+      "reference": "C:/Users/xgwnj/Documents/XGWNJE/MarkPad/design/icon-style-study/references/original/123pan.png",
+      "output": "C:/Users/xgwnj/Documents/XGWNJE/MarkPad/design/icon-style-study/icons/f-original-glass/123pan.png",
+      "selectedGeneratedPath": "C:\\Users\\xgwnj\\.codex\\generated_images\\01a156fb-676e-7521-92c9-dccdf6e2861b\\exec-b53919d3-46a2-402f-a7ac-0abec20913ae.png",
+      "attempts": [
+        {
+          "attempt": 1,
+          "prompt": "Use case: style-transfer.\nAsset type: one isolated transparent PNG bookmark icon, square 1024x1024.\nInput image 1 is exact shape reference. Transform only material into premium translucent frosted glass. Preserve the three-lobed cloud silhouette, centered downward arrow, and three equal-width horizontal rounded storage bars stacked below; top bar overlaps lower cloud edge. Exact reference layout and small details, no extra symbols.\nThick milky frosted sea-glass teal cloud, cream glass downward arrow, warm translucent apricot storage bars. Soft internal refraction, luminous beveled edges, legible dark-teal structural depth, subtle rounded extrusion. FRONT VIEW, no dramatic perspective. Soft upper-left studio light and very subtle shadow. Tactile real volumetric glass, not flat 2D.\nOne centered icon occupying central 76% of square with clean margins and TRUE transparent alpha backdrop. No app tile, scene, text, watermark, border, checkerboard, grid or collage. Preserve composition and all details; change material only.",
+          "referencedImagePaths": [
+            "C:/Users/xgwnj/Documents/XGWNJE/MarkPad/design/icon-style-study/references/original/123pan.png"
+          ],
+          "generatedPath": "C:\\Users\\xgwnj\\.codex\\generated_images\\01a156fb-676e-7521-92c9-dccdf6e2861b\\exec-b53919d3-46a2-402f-a7ac-0abec20913ae.png",
+          "selected": true
+        }
+      ],
+      "validation": {
+        "id": "123pan",
+        "width": 1254,
+        "height": 1254,
+        "mode": "RGBA",
+        "bytes": 1173240,
+        "alpha_extrema": [
+          0,
+          255
+        ],
+        "alpha_gt16_bbox": [
+          116,
+          158,
+          1138,
+          1084
+        ],
+        "corner_alpha": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "source_hash_matches": true
+      },
+      "visualReview": "Inspected individual output: expected subject and interior details preserved, front-facing volumetric frosted teal and apricot glass, transparent margins, no collage."
+    },
+    {
+      "id": "gmail",
+      "reference": "C:/Users/xgwnj/Documents/XGWNJE/MarkPad/design/icon-style-study/references/original/gmail.png",
+      "output": "C:/Users/xgwnj/Documents/XGWNJE/MarkPad/design/icon-style-study/icons/f-original-glass/gmail.png",
+      "selectedGeneratedPath": "C:\\Users\\xgwnj\\.codex\\generated_images\\01a156fb-676e-7521-92c9-dccdf6e2861b\\exec-5758401f-f89a-4c96-b938-3e3c126f8903.png",
+      "attempts": [
+        {
+          "attempt": 1,
+          "prompt": "Use case: style-transfer.\nAsset type: ONE isolated transparent PNG bookmark icon, square 1024x1024.\nInput image 1 is the precise silhouette and composition reference. Re-render the same rounded teal envelope with its wide cream V-shaped flap line and single four-point apricot sparkle at upper-right. Preserve their exact sizes, placement, simple contours and relationships. The sparkle overlaps envelope top-right slightly and must remain separate and readable.\nPremium translucent frosted glass material: thick milky sea-glass teal envelope, soft cream glass V line, warm translucent apricot sparkle; tactile volumetric glass, soft internal refraction and beveled edge highlights, legible dark teal structural depth. Modest rounded extrusion in FRONT VIEW, no dramatic perspective; upper-left soft studio lighting and very subtle shadow.\nOne centered object occupying central 76% of square with uniform clean margins, TRUE transparent alpha background. No app tile, scene, additional marks, text, watermark, border, checkerboard, grid or collage. Change only material; preserve reference layout.",
+          "referencedImagePaths": [
+            "C:/Users/xgwnj/Documents/XGWNJE/MarkPad/design/icon-style-study/references/original/gmail.png"
+          ],
+          "generatedPath": "C:\\Users\\xgwnj\\.codex\\generated_images\\01a156fb-676e-7521-92c9-dccdf6e2861b\\exec-5758401f-f89a-4c96-b938-3e3c126f8903.png",
+          "selected": true
+        }
+      ],
+      "validation": {
+        "id": "gmail",
+        "width": 1254,
+        "height": 1254,
+        "mode": "RGBA",
+        "bytes": 928827,
+        "alpha_extrema": [
+          0,
+          255
+        ],
+        "alpha_gt16_bbox": [
+          184,
+          193,
+          1069,
+          1015
+        ],
+        "corner_alpha": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "source_hash_matches": true
+      },
+      "visualReview": "Inspected individual output: expected subject and interior details preserved, front-facing volumetric frosted teal and apricot glass, transparent margins, no collage."
+    },
+    {
+      "id": "outlook",
+      "reference": "C:/Users/xgwnj/Documents/XGWNJE/MarkPad/design/icon-style-study/references/original/outlook.png",
+      "output": "C:/Users/xgwnj/Documents/XGWNJE/MarkPad/design/icon-style-study/icons/f-original-glass/outlook.png",
+      "selectedGeneratedPath": "C:\\Users\\xgwnj\\.codex\\generated_images\\01a156fb-676e-7521-92c9-dccdf6e2861b\\exec-9b6437a0-18b6-42a0-ae1c-cd94921ad8fd.png",
+      "attempts": [
+        {
+          "attempt": 1,
+          "prompt": "Use case: style-transfer.\nAsset type: ONE isolated transparent PNG bookmark icon, square 1024x1024.\nInput image 1 defines exact original calendar-and-clock symbol. Preserve calendar shape and rounded corners, two vertical apricot binder tabs, one cream horizontal divider, and round apricot clock overlapping lower-right. Preserve clock's dark-teal hands pointing straight up and down-right, all positions/proportions from reference. Do not add numbers or cells.\nPremium translucent frosted glass: thick milky frosted sea-glass teal calendar, warm translucent apricot tabs and clock, cream glass divider, dark teal hands. Tactile glass volume, soft internal refraction, bright beveled edge highlights with smooth rounded extrusion. FRONT VIEW, no dramatic perspective. Upper-left soft studio light and very subtle shadow.\nOne centered icon within central 76% of square, consistent clean margins, TRUE transparent alpha background. No app tile, text, watermark, scene, border, checkerboard, collage or grid. Change only material and depth; preserve shape and small details.",
+          "referencedImagePaths": [
+            "C:/Users/xgwnj/Documents/XGWNJE/MarkPad/design/icon-style-study/references/original/outlook.png"
+          ],
+          "generatedPath": "C:\\Users\\xgwnj\\.codex\\generated_images\\01a156fb-676e-7521-92c9-dccdf6e2861b\\exec-9b6437a0-18b6-42a0-ae1c-cd94921ad8fd.png",
+          "selected": true
+        }
+      ],
+      "validation": {
+        "id": "outlook",
+        "width": 1254,
+        "height": 1254,
+        "mode": "RGBA",
+        "bytes": 917980,
+        "alpha_extrema": [
+          0,
+          255
+        ],
+        "alpha_gt16_bbox": [
+          224,
+          184,
+          1091,
+          1044
+        ],
+        "corner_alpha": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "source_hash_matches": true
+      },
+      "visualReview": "Inspected individual output: expected subject and interior details preserved, front-facing volumetric frosted teal and apricot glass, transparent margins, no collage."
+    },
+    {
+      "id": "tencentcloud",
+      "reference": "C:/Users/xgwnj/Documents/XGWNJE/MarkPad/design/icon-style-study/references/original/tencentcloud.png",
+      "output": "C:/Users/xgwnj/Documents/XGWNJE/MarkPad/design/icon-style-study/icons/f-original-glass/tencentcloud.png",
+      "selectedGeneratedPath": "C:\\Users\\xgwnj\\.codex\\generated_images\\01a156fb-676e-7521-92c9-dccdf6e2861b\\exec-4f8e3885-ed0f-4f5d-888b-a1fd9591e393.png",
+      "attempts": [
+        {
+          "attempt": 1,
+          "prompt": "Use case: style-transfer.\nAsset type: ONE isolated transparent PNG bookmark icon, square 1024x1024.\nInput image 1 specifies exact shape and composition. Re-render the same three-lobed teal cloud with exactly two apricot horizontal server bars stacked below. Each server bar retains one dark-teal small round indicator on left and one dark-teal short horizontal slot to the right. Top bar overlaps low cloud area, bottom bar separated beneath. Preserve proportions and all details.\nPremium translucent frosted glass: thick milky sea-glass teal cloud, warm translucent apricot server bars, dark teal circular and slot details. Real tactile glass volume, internal refraction and beveled edge highlights, modest rounded extrusion. FRONT VIEW without dramatic perspective. Soft upper-left studio lighting, very subtle shadow.\nOne centered icon within central 76% of square with clean margin, TRUE transparent alpha backdrop. No additional app tile, text, watermark, scene, borders, checkerboard, collage, grid or extra objects. Change material only, keep reference silhouette and layout exact.",
+          "referencedImagePaths": [
+            "C:/Users/xgwnj/Documents/XGWNJE/MarkPad/design/icon-style-study/references/original/tencentcloud.png"
+          ],
+          "generatedPath": "C:\\Users\\xgwnj\\.codex\\generated_images\\01a156fb-676e-7521-92c9-dccdf6e2861b\\exec-4f8e3885-ed0f-4f5d-888b-a1fd9591e393.png",
+          "selected": true
+        }
+      ],
+      "validation": {
+        "id": "tencentcloud",
+        "width": 1254,
+        "height": 1254,
+        "mode": "RGBA",
+        "bytes": 802969,
+        "alpha_extrema": [
+          0,
+          255
+        ],
+        "alpha_gt16_bbox": [
+          185,
+          196,
+          1068,
+          1024
+        ],
+        "corner_alpha": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "source_hash_matches": true
+      },
+      "visualReview": "Inspected individual output: expected subject and interior details preserved, front-facing volumetric frosted teal and apricot glass, transparent margins, no collage."
+    },
+    {
+      "id": "visionguard",
+      "reference": "C:/Users/xgwnj/Documents/XGWNJE/MarkPad/design/icon-style-study/references/original/visionguard.png",
+      "output": "C:/Users/xgwnj/Documents/XGWNJE/MarkPad/design/icon-style-study/icons/f-original-glass/visionguard.png",
+      "selectedGeneratedPath": "C:\\Users\\xgwnj\\.codex\\generated_images\\01a156fb-676e-7521-92c9-dccdf6e2861b\\exec-344384cc-a7e2-48a6-8ab1-69d494ae1b95.png",
+      "attempts": [
+        {
+          "attempt": 1,
+          "prompt": "Use case: style-transfer.\nAsset type: ONE isolated transparent PNG bookmark icon, square 1024x1024.\nInput image 1 is exact original visual-person scanning symbol. Preserve four separate teal rounded L-shaped scan brackets at all four corners; centered teal circular head and semicircle torso; one apricot horizontal scan beam crossing the middle above torso. Preserve each shape's proportions, placement, all spaces and silhouette. No shield, eye or extra features.\nPremium translucent frosted glass: thick milky sea-glass teal primary volumes and warm translucent apricot scan beam. Soft internal refraction, luminous beveled edge highlights, legible dark-teal structure, tactile real volumetric glass and modest rounded extrusion. FRONT VIEW, no dramatic perspective. Soft upper-left studio light and extremely subtle shadow.\nOne icon centered in central 76% of square with uniform margin; TRUE transparent alpha backdrop. No text, watermark, extra app tile, scene, border, checkerboard, grid or collage. Change only material; keep reference composition exact.",
+          "referencedImagePaths": [
+            "C:/Users/xgwnj/Documents/XGWNJE/MarkPad/design/icon-style-study/references/original/visionguard.png"
+          ],
+          "generatedPath": "C:\\Users\\xgwnj\\.codex\\generated_images\\01a156fb-676e-7521-92c9-dccdf6e2861b\\exec-344384cc-a7e2-48a6-8ab1-69d494ae1b95.png",
+          "selected": true
+        }
+      ],
+      "validation": {
+        "id": "visionguard",
+        "width": 1254,
+        "height": 1254,
+        "mode": "RGBA",
+        "bytes": 729436,
+        "alpha_extrema": [
+          0,
+          255
+        ],
+        "alpha_gt16_bbox": [
+          203,
+          236,
+          1051,
+          1020
+        ],
+        "corner_alpha": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "source_hash_matches": true
+      },
+      "visualReview": "Inspected individual output: expected subject and interior details preserved, front-facing volumetric frosted teal and apricot glass, transparent margins, no collage."
+    },
+    {
+      "id": "archive",
+      "reference": "C:/Users/xgwnj/Documents/XGWNJE/MarkPad/design/icon-style-study/references/original/archive.png",
+      "output": "C:/Users/xgwnj/Documents/XGWNJE/MarkPad/design/icon-style-study/icons/f-original-glass/archive.png",
+      "selectedGeneratedPath": "C:\\Users\\xgwnj\\.codex\\generated_images\\01a156fb-676e-7521-92c9-dccdf6e2861b\\exec-e9dc8e8e-70bb-4ae7-a612-d6988c6b54d4.png",
+      "attempts": [
+        {
+          "attempt": 1,
+          "prompt": "Use case: style-transfer.\nAsset type: ONE isolated transparent PNG bookmark folder icon, square 1024x1024.\nInput image 1 defines exact folder and interior. Preserve the frontal teal folder silhouette: flat left tab at top, short diagonal shoulder down to the longer top edge at right, rounded outer corners. Centered apricot archive box inset with separated lid, body and short dark-teal horizontal handle. Preserve all shapes, sizes and layout exactly; this belongs to a matched three-folder family so keep folder geometry identical.\nMaterial only: premium thick milky frosted sea-glass teal folder and warm translucent apricot archive-box details; soft internal refraction and luminous beveled edges; dark teal structural handle. Real tactile volumetric glass, modest rounded depth. FRONT VIEW, no dramatic perspective. Upper-left soft studio light and very subtle shadow.\nOne centered folder occupying central 76% of square at uniform optical scale, TRUE transparent alpha backdrop with clean edges and margins. No app tile behind folder, no scene, text, watermark, border, checkerboard, collage, grid or extra object.",
+          "referencedImagePaths": [
+            "C:/Users/xgwnj/Documents/XGWNJE/MarkPad/design/icon-style-study/references/original/archive.png"
+          ],
+          "generatedPath": "C:\\Users\\xgwnj\\.codex\\generated_images\\01a156fb-676e-7521-92c9-dccdf6e2861b\\exec-e9dc8e8e-70bb-4ae7-a612-d6988c6b54d4.png",
+          "selected": true
+        }
+      ],
+      "validation": {
+        "id": "archive",
+        "width": 1254,
+        "height": 1254,
+        "mode": "RGBA",
+        "bytes": 1111276,
+        "alpha_extrema": [
+          0,
+          255
+        ],
+        "alpha_gt16_bbox": [
+          186,
+          182,
+          1074,
+          1006
+        ],
+        "corner_alpha": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "source_hash_matches": true
+      },
+      "visualReview": "Inspected individual output: expected subject and interior details preserved, front-facing volumetric frosted teal and apricot glass, transparent margins, no collage."
+    },
+    {
+      "id": "share",
+      "reference": "C:/Users/xgwnj/Documents/XGWNJE/MarkPad/design/icon-style-study/references/original/share.png",
+      "output": "C:/Users/xgwnj/Documents/XGWNJE/MarkPad/design/icon-style-study/icons/f-original-glass/share.png",
+      "selectedGeneratedPath": "C:\\Users\\xgwnj\\.codex\\generated_images\\01a156fb-676e-7521-92c9-dccdf6e2861b\\exec-437c9c6a-a878-4060-a583-1bd650362c55.png",
+      "attempts": [
+        {
+          "attempt": 1,
+          "prompt": "Use case: style-transfer.\nAsset type: ONE isolated transparent PNG bookmark folder icon, square 1024x1024.\nInput image 1 defines exact folder and interior. Preserve the frontal teal folder silhouette: flat left tab at top, short diagonal shoulder down to longer top edge at right, rounded outer corners. Preserve centered apricot share graph exactly: THREE circular nodes, one at left-middle linked by two diagonal rounded bars to upper-right and lower-right circles. Keep all proportions and positions; this is a matched three-folder family so keep folder geometry identical.\nMaterial only: premium thick milky frosted sea-glass teal folder and warm translucent apricot share-graph details. Tactile glass volume, soft internal refraction and luminous beveled edges, modest rounded extrusion, legible dark teal structural depth. FRONT VIEW, no dramatic perspective. Soft upper-left studio light, very subtle shadow.\nOne centered icon within central 76% of square, uniform clean margins and TRUE transparent alpha backdrop. No extra app tile, scene, text, watermark, border, checkerboard, collage, grid or extra object. Change material only; preserve exact silhouette and interior.",
+          "referencedImagePaths": [
+            "C:/Users/xgwnj/Documents/XGWNJE/MarkPad/design/icon-style-study/references/original/share.png"
+          ],
+          "generatedPath": "C:\\Users\\xgwnj\\.codex\\generated_images\\01a156fb-676e-7521-92c9-dccdf6e2861b\\exec-79022ab8-d6f8-498e-bfa5-8d642f125e0e.png",
+          "selected": false
+        },
+        {
+          "attempt": 2,
+          "prompt": "Use case: precise-object-edit.\nImage 1 is the approved frosted-glass folder base. Image 2 supplies only the requested interior share graph.\nStarting from Image 1, change ONLY the apricot archive-box symbol on its front into Image 2's apricot share graph: exactly three circular nodes, one left-middle linked by two diagonal rounded bars to upper-right and lower-right circles. Preserve the folder base from Image 1 EXACTLY: same silhouette, proportions, tab, corners, all pixels outside interior emblem, FRONT VIEW, optical size, placement, lighting, thick milky frosted sea-glass teal material, soft internal refraction, beveled edge highlights, and true transparent alpha background. The new share graph is warm translucent apricot glass of the same material and light as the removed archive symbol.\nThis is one single folder icon in a matching family, 1254x1254 square preferred. Keep folder at precisely Image 1's canvas scale and position; do not shrink it. No additional app tile, scene, text, watermark, grid, collage, border or checkerboard. Real volumetric glass; preserve clean transparent margins.",
+          "referencedImagePaths": [
+            "C:\\Users\\xgwnj\\.codex\\generated_images\\01a156fb-676e-7521-92c9-dccdf6e2861b\\exec-e9dc8e8e-70bb-4ae7-a612-d6988c6b54d4.png",
+            "C:/Users/xgwnj/Documents/XGWNJE/MarkPad/design/icon-style-study/references/original/share.png"
+          ],
+          "generatedPath": "C:\\Users\\xgwnj\\.codex\\generated_images\\01a156fb-676e-7521-92c9-dccdf6e2861b\\exec-437c9c6a-a878-4060-a583-1bd650362c55.png",
+          "selected": true,
+          "repairReason": "Match the approved archive folder base geometry and canvas scale."
+        }
+      ],
+      "validation": {
+        "id": "share",
+        "width": 1254,
+        "height": 1254,
+        "mode": "RGBA",
+        "bytes": 1078367,
+        "alpha_extrema": [
+          0,
+          255
+        ],
+        "alpha_gt16_bbox": [
+          184,
+          180,
+          1078,
+          1009
+        ],
+        "corner_alpha": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "source_hash_matches": true
+      },
+      "visualReview": "Inspected individual output: expected subject and interior details preserved, front-facing volumetric frosted teal and apricot glass, transparent margins, no collage."
+    },
+    {
+      "id": "visual",
+      "reference": "C:/Users/xgwnj/Documents/XGWNJE/MarkPad/design/icon-style-study/references/original/visual.png",
+      "output": "C:/Users/xgwnj/Documents/XGWNJE/MarkPad/design/icon-style-study/icons/f-original-glass/visual.png",
+      "selectedGeneratedPath": "C:\\Users\\xgwnj\\.codex\\generated_images\\01a156fb-676e-7521-92c9-dccdf6e2861b\\exec-afaf7eed-c0ac-4c1c-8c76-7d521b53c4de.png",
+      "attempts": [
+        {
+          "attempt": 1,
+          "prompt": "Use case: style-transfer.\nAsset type: ONE isolated transparent PNG bookmark folder icon, square 1024x1024.\nInput image 1 defines the exact original folder and interior. Preserve frontal teal folder silhouette: flat left tab at top, short diagonal shoulder down to the longer top edge on right, rounded outer corners. Preserve centered apricot landscape symbol with two joined triangular mountain peaks and one separate circular sun in upper-right above peaks. Preserve exact proportions, placement and contours. This is a matched three-folder family so folder body must retain identical geometry.\nMaterial only: premium thick milky frosted sea-glass teal folder and warm translucent apricot landscape; real tactile volumetric glass, soft internal refraction, luminous beveled edge highlights, modest rounded depth and dark teal structural depth. FRONT VIEW, no dramatic perspective. Soft upper-left studio light, very subtle shadow.\nOne centered folder within central 76% of square at consistent optical scale, ample uniform clean margins, TRUE transparent alpha backdrop. No app tile behind folder, scene, text, watermark, border, checkerboard, collage, grid, or extra object. Change only material; preserve silhouette and interior details.",
+          "referencedImagePaths": [
+            "C:/Users/xgwnj/Documents/XGWNJE/MarkPad/design/icon-style-study/references/original/visual.png"
+          ],
+          "generatedPath": "C:\\Users\\xgwnj\\.codex\\generated_images\\01a156fb-676e-7521-92c9-dccdf6e2861b\\exec-9c765a85-25f0-420a-bd61-ce52751eb867.png",
+          "selected": false
+        },
+        {
+          "attempt": 2,
+          "prompt": "Use case: precise-object-edit.\nImage 1 is the approved frosted-glass folder base. Image 2 supplies only the requested interior landscape symbol.\nStarting from Image 1, change ONLY the apricot archive-box symbol on its front into Image 2's apricot landscape: two joined triangular mountain peaks with the left peak taller and one separate circular sun above toward upper-right. Preserve every pixel outside the interior emblem: the folder from Image 1 must remain EXACTLY the same silhouette, proportions, tab, corners, FRONT VIEW, optical size, position, lighting, thick milky frosted sea-glass teal, soft internal refraction, beveled highlights, and true transparent alpha backdrop. The new landscape is warm translucent apricot glass with same material/light as the removed archive symbol. Preserve Image 2's mountain/sun placement relationships.\nOne single folder icon in a matched family, 1254x1254 square preferred. Keep folder at precisely Image 1's canvas scale and position, do not shrink it. No extra app tile, scene, text, watermark, grid, collage, border or checkerboard. Tactile volumetric glass and clean transparent margins.",
+          "referencedImagePaths": [
+            "C:\\Users\\xgwnj\\.codex\\generated_images\\01a156fb-676e-7521-92c9-dccdf6e2861b\\exec-e9dc8e8e-70bb-4ae7-a612-d6988c6b54d4.png",
+            "C:/Users/xgwnj/Documents/XGWNJE/MarkPad/design/icon-style-study/references/original/visual.png"
+          ],
+          "generatedPath": "C:\\Users\\xgwnj\\.codex\\generated_images\\01a156fb-676e-7521-92c9-dccdf6e2861b\\exec-afaf7eed-c0ac-4c1c-8c76-7d521b53c4de.png",
+          "selected": true,
+          "repairReason": "Match the approved archive folder base geometry and canvas scale."
+        }
+      ],
+      "validation": {
+        "id": "visual",
+        "width": 1254,
+        "height": 1254,
+        "mode": "RGBA",
+        "bytes": 1073081,
+        "alpha_extrema": [
+          0,
+          255
+        ],
+        "alpha_gt16_bbox": [
+          185,
+          180,
+          1075,
+          1008
+        ],
+        "corner_alpha": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "source_hash_matches": true
+      },
+      "visualReview": "Inspected individual output: expected subject and interior details preserved, front-facing volumetric frosted teal and apricot glass, transparent margins, no collage."
+    }
+  ]
+}

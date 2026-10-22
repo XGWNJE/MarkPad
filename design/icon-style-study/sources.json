@@ -1,0 +1,62 @@
+[
+  {
+    "file": "sources/chatgpt.svg",
+    "source": "https://registry.npmjs.org/@lobehub/icons-static-svg/-/icons-static-svg-1.95.1.tgz",
+    "note": "Lobe Icons 1.95.1, package/icons/openai.svg; MIT code license; brand marks remain their owners property."
+  },
+  {
+    "file": "sources/deepseek.svg",
+    "source": "https://registry.npmjs.org/@lobehub/icons-static-svg/-/icons-static-svg-1.95.1.tgz",
+    "note": "Lobe Icons 1.95.1, package/icons/deepseek-color.svg; MIT code license; brand marks remain their owners property."
+  },
+  {
+    "file": "sources/github.svg",
+    "source": "https://registry.npmjs.org/@lobehub/icons-static-svg/-/icons-static-svg-1.95.1.tgz",
+    "note": "Lobe Icons 1.95.1, package/icons/github.svg; MIT code license; brand marks remain their owners property."
+  },
+  {
+    "file": "sources/bilibili.svg",
+    "source": "https://registry.npmjs.org/@lobehub/icons-static-svg/-/icons-static-svg-1.95.1.tgz",
+    "note": "Lobe Icons 1.95.1, package/icons/bilibili-color.svg; MIT code license; brand marks remain their owners property."
+  },
+  {
+    "file": "sources/tencentcloud.svg",
+    "source": "https://registry.npmjs.org/@lobehub/icons-static-svg/-/icons-static-svg-1.95.1.tgz",
+    "note": "Lobe Icons 1.95.1, package/icons/tencentcloud-color.svg; MIT code license; brand marks remain their owners property."
+  },
+  {
+    "file": "sources/huggingface.svg",
+    "source": "https://huggingface.co/brand",
+    "note": "Official brand artwork."
+  },
+  {
+    "file": "sources/outlook.svg",
+    "source": "https://github.com/simple-icons/simple-icons/blob/11.15.0/icons/microsoftoutlook.svg",
+    "note": "Simple Icons 11.15.0, CC0 path data; classic Outlook silhouette retained for this study."
+  },
+  {
+    "file": "sources/youtube.svg",
+    "source": "https://github.com/simple-icons/simple-icons/blob/16.35.0/icons/youtube.svg",
+    "note": "Simple Icons 16.35.0, CC0 path data."
+  },
+  {
+    "file": "sources/visionguard.svg",
+    "source": "VisionGuard/icon/visionguard-icon-light.svg",
+    "note": "Existing project artwork; copied without changing the other repository."
+  },
+  {
+    "file": "sources/123pan-reference.png",
+    "source": "https://www.123pan.com/",
+    "note": "Official header artwork; reference for editable geometric reconstruction, not a final icon."
+  },
+  {
+    "file": "sources/gmail-reference.png",
+    "source": "https://www.gstatic.com/images/branding/product/2x/gmail_2020q4_48dp.png",
+    "note": "Official product image; reference for editable geometric reconstruction."
+  },
+  {
+    "file": "sources/figma-reference.svg",
+    "source": "https://static.figma.com/app/icon/1/favicon.svg",
+    "note": "Official product favicon."
+  }
+]

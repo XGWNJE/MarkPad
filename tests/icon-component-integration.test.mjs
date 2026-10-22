@@ -128,6 +128,24 @@ test('a website icon that cannot be displayed falls back to the text surface and
 test('applying a saved custom-icon record re-resolves it before assigning image source', async () => {
   const source = await read('components/BookmarkCard.js');
 
-  assert.match(source, /!iconData\.type && iconData\.data/);
+  assert.match(source, /!iconData\.type && \(iconData\.data \|\| iconData\.kind === 'builtin'\)/);
   assert.match(source, /this\.updateIcon\(resolveBookmarkIcon\(this\.data, \{ storage: BookmarkStore \}\)\)/);
+});
+
+test('switching icon style updates local icons in place without navigation or selection loss', async () => {
+  const h = await setupGrid();
+  const card = h.instance.cards.get('A');
+  card.data.title = 'GitHub';
+  const element = card.element;
+  const updates = [];
+  card.updateIcon = icon => updates.push(icon);
+  h.instance.selectedCards.add('A');
+  const before = h.fullOrder();
+  h.EventBus.emit('icons:styleChanged');
+  assert.equal(updates.length, 1);
+  assert.equal(updates[0].iconId, 'github');
+  assert.equal(h.instance.cards.get('A').element, element);
+  assert.equal(h.instance.selectedCards.has('A'), true);
+  assert.deepEqual(h.fullOrder(), before);
+  assert.deepEqual(h.errors, []);
 });

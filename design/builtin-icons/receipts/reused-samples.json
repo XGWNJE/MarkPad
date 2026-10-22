@@ -1,0 +1,344 @@
+{
+  "method": "Approved native study samples or fresh native sheets; crop/scale/transparent placement only",
+  "rows": [
+    {
+      "id": "chatgpt",
+      "source": "design/icon-style-study/icons/e-brand-clay/chatgpt.png",
+      "flatSource": "design/icon-style-study/icons/a-brand-flat/chatgpt.svg",
+      "placement": {
+        "bounds": {
+          "left": 162,
+          "top": 151,
+          "width": 936,
+          "height": 957
+        },
+        "rendered": {
+          "width": 192,
+          "height": 196
+        },
+        "position": {
+          "left": 32,
+          "top": 30
+        }
+      }
+    },
+    {
+      "id": "deepseek",
+      "source": "design/icon-style-study/icons/e-brand-clay/deepseek.png",
+      "flatSource": "design/icon-style-study/icons/a-brand-flat/deepseek.svg",
+      "placement": {
+        "bounds": {
+          "left": 124,
+          "top": 267,
+          "width": 1024,
+          "height": 772
+        },
+        "rendered": {
+          "width": 196,
+          "height": 148
+        },
+        "position": {
+          "left": 30,
+          "top": 54
+        }
+      }
+    },
+    {
+      "id": "huggingface",
+      "source": "design/icon-style-study/icons/e-brand-clay/huggingface.png",
+      "flatSource": "design/icon-style-study/icons/a-brand-flat/huggingface.svg",
+      "placement": {
+        "bounds": {
+          "left": 217,
+          "top": 246,
+          "width": 819,
+          "height": 787
+        },
+        "rendered": {
+          "width": 196,
+          "height": 188
+        },
+        "position": {
+          "left": 30,
+          "top": 34
+        }
+      }
+    },
+    {
+      "id": "github",
+      "source": "design/icon-style-study/icons/e-brand-clay/github.png",
+      "flatSource": "design/icon-style-study/icons/a-brand-flat/github.svg",
+      "placement": {
+        "bounds": {
+          "left": 149,
+          "top": 146,
+          "width": 957,
+          "height": 940
+        },
+        "rendered": {
+          "width": 196,
+          "height": 193
+        },
+        "position": {
+          "left": 30,
+          "top": 32
+        }
+      }
+    },
+    {
+      "id": "figma",
+      "source": "design/icon-style-study/icons/e-brand-clay/figma.png",
+      "flatSource": "design/icon-style-study/icons/a-brand-flat/figma.svg",
+      "placement": {
+        "bounds": {
+          "left": 273,
+          "top": 133,
+          "width": 708,
+          "height": 1017
+        },
+        "rendered": {
+          "width": 136,
+          "height": 196
+        },
+        "position": {
+          "left": 60,
+          "top": 30
+        }
+      }
+    },
+    {
+      "id": "bilibili",
+      "source": "design/builtin-icons/sheets/sample-edge-refresh-generated.png",
+      "flatSource": "design/icon-style-study/icons/a-brand-flat/bilibili.svg",
+      "placement": {
+        "bounds": {
+          "left": 94,
+          "top": 132,
+          "width": 556,
+          "height": 490
+        },
+        "rendered": {
+          "width": 196,
+          "height": 173
+        },
+        "position": {
+          "left": 30,
+          "top": 42
+        }
+      },
+      "method": "native-sheet-refresh",
+      "receipt": "design/builtin-icons/receipts/sample-edge-refresh.json",
+      "crop": {
+        "left": 0,
+        "top": 0,
+        "width": 724,
+        "height": 724
+      }
+    },
+    {
+      "id": "youtube",
+      "source": "design/builtin-icons/sheets/sample-edge-refresh-generated.png",
+      "flatSource": "design/icon-style-study/icons/a-brand-flat/youtube.svg",
+      "placement": {
+        "bounds": {
+          "left": 69,
+          "top": 178,
+          "width": 586,
+          "height": 408
+        },
+        "rendered": {
+          "width": 196,
+          "height": 136
+        },
+        "position": {
+          "left": 30,
+          "top": 60
+        }
+      },
+      "method": "native-sheet-refresh",
+      "receipt": "design/builtin-icons/receipts/sample-edge-refresh.json",
+      "crop": {
+        "left": 724,
+        "top": 0,
+        "width": 724,
+        "height": 724
+      }
+    },
+    {
+      "id": "123pan",
+      "source": "design/icon-style-study/icons/e-brand-clay/123pan.png",
+      "flatSource": "design/icon-style-study/icons/a-brand-flat/123pan.svg",
+      "placement": {
+        "bounds": {
+          "left": 179,
+          "top": 180,
+          "width": 897,
+          "height": 895
+        },
+        "rendered": {
+          "width": 196,
+          "height": 196
+        },
+        "position": {
+          "left": 30,
+          "top": 30
+        }
+      }
+    },
+    {
+      "id": "gmail",
+      "source": "design/icon-style-study/icons/e-brand-clay/gmail.png",
+      "flatSource": "design/icon-style-study/icons/a-brand-flat/gmail.svg",
+      "placement": {
+        "bounds": {
+          "left": 130,
+          "top": 296,
+          "width": 995,
+          "height": 696
+        },
+        "rendered": {
+          "width": 196,
+          "height": 137
+        },
+        "position": {
+          "left": 30,
+          "top": 60
+        }
+      }
+    },
+    {
+      "id": "outlook",
+      "source": "design/builtin-icons/sheets/sample-edge-refresh-generated.png",
+      "flatSource": "design/icon-style-study/icons/a-brand-flat/outlook.svg",
+      "placement": {
+        "bounds": {
+          "left": 83,
+          "top": 140,
+          "width": 564,
+          "height": 491
+        },
+        "rendered": {
+          "width": 196,
+          "height": 171
+        },
+        "position": {
+          "left": 30,
+          "top": 43
+        }
+      },
+      "method": "native-sheet-refresh",
+      "receipt": "design/builtin-icons/receipts/sample-edge-refresh.json",
+      "crop": {
+        "left": 1448,
+        "top": 0,
+        "width": 724,
+        "height": 724
+      }
+    },
+    {
+      "id": "tencentcloud",
+      "source": "design/icon-style-study/icons/e-brand-clay/tencentcloud.png",
+      "flatSource": "design/icon-style-study/icons/a-brand-flat/tencentcloud.svg",
+      "placement": {
+        "bounds": {
+          "left": 108,
+          "top": 243,
+          "width": 1041,
+          "height": 773
+        },
+        "rendered": {
+          "width": 196,
+          "height": 146
+        },
+        "position": {
+          "left": 30,
+          "top": 55
+        }
+      }
+    },
+    {
+      "id": "visionguard",
+      "source": "design/icon-style-study/icons/e-brand-clay/visionguard.png",
+      "flatSource": "design/icon-style-study/icons/a-brand-flat/visionguard.svg",
+      "placement": {
+        "bounds": {
+          "left": 186,
+          "top": 194,
+          "width": 883,
+          "height": 868
+        },
+        "rendered": {
+          "width": 196,
+          "height": 193
+        },
+        "position": {
+          "left": 30,
+          "top": 32
+        }
+      }
+    },
+    {
+      "id": "archive",
+      "source": "design/icon-style-study/icons/e-brand-clay/archive.png",
+      "flatSource": "design/icon-style-study/icons/a-brand-flat/archive.svg",
+      "placement": {
+        "bounds": {
+          "left": 236,
+          "top": 260,
+          "width": 788,
+          "height": 741
+        },
+        "rendered": {
+          "width": 196,
+          "height": 184
+        },
+        "position": {
+          "left": 30,
+          "top": 36
+        }
+      }
+    },
+    {
+      "id": "share",
+      "source": "design/icon-style-study/icons/e-brand-clay/share.png",
+      "flatSource": "design/icon-style-study/icons/a-brand-flat/share.svg",
+      "placement": {
+        "bounds": {
+          "left": 212,
+          "top": 226,
+          "width": 834,
+          "height": 805
+        },
+        "rendered": {
+          "width": 196,
+          "height": 189
+        },
+        "position": {
+          "left": 30,
+          "top": 34
+        }
+      }
+    },
+    {
+      "id": "visual",
+      "source": "design/icon-style-study/icons/e-brand-clay/visual.png",
+      "flatSource": "design/icon-style-study/icons/a-brand-flat/visual.svg",
+      "placement": {
+        "bounds": {
+          "left": 189,
+          "top": 217,
+          "width": 878,
+          "height": 821
+        },
+        "rendered": {
+          "width": 196,
+          "height": 183
+        },
+        "position": {
+          "left": 30,
+          "top": 37
+        }
+      }
+    }
+  ]
+}

@@ -1,6 +1,7 @@
 import { readFile } from 'node:fs/promises';
 import vm from 'node:vm';
 import { getMoveDestination, getPreviewOrder } from '../../core/DragOrder.js';
+import { resolveBookmarkIcon } from '../../core/icons/IconResolver.js';
 
 export function deferred() {
   let resolve;
@@ -245,7 +246,7 @@ export async function setupGrid({ folders = defaultFolders(), rootId = 'root', e
   const source = await readFile(new URL('../../components/BookmarkGrid.js', import.meta.url), 'utf8');
   const context = vm.createContext({
     document, EventBus, BookmarkStore, Router, BookmarkCard, GridDragController, CardNavigation,
-    getMoveDestination, getPreviewOrder, chrome,
+    getMoveDestination, getPreviewOrder, resolveBookmarkIcon, chrome,
     iconSvg: name => `<svg data-icon="${name}"></svg>`,
     console: { error: (...args) => errors.push(args), warn: (...args) => errors.push(args), log() {} },
     requestAnimationFrame: callback => { callback(0); return 1; }, cancelAnimationFrame() {},

@@ -1,0 +1,315 @@
+{
+  "generator": "built-in image_gen__imagegen",
+  "worker": "clay-five-glass-five",
+  "outputs": [
+    {
+      "id": "tencentcloud",
+      "style": "e-brand-clay",
+      "reference": "references/brand/tencentcloud.png",
+      "raw": "C:\\Users\\xgwnj\\.codex\\generated_images\\01a156fb-3c4d-76b0-946f-f6c5cfb0e1c6\\exec-07827220-0570-4ec8-a7f6-13b8b6da92d7.png",
+      "output": "icons/e-brand-clay/tencentcloud.png",
+      "prompt": "Use case: style-transfer. Asset type: one standalone Tencent Cloud bookmark icon, design study E brand soft-clay. Input image 1 is the precise shape/color reference, not a background. Re-render this SAME Tencent Cloud emblem as premium tactile matte soft-clay 3D: preserve its interlaced blue/cyan cloud loops, open top arch, exact silhouette, hole shapes, placement and recognizable colors. Rounded edge extrusion, fine subtle ceramic texture, soft upper-left studio light, restrained tiny contact shadow. Front view only, shallow depth, centered in central 76% of square 1024x1024 canvas, consistent visual scale. True transparent alpha everywhere outside emblem and in its negative spaces. No background scene, no backdrop plate or extra tile, no checkerboard, no invented text, no watermark, no glossy metal. Single clean icon, not a sheet. Change only the material and slight dimensional treatment; keep the emblem geometry recognizable and precise.",
+      "attempts": 1,
+      "validation": {
+        "size": [
+          1254,
+          1254
+        ],
+        "mode": "RGBA",
+        "alpha_extrema": [
+          0,
+          255
+        ],
+        "transparent_fraction": 0.76192,
+        "solid_alpha_bbox": [
+          127,
+          262,
+          1130,
+          997
+        ],
+        "bytes": 631159,
+        "raw_copy_sha256_matches": true
+      }
+    },
+    {
+      "id": "visionguard",
+      "style": "e-brand-clay",
+      "reference": "references/brand/visionguard.png",
+      "raw": "C:\\Users\\xgwnj\\.codex\\generated_images\\01a156fb-3c4d-76b0-946f-f6c5cfb0e1c6\\exec-4a414fdc-d732-402c-8ee9-dabb10070466.png",
+      "output": "icons/e-brand-clay/visionguard.png",
+      "prompt": "Use case: style-transfer. Asset type: standalone VisionGuard bookmark icon, design study E brand soft-clay. Follow input image 1 precisely. Material change only: premium tactile matte soft-clay 3D with fine ceramic texture, shallow rounded edge extrusion, soft upper-left studio light, restrained tiny shadows. COLOR CORRECTION IS CRITICAL: the central circular head and three separated bust strips must be DEEP NAVY BLUE (#10192e), never white or silver. Four scanner L corners are slate grey-blue (#64748b), central horizontal scanning bar is vivid orange (#ff6935). Preserve every precise reference shape, position, two horizontal transparent gaps through bust, negative space and proportions. Front view, centered inside central 76% of square 1024x1024 canvas. True transparent alpha outside all components and through all negative spaces; clean isolated edges. No background plate, scene, checkerboard, extra tile, invented text, watermark, glossy metal. One clean icon, not a sheet.",
+      "attempts": 2,
+      "discardedAttempt": {
+        "raw": "C:\\Users\\xgwnj\\.codex\\generated_images\\01a156fb-3c4d-76b0-946f-f6c5cfb0e1c6\\exec-aef9f7b6-f85e-40d9-a4e7-f539fd068590.png",
+        "prompt": "Use case: style-transfer. Asset type: one standalone VisionGuard bookmark icon, design study E brand soft-clay. Input image 1 is the exact symbol geometry/color reference, not a background. Re-render this SAME symbol as premium tactile matte soft-clay 3D: four separate grey scanner L corners surround a pale-grey circular head and pale-grey bust below, a single vivid orange horizontal scanning bar between head and bust. Preserve the bust's two horizontal negative-space gaps, all placements and precise silhouette/details. Retain reference colors. Rounded edge extrusion, subtle fine ceramic texture, soft upper-left studio light, restrained shadow. Front view only, shallow depth, centered and contained inside central 76% of square 1024x1024 canvas. True transparent alpha outside components and in every negative space. No scene, no backdrop plate, no extra tile, no checkerboard, no invented text, no watermark, no glossy metal. Single clean icon; preserve the source symbol and change only material plus slight dimensional treatment.",
+        "reason": "Reference updated during first generation; corrected from pale grey to current deep navy person."
+      },
+      "validation": {
+        "size": [
+          1254,
+          1254
+        ],
+        "mode": "RGBA",
+        "alpha_extrema": [
+          0,
+          255
+        ],
+        "transparent_fraction": 0.78235,
+        "solid_alpha_bbox": [
+          205,
+          213,
+          1050,
+          1043
+        ],
+        "bytes": 560828,
+        "raw_copy_sha256_matches": true
+      }
+    },
+    {
+      "id": "archive",
+      "style": "e-brand-clay",
+      "reference": "references/brand/archive.png",
+      "raw": "C:\\Users\\xgwnj\\.codex\\generated_images\\01a156fb-3c4d-76b0-946f-f6c5cfb0e1c6\\exec-fb783781-08ac-4bd5-8a86-d89859443bba.png",
+      "output": "icons/e-brand-clay/archive.png",
+      "prompt": "Use case: style-transfer. Asset type: one standalone archive-folder bookmark icon, design study E soft-clay. Input image 1 is exact geometry and colors reference. Re-render the SAME muted grey-sage folder with a warm sand archive storage box embossed at center as premium tactile matte soft-clay 3D. Keep the folder tab at upper left, original folder silhouette, warm yellow box with thin lid dividing line and small centered pill-shaped inset handle, precise proportions and placement. Retain reference colors. Subtle rounded edge extrusion, very fine ceramic texture, soft upper-left studio light, restrained tiny shadow. Strict front view, shallow depth, centered inside central 76% of square 1024x1024 canvas. True transparent alpha outside folder, clean antialiased perimeter. No background scene, no extra tile or backdrop plate, no checkerboard, no invented text, no watermark, no glossy metal. Single clean icon, not a sheet. Material change only; keep reference geometry.",
+      "attempts": 1,
+      "validation": {
+        "size": [
+          1254,
+          1254
+        ],
+        "mode": "RGBA",
+        "alpha_extrema": [
+          0,
+          255
+        ],
+        "transparent_fraction": 0.69255,
+        "solid_alpha_bbox": [
+          255,
+          279,
+          1004,
+          982
+        ],
+        "bytes": 763743,
+        "raw_copy_sha256_matches": true
+      }
+    },
+    {
+      "id": "share",
+      "style": "e-brand-clay",
+      "reference": "references/brand/share.png",
+      "raw": "C:\\Users\\xgwnj\\.codex\\generated_images\\01a156fb-3c4d-76b0-946f-f6c5cfb0e1c6\\exec-2b66d83b-14de-4eb6-881d-d13938e40853.png",
+      "output": "icons/e-brand-clay/share.png",
+      "prompt": "Use case: style-transfer. Asset type: one standalone share-folder bookmark icon, design study E soft-clay. Input image 1 is the exact geometry and color reference. Re-render the SAME muted grey-sage folder with a warm sand-yellow three-node share symbol embossed at center, as premium tactile matte soft-clay 3D. Keep folder tab at upper left, original folder silhouette, three round yellow nodes in a right-facing open chevron connected by two yellow diagonal bars, precise proportions and placement. Retain reference colors. Subtle rounded edge extrusion, very fine ceramic texture, soft upper-left studio light, restrained tiny shadow. Strict front view, shallow depth, centered within central 76% of square 1024x1024 canvas. True transparent alpha outside folder; clean antialiased perimeter. No background scene, no extra tile or backdrop plate, no checkerboard, no invented text, no watermark, no glossy metal. Single clean icon, not a sheet. Material change only; preserve reference geometry.",
+      "attempts": 1,
+      "validation": {
+        "size": [
+          1254,
+          1254
+        ],
+        "mode": "RGBA",
+        "alpha_extrema": [
+          0,
+          255
+        ],
+        "transparent_fraction": 0.64631,
+        "solid_alpha_bbox": [
+          232,
+          245,
+          1027,
+          1012
+        ],
+        "bytes": 895278,
+        "raw_copy_sha256_matches": true
+      }
+    },
+    {
+      "id": "visual",
+      "style": "e-brand-clay",
+      "reference": "references/brand/visual.png",
+      "raw": "C:\\Users\\xgwnj\\.codex\\generated_images\\01a156fb-3c4d-76b0-946f-f6c5cfb0e1c6\\exec-082b1a33-ed88-4d85-bd69-111b0eda797d.png",
+      "output": "icons/e-brand-clay/visual.png",
+      "prompt": "Use case: style-transfer. Asset type: one standalone visual-media-folder bookmark icon, design study E soft-clay. Input image 1 is the exact geometry and color reference. Re-render the SAME muted grey-sage folder with a warm sand-yellow landscape emblem embossed at center as premium tactile matte soft-clay 3D. Keep folder tab upper left, original folder silhouette, two connected triangular mountain peaks (left higher) with a separate yellow sun disc above at right, exact proportions and placement. Retain reference colors. Subtle rounded edge extrusion, very fine ceramic texture, soft upper-left studio light, restrained tiny shadow. Strict front view, shallow depth, centered inside central 76% of square 1024x1024 canvas. True transparent alpha outside folder; clean antialiased perimeter. No scene, no extra tile or backdrop plate, no checkerboard, no invented text, no watermark, no glossy metal. Single clean icon, not a sheet. Material change only; preserve reference geometry. Focused quality correction: make the outer folder perimeter exceptionally CLEAN and smooth at pixel level, with a tight antialiased alpha cutout and absolutely no isolated opaque white flecks, no fringe, no colored halo or scraps outside the silhouette. All shading must remain INSIDE the folder silhouette. Background pixels must be fully transparent with no external shadow. Keep identical front-facing composition, colors, and ceramic soft-clay material.",
+      "attempts": 2,
+      "discardedAttempt": {
+        "raw": "C:\\Users\\xgwnj\\.codex\\generated_images\\01a156fb-3c4d-76b0-946f-f6c5cfb0e1c6\\exec-6958a856-aa19-4248-aa60-449311ecf441.png",
+        "prompt": "Use case: style-transfer. Asset type: one standalone visual-media-folder bookmark icon, design study E soft-clay. Input image 1 is the exact geometry and color reference. Re-render the SAME muted grey-sage folder with a warm sand-yellow landscape emblem embossed at center as premium tactile matte soft-clay 3D. Keep folder tab upper left, original folder silhouette, two connected triangular mountain peaks (left higher) with a separate yellow sun disc above at right, exact proportions and placement. Retain reference colors. Subtle rounded edge extrusion, very fine ceramic texture, soft upper-left studio light, restrained tiny shadow. Strict front view, shallow depth, centered inside central 76% of square 1024x1024 canvas. True transparent alpha outside folder; clean antialiased perimeter. No scene, no extra tile or backdrop plate, no checkerboard, no invented text, no watermark, no glossy metal. Single clean icon, not a sheet. Material change only; preserve reference geometry.",
+        "reason": "Focused regeneration to reduce white fringe around alpha cutout."
+      },
+      "validation": {
+        "size": [
+          1254,
+          1254
+        ],
+        "mode": "RGBA",
+        "alpha_extrema": [
+          0,
+          255
+        ],
+        "transparent_fraction": 0.61262,
+        "solid_alpha_bbox": [
+          208,
+          236,
+          1048,
+          1019
+        ],
+        "bytes": 916934,
+        "raw_copy_sha256_matches": true
+      }
+    },
+    {
+      "id": "chatgpt",
+      "style": "f-original-glass",
+      "reference": "references/original/chatgpt.png",
+      "raw": "C:\\Users\\xgwnj\\.codex\\generated_images\\01a156fb-3c4d-76b0-946f-f6c5cfb0e1c6\\exec-3a1174c6-9c4b-414f-b27d-84b6badd68a7.png",
+      "output": "icons/f-original-glass/chatgpt.png",
+      "prompt": "Use case: style-transfer. Asset type: one standalone original conversational-AI bookmark icon, design study F frosted glass. Input image 1 is precise geometry reference: a large rounded speech bubble behind at upper left, a smaller rounded reply bubble in front lower right, and one four-point sparkle on the large bubble. Preserve their distinct shapes, tails, overlaps, positions and relative proportions exactly. Re-render as premium translucent frosted-glass 3D: pale sea-glass TEAL primary bubble, warm translucent APRICOT reply bubble, milky cream sparkle with slightly darker teal interior edge detailing. Fine frosted faces, softly refracted rounded edges, subtle extrusion, controlled soft highlights, upper-left studio light, restrained shadow. Front view without perspective, centered within central 76% of square 1024x1024 canvas. True transparent alpha outside icon, translucent colored glass volumes that remain clearly visible on light and dark backgrounds. No scene or backdrop plate, no extra tile, no invented text, no watermark. NOT white/clear invisible glass, NOT flat vector. Single icon, no sheet.",
+      "attempts": 1,
+      "validation": {
+        "size": [
+          1254,
+          1254
+        ],
+        "mode": "RGBA",
+        "alpha_extrema": [
+          0,
+          255
+        ],
+        "transparent_fraction": 0.65574,
+        "solid_alpha_bbox": [
+          207,
+          208,
+          1055,
+          1032
+        ],
+        "bytes": 943600,
+        "raw_copy_sha256_matches": true
+      }
+    },
+    {
+      "id": "deepseek",
+      "style": "f-original-glass",
+      "reference": "references/original/deepseek.png",
+      "raw": "C:\\Users\\xgwnj\\.codex\\generated_images\\01a156fb-3c4d-76b0-946f-f6c5cfb0e1c6\\exec-261ea895-0009-4828-86c7-6271ac1abc5c.png",
+      "output": "icons/f-original-glass/deepseek.png",
+      "prompt": "Use case: style-transfer. Asset type: one standalone original AI search/reasoning bookmark icon for DeepSeek, design study F frosted glass. Input image 1 is the precise geometry reference: thick round magnifying-glass ring with handle diagonally down-right, two separate curved apricot reasoning strokes inside the empty ring, upper shorter curved stroke with one small central rounded notch and lower simple arch. Preserve all distinct reference shapes, hole, proportions, and placement. Re-render as premium translucent frosted-glass 3D: pale sea-glass TEAL magnifier, warm translucent APRICOT interior strokes. Milky frosted material, softly refracted rounded edges, subtle extrusion, controlled highlights and darker teal inner rims, upper-left studio light, restrained shadow. Front view without perspective, centered inside central 76% of square 1024x1024 canvas. True transparent alpha outside icon and through ring opening between strokes. Colored glass remains legible on both light and dark backgrounds. No scene or backdrop, no extra tile, no invented text, no watermark. NOT white/clear invisible glass, NOT flat vector. Single clean icon, no sheet. Focused quality correction: exceptionally CLEAN smooth pixel-level alpha cutout at every outer and inner perimeter. No opaque white fringe, no white scraps in the magnifier opening, no colored halo, no floating flecks. All refraction/highlights stay inside the glass silhouettes. Make ring opening and negative spaces fully transparent between the separate apricot strokes. Clean crisp colored frost-glass boundaries, no outside shadows. Preserve every reference shape and front-view composition.",
+      "attempts": 2,
+      "discardedAttempt": {
+        "raw": "C:\\Users\\xgwnj\\.codex\\generated_images\\01a156fb-3c4d-76b0-946f-f6c5cfb0e1c6\\exec-c1c6fb39-2ac3-4167-95de-06b6a40de958.png",
+        "prompt": "Use case: style-transfer. Asset type: one standalone original AI search/reasoning bookmark icon for DeepSeek, design study F frosted glass. Input image 1 is the precise geometry reference: thick round magnifying-glass ring with handle diagonally down-right, two separate curved apricot reasoning strokes inside the empty ring, upper shorter curved stroke with one small central rounded notch and lower simple arch. Preserve all distinct reference shapes, hole, proportions, and placement. Re-render as premium translucent frosted-glass 3D: pale sea-glass TEAL magnifier, warm translucent APRICOT interior strokes. Milky frosted material, softly refracted rounded edges, subtle extrusion, controlled highlights and darker teal inner rims, upper-left studio light, restrained shadow. Front view without perspective, centered inside central 76% of square 1024x1024 canvas. True transparent alpha outside icon and through ring opening between strokes. Colored glass remains legible on both light and dark backgrounds. No scene or backdrop, no extra tile, no invented text, no watermark. NOT white/clear invisible glass, NOT flat vector. Single clean icon, no sheet.",
+        "reason": "Focused regeneration to reduce white fringe around alpha cutout."
+      },
+      "validation": {
+        "size": [
+          1254,
+          1254
+        ],
+        "mode": "RGBA",
+        "alpha_extrema": [
+          0,
+          255
+        ],
+        "transparent_fraction": 0.74432,
+        "solid_alpha_bbox": [
+          219,
+          175,
+          1114,
+          1103
+        ],
+        "bytes": 795434,
+        "raw_copy_sha256_matches": true
+      }
+    },
+    {
+      "id": "huggingface",
+      "style": "f-original-glass",
+      "reference": "references/original/huggingface.png",
+      "raw": "C:\\Users\\xgwnj\\.codex\\generated_images\\01a156fb-3c4d-76b0-946f-f6c5cfb0e1c6\\exec-b984835a-1c7f-4b09-b0f2-1f541d947d97.png",
+      "output": "icons/f-original-glass/huggingface.png",
+      "prompt": "Use case: style-transfer. Asset type: one standalone original model-network bookmark icon for Hugging Face, design study F frosted glass. Input image 1 is precise geometry reference: THREE circular nodes forming a triangular network, teal upper-left node, apricot upper-right node, larger teal bottom-center node with a cream checkmark, three straight teal connections behind them. Preserve exact node count, arrangement, proportions, distinct geometry, checkmark and placement. Re-render as premium translucent frosted-glass 3D: pale sea-glass TEAL main nodes/connections, warm translucent APRICOT upper-right node, milky-cream check inset with slightly darker teal inner details. Fine frosted faces, softly refracted rounded edges, shallow extrusion, controlled highlights, soft upper-left studio light, restrained shadow. Front view without perspective, centered within central 76% of square 1024x1024 canvas. True transparent alpha outside icon and in triangular opening. Colored glass remains legible on both light and dark backgrounds. No scene or backdrop plate, no extra tile, invented text, watermark. NOT white/clear invisible glass, NOT flat vector. Single clean icon, no sheet.",
+      "attempts": 1,
+      "validation": {
+        "size": [
+          1254,
+          1254
+        ],
+        "mode": "RGBA",
+        "alpha_extrema": [
+          0,
+          255
+        ],
+        "transparent_fraction": 0.74278,
+        "solid_alpha_bbox": [
+          214,
+          213,
+          1039,
+          1064
+        ],
+        "bytes": 862443,
+        "raw_copy_sha256_matches": true
+      }
+    },
+    {
+      "id": "github",
+      "style": "f-original-glass",
+      "reference": "references/original/github.png",
+      "raw": "C:\\Users\\xgwnj\\.codex\\generated_images\\01a156fb-3c4d-76b0-946f-f6c5cfb0e1c6\\exec-1ed08e1d-302d-47d6-a13e-85aea9ee76e6.png",
+      "output": "icons/f-original-glass/github.png",
+      "prompt": "Use case: style-transfer. Asset type: one standalone original code-and-branch bookmark icon for GitHub, design study F frosted glass. Input image 1 is precise geometry reference: left thick open angle bracket, right thick angle bracket placed lower, and a central branching connector with apricot circular endpoint at top and lower-right. Preserve source geometry, detached left bracket, right bracket, central bend, teal connector center node, TWO apricot endpoint discs, proportions and placement exactly. Re-render as premium translucent frosted-glass 3D: pale sea-glass TEAL bracket/branch volumes, warm translucent APRICOT endpoint discs; fine milky frosted faces, softly refracted rounded edges, subtle extrusion, controlled highlights and legible darker teal inner detailing, soft upper-left studio light, restrained shadow. Front view, no perspective, centered within central 76% of square 1024x1024 canvas. True transparent alpha outside and through gaps. Colored glass visible on light and dark backgrounds. No background scene or backdrop plate, no extra tile, invented text, watermark. NOT white/clear invisible glass, NOT flat vector. Single clean icon, no sheet.",
+      "attempts": 1,
+      "validation": {
+        "size": [
+          1254,
+          1254
+        ],
+        "mode": "RGBA",
+        "alpha_extrema": [
+          0,
+          255
+        ],
+        "transparent_fraction": 0.80324,
+        "solid_alpha_bbox": [
+          156,
+          180,
+          1105,
+          1036
+        ],
+        "bytes": 712458,
+        "raw_copy_sha256_matches": true
+      }
+    },
+    {
+      "id": "figma",
+      "style": "f-original-glass",
+      "reference": "references/original/figma.png",
+      "raw": "C:\\Users\\xgwnj\\.codex\\generated_images\\01a156fb-3c4d-76b0-946f-f6c5cfb0e1c6\\exec-97bd60a9-290e-4041-b88b-0ce7495f31d0.png",
+      "output": "icons/f-original-glass/figma.png",
+      "prompt": "Use case: style-transfer. Asset type: one standalone original design-pen bookmark icon for Figma, design study F frosted glass. Input image 1 is precise geometry reference: a diagonally oriented teal fountain-pen nib pointing bottom-left, a cream central shaft/crossbar over the nib, one apricot small round hole near nib upper center, one apricot rounded-square anchor at bottom-left. Preserve exact distinctive reference silhouette, diagonal orientation, contours, intersections, proportions and placement; do not substitute the Figma corporate logo. Re-render as premium translucent frosted-glass 3D: pale sea-glass TEAL nib volume, warm translucent APRICOT hole and anchor, milky cream shaft/crossbar with legible darker teal inner edging. Fine frosted faces, softly refracted rounded edges, subtle extrusion, controlled highlights, soft upper-left studio light, restrained shadow. Strict front view, no perspective rotation beyond the source's flat diagonal geometry, centered within central 76% of square 1024x1024 canvas. True transparent alpha outside icon. Colored glass remains visible on light and dark backgrounds. No scene or backdrop plate, no extra tile, invented text, watermark. NOT white/clear invisible glass, NOT flat vector. Single clean icon, no sheet.",
+      "attempts": 1,
+      "validation": {
+        "size": [
+          1254,
+          1254
+        ],
+        "mode": "RGBA",
+        "alpha_extrema": [
+          0,
+          255
+        ],
+        "transparent_fraction": 0.80009,
+        "solid_alpha_bbox": [
+          238,
+          236,
+          1047,
+          1035
+        ],
+        "bytes": 679348,
+        "raw_copy_sha256_matches": true
+      }
+    }
+  ],
+  "notes": [
+    "All outputs copied byte-for-byte from native ImageGen PNGs without image processing or re-encoding.",
+    "Small low-alpha edge speckles may remain in native transparent output; inspect dark-theme closeups when choosing final direction."
+  ]
+}

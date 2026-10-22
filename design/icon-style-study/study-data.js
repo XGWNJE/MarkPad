@@ -1,0 +1,203 @@
+window.MARKPAD_ICON_STUDY = {
+  "title": "MarkPad 图标风格研究",
+  "date": "2026-10-20",
+  "baseline": {
+    "bookmarks": 98,
+    "uniqueHosts": 93
+  },
+  "samples": [
+    {
+      "id": "chatgpt",
+      "title": "ChatGPT",
+      "meaning": "对话与推理",
+      "group": "AI"
+    },
+    {
+      "id": "deepseek",
+      "title": "DeepSeek",
+      "meaning": "深入检索",
+      "group": "AI"
+    },
+    {
+      "id": "huggingface",
+      "title": "Hugging Face",
+      "meaning": "模型协作",
+      "group": "AI"
+    },
+    {
+      "id": "github",
+      "title": "GitHub",
+      "meaning": "代码与分支",
+      "group": "开发"
+    },
+    {
+      "id": "figma",
+      "title": "Figma",
+      "meaning": "设计与协作",
+      "group": "设计"
+    },
+    {
+      "id": "bilibili",
+      "title": "BiliBili",
+      "meaning": "视频社区",
+      "group": "视频"
+    },
+    {
+      "id": "youtube",
+      "title": "YouTube",
+      "meaning": "视频播放",
+      "group": "视频"
+    },
+    {
+      "id": "123pan",
+      "title": "123云盘",
+      "meaning": "云端存储",
+      "group": "工具"
+    },
+    {
+      "id": "gmail",
+      "title": "Gmail",
+      "meaning": "轻量收信",
+      "group": "邮箱"
+    },
+    {
+      "id": "outlook",
+      "title": "Outlook",
+      "meaning": "邮件与日程",
+      "group": "邮箱"
+    },
+    {
+      "id": "tencentcloud",
+      "title": "腾讯云",
+      "meaning": "云服务与计算",
+      "group": "工具"
+    },
+    {
+      "id": "visionguard",
+      "title": "VisionGuard 控制台",
+      "meaning": "视觉与监测",
+      "group": "自用"
+    },
+    {
+      "id": "archive",
+      "title": "长期留存",
+      "meaning": "归档收藏",
+      "group": "文件夹"
+    },
+    {
+      "id": "share",
+      "title": "分享",
+      "meaning": "资源与分享",
+      "group": "文件夹"
+    },
+    {
+      "id": "visual",
+      "title": "视觉",
+      "meaning": "创作与灵感",
+      "group": "文件夹"
+    }
+  ],
+  "styles": [
+    {
+      "id": "A",
+      "name": "品牌彩色扁平",
+      "short": "原色 · 平面",
+      "route": "保留品牌",
+      "material": "干净色块 / 统一留白",
+      "format": "SVG",
+      "folder": "a-brand-flat",
+      "colors": [
+        "#111111",
+        "#4285f4",
+        "#f7c84b"
+      ]
+    },
+    {
+      "id": "B",
+      "name": "品牌单色浮雕",
+      "short": "石白 · 浮雕",
+      "route": "保留品牌",
+      "material": "中性石色 / 轻浮雕",
+      "format": "SVG",
+      "folder": "b-brand-relief",
+      "colors": [
+        "#716c63",
+        "#c7c1b6",
+        "#efebe3"
+      ]
+    },
+    {
+      "id": "C",
+      "name": "原创双色几何",
+      "short": "松绿 · 杏橙",
+      "route": "原创语义",
+      "material": "几何轮廓 / 双色点睛",
+      "format": "SVG",
+      "folder": "c-original-duotone",
+      "colors": [
+        "#255e59",
+        "#ed996d",
+        "#edf0e9"
+      ]
+    },
+    {
+      "id": "D",
+      "name": "原创柔和立体",
+      "short": "海盐 · 轻立体",
+      "route": "原创语义",
+      "material": "圆润形体 / 柔光渐变",
+      "format": "SVG",
+      "folder": "d-original-soft",
+      "colors": [
+        "#477e8a",
+        "#c4e3df",
+        "#f6b78b"
+      ]
+    },
+    {
+      "id": "E",
+      "name": "品牌软陶材质",
+      "short": "原色 · 软陶",
+      "route": "保留品牌",
+      "material": "哑光软陶 / 柔和投影",
+      "format": "PNG",
+      "folder": "e-brand-clay",
+      "colors": [
+        "#517bd1",
+        "#f3bb74",
+        "#ece3d7"
+      ]
+    },
+    {
+      "id": "F",
+      "name": "原创磨砂玻璃",
+      "short": "青绿 · 透光",
+      "route": "原创语义",
+      "material": "磨砂透光 / 橙色点睛",
+      "format": "PNG",
+      "folder": "f-original-glass",
+      "colors": [
+        "#9acfc9",
+        "#e9a777",
+        "#d8eeeb"
+      ]
+    }
+  ],
+  "reviewNotes": [
+    {
+      "style": "E",
+      "sample": "bilibili",
+      "text": "放大后边缘有少量碎点或彩边，选定风格后需修边。"
+    },
+    {
+      "style": "E",
+      "sample": "youtube",
+      "text": "放大后边缘有少量碎点或彩边，选定风格后需修边。"
+    },
+    {
+      "style": "E",
+      "sample": "outlook",
+      "text": "放大后边缘有少量碎点或彩边，选定风格后需修边。"
+    }
+  ]
+};

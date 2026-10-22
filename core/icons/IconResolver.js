@@ -1,4 +1,4 @@
-import { findLibraryIcon, ICON_MATCHER_VERSION } from './IconLibraryProvider.js';
+import { findLibraryIcon, getLibraryIconById, ICON_MATCHER_VERSION } from './IconLibraryProvider.js';
 import { isSvgRaw } from './IconSanitizer.js';
 import { normalizeIconBackground } from './IconBackground.js';
 import { normalizeIconScale } from './IconUploadProcessor.js';
@@ -25,6 +25,9 @@ function libraryIconToModel(icon) {
   return {
     type: icon.type || 'svg',
     value: icon.svg || icon.value,
+    fallbackValue: icon.fallbackValue,
+    iconId: icon.id,
+    style: icon.style,
     source: icon.source,
     sourceLabel: icon.sourceLabel,
     matchReason: icon.matchReason,
@@ -42,10 +45,15 @@ export function resolveBookmarkIcon(bookmark, options = {}) {
   const bookmarkId = bookmark?.id;
 
   if (bookmarkId && storage?.getCustomIcon) {
-    const customIcon = customIconToModel(storage.getCustomIcon(bookmarkId));
+    const record = storage.getCustomIcon(bookmarkId);
+    if (record?.kind === 'builtin') {
+      const selected = getLibraryIconById(record.iconId, options);
+      if (selected) return { ...libraryIconToModel(selected), scale: normalizeIconScale(record.scale) };
+    }
+    const customIcon = customIconToModel(record);
     if (customIcon) return customIcon;
   }
 
-  const libraryIcon = libraryLookup(bookmark);
+  const libraryIcon = libraryLookup(bookmark, { ...options, kind: bookmark?.url ? 'website' : 'folder' });
   return libraryIcon ? libraryIconToModel(libraryIcon) : null;
 }

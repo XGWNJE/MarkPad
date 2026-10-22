@@ -1,0 +1,271 @@
+{
+  "ids": [
+    "123community",
+    "civitai",
+    "jpsmile",
+    "imyshare",
+    "ghxi",
+    "laogou",
+    "rutracker",
+    "byrut",
+    "kkpans",
+    "xclient",
+    "ipastore",
+    "greasyfork",
+    "macked",
+    "cgown",
+    "adobeae",
+    "c4dsky",
+    "gfxcamp",
+    "wszyk",
+    "aplaybox",
+    "lookae",
+    "blenderco",
+    "lanzou",
+    "pixabay",
+    "aigei",
+    "heiliaowang"
+  ],
+  "initialFallbackIds": [
+    "123community",
+    "ghxi",
+    "ipastore",
+    "macked",
+    "c4dsky",
+    "wszyk",
+    "aigei",
+    "heiliaowang"
+  ],
+  "records": [
+    {
+      "id": "123community",
+      "homepage": "https://www.123panfx.com/",
+      "kind": "initial-fallback",
+      "note": "Project-authored S initial; official header logo is 347×59 with a small badge, unsuitable for a clean enlarged icon.",
+      "sourceUrl": "https://www.123panfx.com/view/img/logo.png",
+      "initialFallback": true,
+      "license": "Project-authored original initial artwork; no imported logo in final asset."
+    },
+    {
+      "id": "civitai",
+      "homepage": "https://civitai.com/",
+      "kind": "official-inline-svg-adaptation",
+      "note": "Official inline C hexagon geometry; seasonal palette replaced with stable blue sampled from official light-mode wordmark.",
+      "sourceUrl": "https://civitai.com/images/logo_light_mode.png",
+      "initialFallback": false,
+      "license": "Official brand/logo; no standalone redistribution license located. Trademark/copyright remain with the respective owner."
+    },
+    {
+      "id": "jpsmile",
+      "homepage": "https://jpsmile.com/",
+      "kind": "official-raster-vectorized",
+      "note": "512×512 official icon, editable paths with 8-color source tracing.",
+      "sourceUrl": "https://jpsmile.com/wp-content/uploads/2019/03/cropped-LOGO_站点图标.png",
+      "initialFallback": false,
+      "license": "Official brand/logo; no standalone redistribution license located. Trademark/copyright remain with the respective owner."
+    },
+    {
+      "id": "imyshare",
+      "homepage": "https://imyshare.com/",
+      "kind": "official-raster-vectorized",
+      "note": "253×162 official header symbol, editable 3-color paths.",
+      "sourceUrl": "https://imyshare.com/static/img/logo.png",
+      "initialFallback": false,
+      "license": "Official brand/logo; no standalone redistribution license located. Trademark/copyright remain with the respective owner."
+    },
+    {
+      "id": "ghxi",
+      "homepage": "https://www.ghxi.com/",
+      "kind": "initial-fallback",
+      "note": "Project-authored G initial; public page and linked resources did not expose a clear reusable site mark.",
+      "sourceUrl": null,
+      "initialFallback": true,
+      "license": "Project-authored original initial artwork; no imported logo in final asset."
+    },
+    {
+      "id": "laogou",
+      "homepage": "https://www.laogou717.com/",
+      "kind": "official-raster-vectorized",
+      "note": "1024×1024 official profile mark; black silhouette extracted as editable contours, white background omitted.",
+      "sourceUrl": "https://image.laogou717.com/file/image/blog/1757594391083_黑白.png",
+      "initialFallback": false,
+      "license": "Official brand/logo; no standalone redistribution license located. Trademark/copyright remain with the respective owner."
+    },
+    {
+      "id": "rutracker",
+      "homepage": "https://rutracker.org/",
+      "kind": "official-vector-monogram-adaptation",
+      "note": "Official SVG rendered at 4× solely for clean source path extraction; red ru prefix retained as a compact monogram.",
+      "sourceUrl": "https://static.rutracker.cc/logo/logo-3.svg",
+      "initialFallback": false,
+      "license": "PD-textlogo per Wikimedia Commons; trademark restrictions may apply.",
+      "licenseSource": "https://commons.wikimedia.org/wiki/File:Rutracker.org_logo.svg"
+    },
+    {
+      "id": "byrut",
+      "homepage": "https://byrutgame.org/",
+      "kind": "official-svg",
+      "note": "Official resolution-independent SVG favicon.",
+      "sourceUrl": "https://byrutgame.org/favicon.svg",
+      "initialFallback": false,
+      "license": "Official brand/logo; no standalone redistribution license located. Trademark/copyright remain with the respective owner."
+    },
+    {
+      "id": "kkpans",
+      "homepage": "https://www.kkpans.com/",
+      "kind": "official-svg",
+      "note": "Official KK symbol SVG.",
+      "sourceUrl": "https://www.kkpans.com/logo.svg",
+      "initialFallback": false,
+      "license": "Official brand/logo; no standalone redistribution license located. Trademark/copyright remain with the respective owner."
+    },
+    {
+      "id": "xclient",
+      "homepage": "https://xclient.info/",
+      "kind": "official-raster-vectorized",
+      "note": "470×200 header source; X symbol crop (0,0,190,200), editable 2-color paths.",
+      "sourceUrl": "https://img.xclient.info/img/logo.png",
+      "initialFallback": false,
+      "license": "Official brand/logo; no standalone redistribution license located. Trademark/copyright remain with the respective owner."
+    },
+    {
+      "id": "ipastore",
+      "homepage": "https://ipa.store/",
+      "kind": "initial-fallback",
+      "note": "Project-authored I initial; public home returned HTTP 504 and no reusable high-resolution mark was found.",
+      "sourceUrl": null,
+      "initialFallback": true,
+      "license": "Project-authored original initial artwork; no imported logo in final asset."
+    },
+    {
+      "id": "greasyfork",
+      "homepage": "https://greasyfork.org/",
+      "kind": "brand-svg-source",
+      "note": "Greasy Fork logo. Attribution: Jason Barnabe. Simple Icons metadata identifies the original logo as GPL-3.0-only.",
+      "sourceUrl": "https://raw.githubusercontent.com/simple-icons/simple-icons/develop/icons/greasyfork.svg",
+      "initialFallback": false,
+      "license": "GPL-3.0-only; see assets/bookmark-icons/GPL-3.0.txt",
+      "attribution": "Greasy Fork logo, Jason Barnabe",
+      "licenseUrl": "https://www.gnu.org/licenses/gpl-3.0.html",
+      "originalLogoSource": "https://github.com/JasonBarnabe/greasyfork/blob/bfeb5f405e03fb32ebc86df7e11c83ca1cb79ddb/misc/logos/logo512.xcf",
+      "metadataSource": "https://raw.githubusercontent.com/simple-icons/simple-icons/develop/data/simple-icons.json"
+    },
+    {
+      "id": "macked",
+      "homepage": "https://macked.app/",
+      "kind": "initial-fallback",
+      "note": "Project-authored M initial; public home returned HTTP 403 challenge and no reusable clear mark was located.",
+      "sourceUrl": null,
+      "initialFallback": true,
+      "license": "Project-authored original initial artwork; no imported logo in final asset."
+    },
+    {
+      "id": "cgown",
+      "homepage": "https://www.cgown.com/",
+      "kind": "official-raster-vectorized",
+      "note": "120×75 official logo image; orange/yellow cube symbol crop (25,0,70,49), simplified editable 3-color contours.",
+      "sourceUrl": "https://www.cgown.com/logo.jpg",
+      "initialFallback": false,
+      "license": "Official brand/logo; no standalone redistribution license located. Trademark/copyright remain with the respective owner."
+    },
+    {
+      "id": "adobeae",
+      "homepage": "https://www.adobeae.com/",
+      "kind": "brand-vector-adaptation",
+      "note": "Site header explicitly uses the Adobe Ae mark. Flat asset uses a clean compatible Ae vector from Simple Icons v13 with site purple/white colors; clay uses the official header reference.",
+      "sourceUrl": "https://cdn.jsdelivr.net/npm/simple-icons@13/icons/adobeaftereffects.svg",
+      "initialFallback": false,
+      "license": "Simple Icons vector code under CC0-1.0; underlying brand/trademark rights remain with owner."
+    },
+    {
+      "id": "c4dsky",
+      "homepage": "https://c4dsky.com/",
+      "kind": "initial-fallback",
+      "note": "Project-authored C initial; public HTTP/HTTPS home could not be fetched and no reusable clear mark was located.",
+      "sourceUrl": null,
+      "initialFallback": true,
+      "license": "Project-authored original initial artwork; no imported logo in final asset."
+    },
+    {
+      "id": "gfxcamp",
+      "homepage": "https://www.gfxcamp.com/",
+      "kind": "official-raster-vectorized",
+      "note": "192×192 official icon; red/orange G symbol traced, original dark square background omitted.",
+      "sourceUrl": "https://www.gfxcamp.com/wp-content/uploads/2026/09/cropped-logo-512-192x192.png",
+      "initialFallback": false,
+      "license": "Official brand/logo; no standalone redistribution license located. Trademark/copyright remain with the respective owner."
+    },
+    {
+      "id": "wszyk",
+      "homepage": "https://www.wszyk.cn/",
+      "kind": "initial-fallback",
+      "note": "Project-authored W initial; public header/login logo links returned HTTP 404 and no reusable clear mark was located.",
+      "sourceUrl": null,
+      "initialFallback": true,
+      "license": "Project-authored original initial artwork; no imported logo in final asset."
+    },
+    {
+      "id": "aplaybox",
+      "homepage": "https://www.aplaybox.com/",
+      "kind": "official-raster-vectorized",
+      "note": "260×80 official header logo; cyan anime-head symbol crop (0,0,85,80), editable 4-color paths.",
+      "sourceUrl": "https://www.aplaybox.com/img/pb_logo_new_top.f143e443.png",
+      "initialFallback": false,
+      "license": "Official brand/logo; no standalone redistribution license located. Trademark/copyright remain with the respective owner."
+    },
+    {
+      "id": "lookae",
+      "homepage": "https://www.lookae.com/",
+      "kind": "official-raster-vectorized",
+      "note": "200×58 official header; coral ae circle crop (0,0,61,58), editable 3-color paths.",
+      "sourceUrl": "https://www.lookae.com/wp-content/uploads/2024/01/LOGO.png",
+      "initialFallback": false,
+      "license": "Official brand/logo; no standalone redistribution license located. Trademark/copyright remain with the respective owner."
+    },
+    {
+      "id": "blenderco",
+      "homepage": "https://blenderco.cn/",
+      "kind": "official-raster-vectorized",
+      "note": "50×50 official public icon, simple b monogram traced as editable 2-color paths. This is a direct site asset, not the 16px bookmark export.",
+      "sourceUrl": "https://img.alicdn.com/imgextra/i2/751044092/O1CN01bfJBT61g6BpPdpCtO_!!751044092.png",
+      "initialFallback": false,
+      "license": "Official brand/logo; no standalone redistribution license located. Trademark/copyright remain with the respective owner."
+    },
+    {
+      "id": "lanzou",
+      "homepage": "https://www.lanzou.com/",
+      "kind": "simplified-brand-vector",
+      "note": "Editable smooth red-outline cloud derived from the public official 124×58 header logo; wording omitted.",
+      "sourceUrl": "https://www.lanzou.com/img/logo3.gif",
+      "initialFallback": false,
+      "license": "Official brand/logo; no standalone redistribution license located. Trademark/copyright remain with the respective owner."
+    },
+    {
+      "id": "pixabay",
+      "homepage": "https://pixabay.com/",
+      "kind": "brand-svg-source",
+      "note": "Resolution-independent Simple Icons Pixabay symbol; official color #191B26 confirmed from Simple Icons brand metadata.",
+      "sourceUrl": "https://raw.githubusercontent.com/simple-icons/simple-icons/develop/icons/pixabay.svg",
+      "initialFallback": false,
+      "license": "Simple Icons vector code under CC0-1.0; underlying brand/trademark rights remain with owner."
+    },
+    {
+      "id": "aigei",
+      "homepage": "https://www.aigei.com/",
+      "kind": "initial-fallback",
+      "note": "Project-authored A initial; public home returned HTTP 403 and no reusable clear site mark was located.",
+      "sourceUrl": null,
+      "initialFallback": true,
+      "license": "Project-authored original initial artwork; no imported logo in final asset."
+    },
+    {
+      "id": "heiliaowang",
+      "homepage": "https://hl09.co/",
+      "kind": "initial-fallback",
+      "note": "Project-authored H initial; only a 64px icon was exposed by the public page, no reusable high-resolution mark found. No adult imagery downloaded.",
+      "sourceUrl": "https://hl09.co/static/pc/icons/icon_64x64.qscd.png",
+      "initialFallback": true,
+      "license": "Project-authored original initial artwork; no imported logo in final asset."
+    }
+  ]
+}

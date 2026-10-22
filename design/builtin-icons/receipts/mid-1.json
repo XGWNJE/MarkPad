@@ -1,0 +1,455 @@
+{
+  "sheetId": "mid-1",
+  "generator": "built-in image_gen__imagegen",
+  "attempts": 2,
+  "ids": [
+    "missav",
+    "redcap",
+    "sefan",
+    "tapnow",
+    "artstation",
+    "pixiv",
+    "ggac",
+    "huaban",
+    "wallhaven"
+  ],
+  "contentReference": "design/builtin-icons/sheets/mid-1-reference.png",
+  "materialReference": "design/icon-style-study/icons/e-brand-clay/figma.png",
+  "rawGeneratedPath": "C:\\Users\\xgwnj\\.codex\\generated_images\\01a156fb-3c4d-76b0-946f-f6c5cfb0e1c6\\exec-23bc46bd-0ebd-433a-af37-cf70c6014024.png",
+  "sheet": "design/builtin-icons/sheets/mid-1-generated.png",
+  "prompt": "Use case: style-transfer. Deliver ONE square transparent PNG contact sheet with an EXACT fixed 3-column by 3-row grid of NINE separate bookmark icons. Input image 1 is CONTENT/SHAPE/COLOR reference for the nine cells, in row-major order. Input image 2 (Figma) is MATERIAL/FINISH REFERENCE ONLY; NEVER copy its five-color Figma shape or add it to this sheet. Re-render image 1's nine marks as a coherent premium soft-clay icon family matching image 2: front-facing, thin softly rounded extrusion, tactile matte ceramic-clay finish, subtle fine texture, gentle upper-left studio lighting and restrained shadows, brand colors retained. Exact cell order: row 1 purple rounded M mark, muted coral rounded R mark, slate-blue rounded S mark; row 2 multicolor overlapping organic TapNow lobes, cyan angular ArtStation A symbol with its separate triangle, bright blue rounded-square pixiv p with dark cutout/negative-space p; row 3 yellow GGAC geometric black angular symbol, pink rounded H mark, dark sage rounded W mark. Preserve all source silhouettes, holes, detail, letters already part of marks, and color placement. In EVERY cell, center its whole icon at the exact center of that cell and keep its maximum extent to 62%-66% of the cell size, including gentle shading. Equal columns and rows, constant margin, no crossing boundaries, no cropped edges. NO grid lines, cell backgrounds, labels, captions, extra frames, extra pedestals, loose parts or invented text. Existing colored mark tiles intrinsic to content image must stay as part of each mark; add NO other tile. True transparent alpha outside marks and through negative spaces, no checkerboard or background scene. Single 3x3 sheet, preferably at least 1536x1536. Focused layout correction: SHRINK ALL nine icons versus a tightly packed sheet. Exactly equal 3x3 cells, with icon centers at canvas percentages (16.667%,16.667%), (50%,16.667%), (83.333%,16.667%), (16.667%,50%), (50%,50%), (83.333%,50%), (16.667%,83.333%), (50%,83.333%), (83.333%,83.333%). Leave at least 17% of each cell's width on every side of its centered icon. Do not distribute by visual packing or center rows as a group; use the exact regular cell centers. Clean transparent perimeter with no outside flecks.",
+  "sourceRecords": "design/builtin-icons/sources/mid-sources.json",
+  "provenance": "Native ImageGen sheet generated with explicit user permission for multiple icons per sheet. Each regular cell is cropped, then centered on a 256px transparent canvas by the shared helper using its visible-alpha bounds and a 1.5% buffer; maximum rendered edge 196px. No matting, background removal, repaint or recoloring.",
+  "discardedAttempt": {
+    "raw": "C:\\Users\\xgwnj\\.codex\\generated_images\\01a156fb-3c4d-76b0-946f-f6c5cfb0e1c6\\exec-052772f6-8ccb-45fc-8534-45369d505353.png",
+    "prompt": "Use case: style-transfer. Deliver ONE square transparent PNG contact sheet with an EXACT fixed 3-column by 3-row grid of NINE separate bookmark icons. Input image 1 is CONTENT/SHAPE/COLOR reference for the nine cells, in row-major order. Input image 2 (Figma) is MATERIAL/FINISH REFERENCE ONLY; NEVER copy its five-color Figma shape or add it to this sheet. Re-render image 1's nine marks as a coherent premium soft-clay icon family matching image 2: front-facing, thin softly rounded extrusion, tactile matte ceramic-clay finish, subtle fine texture, gentle upper-left studio lighting and restrained shadows, brand colors retained. Exact cell order: row 1 purple rounded M mark, muted coral rounded R mark, slate-blue rounded S mark; row 2 multicolor overlapping organic TapNow lobes, cyan angular ArtStation A symbol with its separate triangle, bright blue rounded-square pixiv p with dark cutout/negative-space p; row 3 yellow GGAC geometric black angular symbol, pink rounded H mark, dark sage rounded W mark. Preserve all source silhouettes, holes, detail, letters already part of marks, and color placement. In EVERY cell, center its whole icon at the exact center of that cell and keep its maximum extent to 72%-76% of the cell size, including gentle shading. Equal columns and rows, constant margin, no crossing boundaries, no cropped edges. NO grid lines, cell backgrounds, labels, captions, extra frames, extra pedestals, loose parts or invented text. Existing colored mark tiles intrinsic to content image must stay as part of each mark; add NO other tile. True transparent alpha outside marks and through negative spaces, no checkerboard or background scene. Single 3x3 sheet, preferably at least 1536x1536.",
+    "reason": "Focused layout correction for generous per-cell margins; subsequent centering is handled by user-authorized crop layout."
+  },
+  "crop": [
+    {
+      "id": "missav",
+      "target": "C:\\Users\\xgwnj\\Documents\\XGWNJE\\MarkPad\\assets\\bookmark-icons\\clay\\missav.png",
+      "crop": {
+        "left": 0,
+        "top": 0,
+        "width": 418,
+        "height": 418
+      },
+      "placement": {
+        "bounds": {
+          "left": 74,
+          "top": 99,
+          "width": 310,
+          "height": 297
+        },
+        "rendered": {
+          "width": 196,
+          "height": 188
+        },
+        "position": {
+          "left": 30,
+          "top": 34
+        }
+      },
+      "validation": {
+        "width": 256,
+        "height": 256,
+        "cornerAlpha": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "bytes": 65840
+      }
+    },
+    {
+      "id": "redcap",
+      "target": "C:\\Users\\xgwnj\\Documents\\XGWNJE\\MarkPad\\assets\\bookmark-icons\\clay\\redcap.png",
+      "crop": {
+        "left": 418,
+        "top": 0,
+        "width": 418,
+        "height": 418
+      },
+      "placement": {
+        "bounds": {
+          "left": 55,
+          "top": 99,
+          "width": 308,
+          "height": 297
+        },
+        "rendered": {
+          "width": 196,
+          "height": 189
+        },
+        "position": {
+          "left": 30,
+          "top": 34
+        }
+      },
+      "validation": {
+        "width": 256,
+        "height": 256,
+        "cornerAlpha": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "bytes": 68130
+      }
+    },
+    {
+      "id": "sefan",
+      "target": "C:\\Users\\xgwnj\\Documents\\XGWNJE\\MarkPad\\assets\\bookmark-icons\\clay\\sefan.png",
+      "crop": {
+        "left": 836,
+        "top": 0,
+        "width": 418,
+        "height": 418
+      },
+      "placement": {
+        "bounds": {
+          "left": 33,
+          "top": 98,
+          "width": 310,
+          "height": 298
+        },
+        "rendered": {
+          "width": 196,
+          "height": 188
+        },
+        "position": {
+          "left": 30,
+          "top": 34
+        }
+      },
+      "validation": {
+        "width": 256,
+        "height": 256,
+        "cornerAlpha": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "bytes": 69345
+      }
+    },
+    {
+      "id": "tapnow",
+      "target": "C:\\Users\\xgwnj\\Documents\\XGWNJE\\MarkPad\\assets\\bookmark-icons\\clay\\tapnow.png",
+      "crop": {
+        "left": 0,
+        "top": 418,
+        "width": 418,
+        "height": 418
+      },
+      "placement": {
+        "bounds": {
+          "left": 78,
+          "top": 60,
+          "width": 298,
+          "height": 299
+        },
+        "rendered": {
+          "width": 195,
+          "height": 196
+        },
+        "position": {
+          "left": 31,
+          "top": 30
+        }
+      },
+      "validation": {
+        "width": 256,
+        "height": 256,
+        "cornerAlpha": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "bytes": 80060
+      }
+    },
+    {
+      "id": "artstation",
+      "target": "C:\\Users\\xgwnj\\Documents\\XGWNJE\\MarkPad\\assets\\bookmark-icons\\clay\\artstation.png",
+      "crop": {
+        "left": 418,
+        "top": 418,
+        "width": 418,
+        "height": 418
+      },
+      "placement": {
+        "bounds": {
+          "left": 57,
+          "top": 79,
+          "width": 310,
+          "height": 276
+        },
+        "rendered": {
+          "width": 196,
+          "height": 175
+        },
+        "position": {
+          "left": 30,
+          "top": 41
+        }
+      },
+      "validation": {
+        "width": 256,
+        "height": 256,
+        "cornerAlpha": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "bytes": 44188
+      }
+    },
+    {
+      "id": "pixiv",
+      "target": "C:\\Users\\xgwnj\\Documents\\XGWNJE\\MarkPad\\assets\\bookmark-icons\\clay\\pixiv.png",
+      "crop": {
+        "left": 836,
+        "top": 418,
+        "width": 418,
+        "height": 418
+      },
+      "placement": {
+        "bounds": {
+          "left": 34,
+          "top": 57,
+          "width": 313,
+          "height": 310
+        },
+        "rendered": {
+          "width": 196,
+          "height": 194
+        },
+        "position": {
+          "left": 30,
+          "top": 31
+        }
+      },
+      "validation": {
+        "width": 256,
+        "height": 256,
+        "cornerAlpha": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "bytes": 65714
+      }
+    },
+    {
+      "id": "ggac",
+      "target": "C:\\Users\\xgwnj\\Documents\\XGWNJE\\MarkPad\\assets\\bookmark-icons\\clay\\ggac.png",
+      "crop": {
+        "left": 0,
+        "top": 836,
+        "width": 418,
+        "height": 418
+      },
+      "placement": {
+        "bounds": {
+          "left": 73,
+          "top": 21,
+          "width": 312,
+          "height": 300
+        },
+        "rendered": {
+          "width": 196,
+          "height": 188
+        },
+        "position": {
+          "left": 30,
+          "top": 34
+        }
+      },
+      "validation": {
+        "width": 256,
+        "height": 256,
+        "cornerAlpha": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "bytes": 65464
+      }
+    },
+    {
+      "id": "huaban",
+      "target": "C:\\Users\\xgwnj\\Documents\\XGWNJE\\MarkPad\\assets\\bookmark-icons\\clay\\huaban.png",
+      "crop": {
+        "left": 418,
+        "top": 836,
+        "width": 418,
+        "height": 418
+      },
+      "placement": {
+        "bounds": {
+          "left": 52,
+          "top": 22,
+          "width": 314,
+          "height": 299
+        },
+        "rendered": {
+          "width": 196,
+          "height": 187
+        },
+        "position": {
+          "left": 30,
+          "top": 35
+        }
+      },
+      "validation": {
+        "width": 256,
+        "height": 256,
+        "cornerAlpha": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "bytes": 66564
+      }
+    },
+    {
+      "id": "wallhaven",
+      "target": "C:\\Users\\xgwnj\\Documents\\XGWNJE\\MarkPad\\assets\\bookmark-icons\\clay\\wallhaven.png",
+      "crop": {
+        "left": 836,
+        "top": 836,
+        "width": 418,
+        "height": 418
+      },
+      "placement": {
+        "bounds": {
+          "left": 31,
+          "top": 21,
+          "width": 314,
+          "height": 300
+        },
+        "rendered": {
+          "width": 196,
+          "height": 187
+        },
+        "position": {
+          "left": 30,
+          "top": 35
+        }
+      },
+      "validation": {
+        "width": 256,
+        "height": 256,
+        "cornerAlpha": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "bytes": 63813
+      }
+    }
+  ],
+  "sources": [
+    {
+      "id": "missav",
+      "kind": "initial-fallback",
+      "initial": "M",
+      "sourceUrl": "https://missav.ws/",
+      "license": "Original MarkPad initial artwork.",
+      "note": "Official origin returned HTTP 403; no reusable vector mark found.",
+      "flat": "assets/bookmark-icons/flat/missav.svg",
+      "reference": "design/builtin-icons/references/missav.png"
+    },
+    {
+      "id": "redcap",
+      "kind": "initial-fallback",
+      "initial": "R",
+      "sourceUrl": null,
+      "license": "Original MarkPad initial artwork.",
+      "note": "Local hotspot entry; no device or private management page was accessed.",
+      "flat": "assets/bookmark-icons/flat/redcap.svg",
+      "reference": "design/builtin-icons/references/redcap.png"
+    },
+    {
+      "id": "sefan",
+      "kind": "initial-fallback",
+      "initial": "S",
+      "sourceUrl": "https://ma.sefan.pw/",
+      "license": "Original MarkPad initial artwork.",
+      "note": "Official origin returned HTTP 404; no reusable mark found.",
+      "flat": "assets/bookmark-icons/flat/sefan.svg",
+      "reference": "design/builtin-icons/references/sefan.png"
+    },
+    {
+      "id": "tapnow",
+      "kind": "reviewed-vector-redraw",
+      "sourceUrl": "https://fe-assets.tapnow.media/7ad370fbd58d60ca3fe69efcd10d257144faa85e/assets/favicons/apple-touch-icon.png",
+      "license": "Brand artwork rights retained by its owner; no separate reuse license was published.",
+      "note": "Editable simplified vector redraw from the official public mark; not a claim of an official supplied vector.",
+      "flat": "assets/bookmark-icons/flat/tapnow.svg",
+      "reference": "design/builtin-icons/references/tapnow.png"
+    },
+    {
+      "id": "artstation",
+      "kind": "downloaded-vector",
+      "sourceUrl": "https://cdn.simpleicons.org/artstation",
+      "license": "CC0-1.0 (Simple Icons); brand trademark rights remain with the owner.",
+      "flat": "assets/bookmark-icons/flat/artstation.svg",
+      "reference": "design/builtin-icons/references/artstation.png"
+    },
+    {
+      "id": "pixiv",
+      "kind": "downloaded-vector",
+      "sourceUrl": "https://cdn.simpleicons.org/pixiv",
+      "license": "CC0-1.0 (Simple Icons); brand trademark rights remain with the owner.",
+      "flat": "assets/bookmark-icons/flat/pixiv.svg",
+      "reference": "design/builtin-icons/references/pixiv.png"
+    },
+    {
+      "id": "ggac",
+      "kind": "reviewed-vector-redraw",
+      "sourceUrl": "https://cdn-prd.ggac.com/ggac/assets/image/favicon.png",
+      "license": "Brand artwork rights retained by its owner; no separate reuse license was published.",
+      "note": "Editable simplified vector redraw from the official public mark; not a claim of an official supplied vector.",
+      "flat": "assets/bookmark-icons/flat/ggac.svg",
+      "reference": "design/builtin-icons/references/ggac.png"
+    },
+    {
+      "id": "huaban",
+      "kind": "initial-fallback",
+      "initial": "H",
+      "sourceUrl": "https://huaban.com/",
+      "license": "Original MarkPad initial artwork.",
+      "note": "Public origin returned browser-verification markup; no reusable vector mark found.",
+      "flat": "assets/bookmark-icons/flat/huaban.svg",
+      "reference": "design/builtin-icons/references/huaban.png"
+    },
+    {
+      "id": "wallhaven",
+      "kind": "initial-fallback",
+      "initial": "W",
+      "sourceUrl": "https://wallhaven.cc/",
+      "license": "Original MarkPad initial artwork.",
+      "note": "Official horizontal raster wordmark is too wide for a small icon; an editable W initial is used.",
+      "flat": "assets/bookmark-icons/flat/wallhaven.svg",
+      "reference": "design/builtin-icons/references/wallhaven.png"
+    }
+  ],
+  "sheetValidation": {
+    "width": 1254,
+    "height": 1254,
+    "hasAlpha": true,
+    "sha256MatchesRaw": true
+  }
+}

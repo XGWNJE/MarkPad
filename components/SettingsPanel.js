@@ -1,4 +1,5 @@
 import EventBus from '../core/EventBus.js';
+import { getIconStyle, setIconStyle } from '../core/icons/IconStyle.js';
 
 const CARD_FONT_FAMILIES = Object.freeze({
   system: '"Segoe UI Variable", "Segoe UI", "Microsoft YaHei UI", "Microsoft YaHei", system-ui, sans-serif',
@@ -67,6 +68,7 @@ class SettingsPanel {
     this.applyTransparency();
     this.bindPanelControls();
     this.bindThemeControls(themeGroup);
+    this.bindIconStyleControls();
     this.bindOpenModeControls();
     this.bindTransparencyControls();
     this.bindCardControls();
@@ -77,6 +79,23 @@ class SettingsPanel {
     const value = Number(localStorage.getItem(key) || fallback);
     if (!Number.isFinite(value)) return fallback;
     return Math.min(max, Math.max(min, value));
+  }
+
+  bindIconStyleControls() {
+    const group = document.getElementById('icon-style-group');
+    if (!group) return;
+    const sync = () => group.querySelectorAll('[data-value]').forEach(button => {
+      const active = button.dataset.value === getIconStyle();
+      button.classList.toggle('active', active);
+      button.setAttribute('aria-pressed', String(active));
+    });
+    group.addEventListener('click', event => {
+      const button = event.target.closest('[data-value]');
+      if (!button || !group.contains(button) || !setIconStyle(button.dataset.value)) return;
+      sync();
+      EventBus.emit('icons:styleChanged');
+    });
+    sync();
   }
 
   readNumber(key, fallback, min, max) {

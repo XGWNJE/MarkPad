@@ -1,0 +1,157 @@
+{
+  "sheetId": "sample-edge-refresh",
+  "generator": "built-in image_gen__imagegen",
+  "attempts": 1,
+  "ids": [
+    "bilibili",
+    "youtube",
+    "outlook"
+  ],
+  "grid": {
+    "columns": 3,
+    "rows": 1
+  },
+  "contentReference": "design/builtin-icons/sheets/sample-edge-refresh-reference.png",
+  "materialReference": "design/icon-style-study/icons/e-brand-clay/figma.png",
+  "rawGeneratedPath": "C:\\Users\\xgwnj\\.codex\\generated_images\\01a156fb-3c4d-76b0-946f-f6c5cfb0e1c6\\exec-5599f917-653c-499e-a7e1-eca1746f6354.png",
+  "sheet": "design/builtin-icons/sheets/sample-edge-refresh-generated.png",
+  "prompt": "Use case: style-transfer. Create ONE WIDE horizontal transparent PNG icon sheet, exactly THREE EQUAL COLUMNS and ONE ROW, aspect ratio approximately 3:1. Three icons only, generous transparent space around each. Image 1 is the exact brand CONTENT/GEOMETRY/COLOR reference, ordered left to right: BiliBili, YouTube, classic Outlook. Image 2 is only the premium matte soft-clay MATERIAL reference; do not copy the Figma geometry or its five colors. Render these three marks as one coherent family of front-view, thin-extruded, gently rounded matte ceramic/soft-clay icons, soft upper-left studio illumination and subtle shading kept INSIDE each silhouette. Brand colors retained: warm pink BiliBili, vivid red YouTube, medium-blue Outlook. Preserve every precise contour, position, internal detail and TRANSPARENT HOLE of image 1. BiliBili: rounded rectangular TV outline with two diagonal antenna stalks and TWO floating pink short capsule eyes; the screen opening around the eyes must be TRANSPARENT, never a solid plate. YouTube: curved red horizontal rounded rectangle with one RIGHT-FACING TRIANGULAR TRANSPARENT HOLE, never a white filled triangle. Outlook: classic outlined blue mail/calendar mark with overlapping O tile, same grid of transparent window holes, O counter and diagonal envelope negative spaces; do not invent another logo. Each icon centered exactly at x=16.667%,50%,83.333% of sheet and y=50%, maximum extent around 65% of its individual square cell. Keep all geometry inside its own cell with ample transparent margin, no crop, no bleed between cells. CRITICAL EDGE QUALITY: clean smooth antialiased alpha edge, no fluorescent edges, no colored outline, no neon halos, no scattered dots, no crumbs, no speckles, no floating debris, no white fringe. Empty/background pixels fully transparent, with all negative spaces truly transparent. No external shadows beyond silhouettes, backdrop, tile, scene, grid lines, captions, labels, invented text or watermark. Existing O is part of Outlook geometry and must remain. Single clean 3x1 sheet; preserve all three reference designs exactly while changing only material and shallow depth.",
+  "sources": [
+    {
+      "file": "design/icon-style-study/sources/bilibili.svg",
+      "source": "https://registry.npmjs.org/@lobehub/icons-static-svg/-/icons-static-svg-1.95.1.tgz",
+      "note": "Lobe Icons 1.95.1, package/icons/bilibili-color.svg; MIT code license; brand marks remain their owners property."
+    },
+    {
+      "file": "design/icon-style-study/sources/outlook.svg",
+      "source": "https://github.com/simple-icons/simple-icons/blob/11.15.0/icons/microsoftoutlook.svg",
+      "note": "Simple Icons 11.15.0, CC0 path data; classic Outlook silhouette retained for this study."
+    },
+    {
+      "file": "design/icon-style-study/sources/youtube.svg",
+      "source": "https://github.com/simple-icons/simple-icons/blob/16.35.0/icons/youtube.svg",
+      "note": "Simple Icons 16.35.0, CC0 path data."
+    }
+  ],
+  "crops": [
+    {
+      "id": "bilibili",
+      "target": "C:\\Users\\xgwnj\\Documents\\XGWNJE\\MarkPad\\assets\\bookmark-icons\\clay\\bilibili.png",
+      "crop": {
+        "left": 0,
+        "top": 0,
+        "width": 724,
+        "height": 724
+      },
+      "placement": {
+        "bounds": {
+          "left": 94,
+          "top": 132,
+          "width": 556,
+          "height": 490
+        },
+        "rendered": {
+          "width": 196,
+          "height": 173
+        },
+        "position": {
+          "left": 30,
+          "top": 42
+        }
+      },
+      "validation": {
+        "width": 256,
+        "height": 256,
+        "cornerAlpha": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "bytes": 42469
+      }
+    },
+    {
+      "id": "youtube",
+      "target": "C:\\Users\\xgwnj\\Documents\\XGWNJE\\MarkPad\\assets\\bookmark-icons\\clay\\youtube.png",
+      "crop": {
+        "left": 724,
+        "top": 0,
+        "width": 724,
+        "height": 724
+      },
+      "placement": {
+        "bounds": {
+          "left": 69,
+          "top": 178,
+          "width": 586,
+          "height": 408
+        },
+        "rendered": {
+          "width": 196,
+          "height": 136
+        },
+        "position": {
+          "left": 30,
+          "top": 60
+        }
+      },
+      "validation": {
+        "width": 256,
+        "height": 256,
+        "cornerAlpha": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "bytes": 43247
+      }
+    },
+    {
+      "id": "outlook",
+      "target": "C:\\Users\\xgwnj\\Documents\\XGWNJE\\MarkPad\\assets\\bookmark-icons\\clay\\outlook.png",
+      "crop": {
+        "left": 1448,
+        "top": 0,
+        "width": 724,
+        "height": 724
+      },
+      "placement": {
+        "bounds": {
+          "left": 83,
+          "top": 140,
+          "width": 564,
+          "height": 491
+        },
+        "rendered": {
+          "width": 196,
+          "height": 171
+        },
+        "position": {
+          "left": 30,
+          "top": 43
+        }
+      },
+      "validation": {
+        "width": 256,
+        "height": 256,
+        "cornerAlpha": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "bytes": 50839
+      }
+    }
+  ],
+  "validation": {
+    "width": 2172,
+    "height": 724,
+    "hasAlpha": true,
+    "sha256MatchesRaw": true,
+    "preview": "design/builtin-icons/references/sample-edge-refresh-preview.png"
+  },
+  "provenance": "Three fresh native clay marks replace the reused study PNGs. The user explicitly authorized a multi-icon sheet and cropping. cropSheet/exportCenteredIcon crop and center only, retaining native alpha and colors; no matting, repaint or automated background removal. Earlier study source files remain unchanged."
+}

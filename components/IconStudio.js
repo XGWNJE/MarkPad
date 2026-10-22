@@ -1,7 +1,8 @@
 import EventBus from '../core/EventBus.js';
 import BookmarkStore from '../core/BookmarkStore.js';
 import { iconSvg } from '../core/IconLibrary.js';
-import { getLibraryIconCandidates } from '../core/icons/IconLibraryProvider.js';
+import { getLibraryIconCandidates, getLibraryIconById, searchLibraryIcons } from '../core/icons/IconLibraryProvider.js';
+import { buildIconPrompt } from '../core/icons/IconPrompt.js';
 import { createCustomIconRecord, isValidHexColor, normalizeIconScale, readIconUpload } from '../core/icons/IconUploadProcessor.js';
 import { analyzeIconBackground } from '../core/icons/IconBackgroundAnalyzer.js';
 import { backgroundCssValue, cloneIconBackground, getIconScale } from '../core/icons/IconBackground.js';
@@ -50,8 +51,9 @@ class IconStudio {
       <div class="dialog-overlay"></div><div class="dialog-content icon-studio-content">
         <div class="dialog-header"><div><h3 id="icon-studio-title">图标</h3><div class="icon-studio-subtitle"></div></div><button class="dialog-close" data-action="close" aria-label="关闭">${iconSvg('x')}</button></div>
         <div class="icon-studio-body"><div class="icon-studio-editor">
-          <section class="icon-studio-section icon-library-section"><div class="icon-studio-label">内置图标</div><div class="icon-studio-local-context"></div><div class="icon-studio-results"></div></section>
+          <section class="icon-studio-section icon-library-section"><label class="icon-studio-label" for="icon-library-search">内置图标</label><div class="icon-studio-search-row"><input id="icon-library-search" type="search" placeholder="搜索品牌或文件夹名称" autocomplete="off"><button type="button" class="btn btn-secondary" data-action="browse-icons">全部</button></div><div class="icon-studio-local-context" role="status" aria-live="polite"></div><div class="icon-studio-results"></div></section>
           <section class="icon-studio-section icon-upload-section"><label class="icon-studio-label" for="icon-upload-input">上传图片</label><p class="icon-studio-help">支持 SVG、PNG/APNG、GIF、JPG、WebP；动画保持原始播放，GIF、APNG、动态 WebP 与 SVG 动画可到 10MB，静态图片不超过 1MB；位图原始尺寸至少 256 × 256。</p><input id="icon-upload-input" class="icon-upload-input" type="file" accept="image/svg+xml,image/png,image/jpeg,image/webp,image/gif"></section>
+          <details class="icon-studio-section icon-prompt-section"><summary>生成单枚图标</summary><p class="icon-studio-help">复制当前风格的提示词，附上清晰品牌标识交给图片生成工具，完成后在上方上传。</p><textarea class="icon-prompt-text" readonly rows="7" aria-label="单枚图标生成提示词"></textarea><button type="button" class="btn btn-secondary" data-action="copy-prompt">复制提示词</button></details>
           <section class="icon-background-composer hidden"><div class="icon-studio-label">图标背景</div><p class="icon-studio-help icon-background-source"></p>
             <div class="icon-background-modes" role="group" aria-label="图标背景模式"><button type="button" class="btn btn-secondary" data-background-mode="raw">保留原样</button><button type="button" class="btn btn-secondary" data-background-mode="auto">自动融合</button><button type="button" class="btn btn-secondary" data-background-mode="black">黑色</button><button type="button" class="btn btn-secondary" data-background-mode="white">白色</button><button type="button" class="btn btn-secondary" data-background-mode="custom">自定义</button></div>
             <div class="icon-custom-color hidden"><div class="icon-color-picker-row"><button type="button" class="icon-hue-wheel" aria-label="色相色轮"><span></span></button><button type="button" class="icon-sv-plane" aria-label="饱和度和明度面板"><span></span></button></div><div class="icon-color-inputs"><input class="icon-color-hex" type="text" value="#ffffff" maxlength="7" spellcheck="false" aria-label="背景色 HEX"><button type="button" class="btn btn-secondary icon-eyedropper">屏幕取色</button></div></div>
@@ -69,6 +71,9 @@ class IconStudio {
     this.dialog.querySelectorAll('[data-action="close"]').forEach(button => button.addEventListener('click', () => this.hide()));
     this.dialog.querySelector('[data-action="apply"]').addEventListener('click', () => this.applySelectedIcon());
     this.dialog.querySelector('#icon-upload-input').addEventListener('change', event => this.handleUpload(event));
+    this.dialog.querySelector('#icon-library-search').addEventListener('input', () => this.renderLibraryCandidates());
+    this.dialog.querySelector('[data-action="browse-icons"]').addEventListener('click', () => { this.browseAll = true; this.dialog.querySelector('#icon-library-search').value = ''; this.renderLibraryCandidates(); });
+    this.dialog.querySelector('[data-action="copy-prompt"]').addEventListener('click', () => this.copyPrompt());
     this.dialog.querySelectorAll('[data-background-mode]').forEach(button => button.addEventListener('click', () => this.setBackgroundMode(button.dataset.backgroundMode)));
     this.dialog.querySelector('.icon-scale-input').addEventListener('input', event => this.setIconScale(Number(event.target.value) / 100));
     this.dialog.querySelector('.icon-color-hex').addEventListener('input', event => {
@@ -98,7 +103,12 @@ class IconStudio {
     this.beginSession(returnFocus);
     this.bookmark = bookmark; this.selectedIcon = null; this.siteIcon = null; this.mode = 'custom';
     const existing = BookmarkStore.getCustomIcon(bookmark.id);
-    if (existing) {
+    this.upload = null;
+    if (existing?.kind === 'builtin') {
+      this.selectedIcon = getLibraryIconById(existing.iconId);
+      this.resetIconPresentation();
+      this.iconScale = normalizeIconScale(existing.scale);
+    } else if (existing) {
       const record = typeof existing === 'string'
         ? { kind: isSvgRaw(existing) ? 'svg' : 'image', data: existing, background: { mode: 'raw' } }
         : existing;
@@ -113,6 +123,11 @@ class IconStudio {
       this.resetIconPresentation();
     }
     this.dialog.querySelector('#icon-upload-input').value = ''; this.dialog.querySelector('.icon-studio-subtitle').textContent = bookmark.title || '未命名书签'; this.dialog.querySelector('.dialog-header h3').textContent = '图标';
+    this.browseAll = false;
+    this.dialog.querySelector('#icon-library-search').value = '';
+    this.dialog.querySelector('.icon-prompt-section').classList.remove('hidden');
+    this.dialog.querySelector('.icon-prompt-section').open = false;
+    this.updatePrompt();
     this.dialog.querySelector('.icon-library-section').classList.remove('hidden'); this.dialog.querySelector('.icon-upload-section').classList.remove('hidden'); this.setStatus(''); this.renderLibraryCandidates(); this.updateAll(); this.dialog.classList.remove('hidden');
     this.dialog.querySelector('.dialog-close').focus();
   }
@@ -122,6 +137,7 @@ class IconStudio {
     this.beginSession(returnFocus);
     this.bookmark = bookmark; this.selectedIcon = null; this.upload = null; this.siteIcon = siteIcon; this.mode = 'site-background'; this.background = cloneIconBackground(BookmarkStore.getSiteIconBackground(bookmark.id)); this.iconScale = getIconScale(this.background); this.customColor = this.background.mode === 'solid' ? this.background.color : '#ffffff'; this.colorState = hexToHsv(this.customColor); this.customEditing = this.background.mode === 'solid' && !['#111111', '#ffffff'].includes(this.background.color);
     this.dialog.querySelector('.dialog-header h3').textContent = '网站图标背景'; this.dialog.querySelector('.icon-studio-subtitle').textContent = bookmark.title || '未命名书签'; this.dialog.querySelector('.icon-library-section').classList.add('hidden'); this.dialog.querySelector('.icon-upload-section').classList.add('hidden');
+    this.dialog.querySelector('.icon-prompt-section').classList.add('hidden');
     this.setStatus('背景只改变显示策略，网站图标仍由页面声明资源提供。'); this.updateAll(); this.dialog.classList.remove('hidden');
     this.dialog.querySelector('.dialog-close').focus();
   }
@@ -152,17 +168,38 @@ class IconStudio {
   }
 
   renderLibraryCandidates() {
-    const result = getLibraryIconCandidates(this.bookmark, { limit: 48 }); const container = this.dialog.querySelector('.icon-studio-results');
-    this.dialog.querySelector('.icon-studio-local-context').textContent = result.candidates.length
-      ? `按书签名称“${this.bookmark.title || '未命名'}”匹配到 ${result.candidates.length} 个图标。`
-      : '暂无匹配的内置图标，可在下方上传图片。';
+    const query = this.dialog.querySelector('#icon-library-search').value.trim();
+    const browsing = Boolean(query || this.browseAll);
+    const candidates = browsing
+      ? searchLibraryIcons(query, { kind: this.bookmark.url ? 'website' : 'folder' })
+      : getLibraryIconCandidates(this.bookmark, { limit: 48, kind: this.bookmark.url ? 'website' : 'folder' }).candidates;
+    const container = this.dialog.querySelector('.icon-studio-results');
+    container.classList.add('local-candidates');
+    this.dialog.querySelector('.icon-studio-local-context').textContent = browsing
+      ? `找到 ${candidates.length} 个内置图标。应用后跟随设置中的图标风格。`
+      : candidates.length ? `按书签名称匹配到 ${candidates.length} 个图标，也可搜索其他品牌。` : '暂无名称匹配。可搜索或查看全部，也可上传图片。';
     container.innerHTML = '';
-    container.classList.toggle('hidden', !result.candidates.length);
-    if (!result.candidates.length) return;
-    result.candidates.forEach(icon => {
-      const button = document.createElement('button'); button.type = 'button'; button.className = 'icon-studio-local-tile'; button.innerHTML = `<span class="icon-studio-local-art">${icon.svg}</span><span class="icon-studio-local-info"><span class="icon-studio-local-title">${this.escapeHtml(icon.title)}</span><span class="icon-studio-local-reasons">${this.escapeHtml(icon.matchReason)}</span></span>`;
-      button.addEventListener('click', () => { if (this.uploadBusy) return; this.selectedIcon = icon; this.upload = null; this.resetIconPresentation(); this.setStatus(''); container.querySelectorAll('.icon-studio-local-tile').forEach(item => item.classList.remove('selected')); button.classList.add('selected'); this.updateAll(); }); container.appendChild(button);
+    container.classList.toggle('hidden', !candidates.length);
+    candidates.forEach(icon => {
+      const button = document.createElement('button'); button.type = 'button'; button.className = 'icon-studio-local-tile'; button.innerHTML = `<span class="icon-studio-local-art"></span><span class="icon-studio-local-info"><span class="icon-studio-local-title">${this.escapeHtml(icon.title)}</span><span class="icon-studio-local-reasons">${icon.style === 'flat' ? '彩色扁平' : '品牌软陶'}${icon.initialOnly ? ' · 字母标识' : ''}</span></span>`;
+      const art = button.querySelector('.icon-studio-local-art');
+      if (icon.type === 'svg') art.innerHTML = icon.svg;
+      else { const image = document.createElement('img'); image.src = icon.value; image.alt = ''; image.loading = 'lazy'; art.appendChild(image); }
+      const selected = this.selectedIcon?.id === icon.id;
+      button.classList.toggle('selected', selected);
+      button.setAttribute('aria-pressed', String(selected));
+      button.addEventListener('click', () => { if (this.uploadBusy) return; this.selectedIcon = icon; this.upload = null; this.resetIconPresentation(); this.setStatus(''); container.querySelectorAll('.icon-studio-local-tile').forEach(item => { item.classList.remove('selected'); item.setAttribute('aria-pressed', 'false'); }); button.classList.add('selected'); button.setAttribute('aria-pressed', 'true'); this.updatePrompt(); this.updateAll(); }); container.appendChild(button);
     });
+  }
+
+  async copyPrompt() {
+    const field = this.dialog.querySelector('.icon-prompt-text');
+    try { await navigator.clipboard.writeText(field.value); this.setStatus('提示词已复制，生成时请附上清晰品牌标识。'); }
+    catch { field.focus(); field.select(); this.setStatus('请手动复制已选中的提示词。'); }
+  }
+
+  updatePrompt() {
+    this.dialog.querySelector('.icon-prompt-text').value = buildIconPrompt(this.selectedIcon?.title || this.bookmark.title, undefined, this.bookmark.url ? 'website' : 'folder');
   }
 
   async handleUpload(event) {
@@ -242,7 +279,7 @@ class IconStudio {
     } catch {}
   }
 
-  currentIcon() { const current = this.upload || this.selectedIcon || this.siteIcon; return current ? { kind: current.kind || current.type || 'svg', value: current.data || current.svg || current.value } : null; }
+  currentIcon() { const current = this.upload || this.selectedIcon || this.siteIcon; return current ? { kind: current.type || current.kind || 'svg', value: current.data || current.svg || current.value } : null; }
 
   updateAll() {
     const current = this.currentIcon(); const enabled = Boolean(this.upload) || this.mode === 'site-background'; this.dialog.querySelector('.icon-background-composer').classList.toggle('hidden', !enabled); this.dialog.querySelector('.icon-background-source').textContent = this.mode === 'site-background' ? '来源：当前网站声明图标。' : '来源：上传原始图标文件。';
@@ -269,8 +306,8 @@ class IconStudio {
   renderPreview(current) {
     this.dialog.querySelector('.icon-studio-body').classList.toggle('has-preview', Boolean(current));
     const preview = this.dialog.querySelector('.icon-studio-preview'); const card = preview.querySelector('.icon-studio-preview-card'); const icon = card.querySelector('.card-icon'); if (!current) { preview.classList.add('hidden'); return; }
-    preview.classList.remove('hidden'); icon.innerHTML = ''; icon.style.background = backgroundCssValue(this.background); icon.style.setProperty('--icon-content-scale', String(this.iconScale)); if (current.kind === 'svg') icon.innerHTML = current.value; else { const image = document.createElement('img'); image.className = 'card-icon-image'; image.src = current.value; image.alt = ''; icon.appendChild(image); }
-    card.querySelector('.card-title').textContent = this.bookmark.title || '未命名书签'; card.querySelector('.card-meta').textContent = this.mode === 'site-background' ? this.domain() : '上传图标'; preview.querySelector('.icon-studio-preview-source').textContent = this.mode === 'site-background' ? '来源：网站声明图标（临时预览同步到原卡片）' : '来源：上传图标（应用前不写入）';
+    preview.classList.remove('hidden'); icon.innerHTML = ''; icon.style.background = this.selectedIcon ? 'var(--color-builtin-icon-bg)' : backgroundCssValue(this.background); icon.style.setProperty('--icon-content-scale', String(this.iconScale)); if (current.kind === 'svg') icon.innerHTML = current.value; else { const image = document.createElement('img'); image.className = 'card-icon-image'; image.src = current.value; image.alt = ''; icon.appendChild(image); }
+    card.querySelector('.card-title').textContent = this.bookmark.title || '未命名书签'; card.querySelector('.card-meta').textContent = this.mode === 'site-background' ? this.domain() : this.selectedIcon ? this.selectedIcon.title : '上传图标'; preview.querySelector('.icon-studio-preview-source').textContent = this.mode === 'site-background' ? '来源：网站声明图标（临时预览同步到原卡片）' : this.selectedIcon ? '来源：内置图标（跟随整套风格）' : '来源：上传图标（应用前不写入）';
   }
 
   domain() { try { return new URL(this.bookmark.url).hostname; } catch { return ''; } }
@@ -281,7 +318,10 @@ class IconStudio {
         const background = { ...(this.background.mode === 'auto' ? { ...this.background, sourceValue: current.value } : this.background), scale: this.iconScale };
         BookmarkStore.setSiteIconBackground(this.bookmark.id, background); EventBus.emit('siteIcon:backgroundApplied', { id: this.bookmark.id }); this.setStatus('网站图标背景与缩放已应用。'); return;
       }
-      const record = createCustomIconRecord({ kind: current.kind, data: current.value, background: this.upload ? this.background : { mode: 'raw' }, scale: this.iconScale }); BookmarkStore.setCustomIcon(this.bookmark.id, record); EventBus.emit('icon:applied', { id: this.bookmark.id, iconData: record }); this.setStatus('图标与缩放已应用。');
+      const record = this.selectedIcon
+        ? { version: 4, kind: 'builtin', iconId: this.selectedIcon.id, scale: this.iconScale }
+        : createCustomIconRecord({ kind: current.kind, data: current.value, background: this.background, scale: this.iconScale });
+      BookmarkStore.setCustomIcon(this.bookmark.id, record); EventBus.emit('icon:applied', { id: this.bookmark.id, iconData: record }); this.setStatus('图标与缩放已应用。');
     } catch {
       this.setStatus('图标应用失败，请重试。', true);
     }

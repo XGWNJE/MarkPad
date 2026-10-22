@@ -1,0 +1,369 @@
+{
+  "sheetId": "suffix3-01",
+  "generationTool": "built-in image_gen__imagegen",
+  "style": "品牌软陶",
+  "order": [
+    "shadcn",
+    "penpot",
+    "xgwnje",
+    "doubao",
+    "kimi",
+    "grsai",
+    "pansoo",
+    "wechat",
+    "netcoffee"
+  ],
+  "selectedAttempt": 2,
+  "sourcePaths": [
+    "sources/shadcn.source.svg",
+    "sources/penpot.source.svg",
+    "sources/xgwnje.source.svg",
+    "sources/doubao.source.svg",
+    "sources/kimi.source.svg",
+    "sources/grsai.source.svg",
+    "sources/pansoo.source.svg",
+    "sources/wechat.source.svg",
+    "sources/netcoffee.source.svg"
+  ],
+  "rawSheet": "sheets/suffix3-01-raw.png",
+  "sourceReceipt": "receipts/suffix3-sources.json",
+  "exportMethod": "User-authorized contact-sheet generation and equal-grid cropping; exportCenteredIcon crops alpha>=64 subject bounds with 1.5% buffer, preserves native colors/alpha, scales longest edge to 196px, centers on transparent 256x256. No matte, background removal or repainting.",
+  "attempts": [
+    {
+      "attempt": 1,
+      "prompt": "Create ONE transparent square 3-by-3 contact sheet containing exactly NINE separate bookmark icons. Image 1 is the exact 3x3 logo reference sheet; Image 2 is MATERIAL REFERENCE ONLY (the selected matte soft-clay Figma icon), do not include Figma.\nUse fixed equal square cells, read left-to-right, top-to-bottom:\nrow 1 shadcn/ui; Penpot; X initial fallback.\nrow 2 Doubao; Kimi; G initial fallback.\nrow 3 Pansoo; WeChat; Net.Coffee.\nPreserve each Image 1 logo silhouette, brand colors, text/glyphs within the mark and details exactly. The first two references are black/dark monochrome logos on transparent alpha and must remain recognizable. Keep all nine in their original grid positions. Do not invent or substitute symbols.\nFor ALL nine apply the same premium soft-clay material as Image 2: matte tactile ceramic-like clay, shallow rounded extrusion, FRONT VIEW, upper-left soft studio light, soft gentle contact shading, slightly rounded edges but preserve brand geometry. Brand original colors; keep dark logos dark and white details legible. Each subject centered in its own cell, maximum subject dimension 72%-76% of cell, identical optical scale, ample transparent gaps. Existing colored shapes in a source logo remain part of that logo; add NO tile, base, plaque, backing panel, pedestal or external frame.\nTRUE transparent alpha across sheet background and between icons. No text labels/captions, no grid lines, no scene, no watermark, no checkerboard. No icon crosses a cell boundary or touches canvas edges. Exactly 3 columns and 3 rows, square output at least 1024px. This sheet will be split into equal cells, so position and transparent separation are essential.",
+      "referencePaths": [
+        "C:/Users/xgwnj/Documents/XGWNJE/MarkPad/design/builtin-icons/sheets/suffix3-01-reference.png",
+        "C:/Users/xgwnj/Documents/XGWNJE/MarkPad/design/icon-style-study/icons/e-brand-clay/figma.png"
+      ],
+      "nativeGeneratedPath": "C:\\Users\\xgwnj\\.codex\\generated_images\\01a156fb-676e-7521-92c9-dccdf6e2861b\\exec-f4f830d1-eb73-4da3-9722-b48c322a22ef.png",
+      "localRawPath": "sheets/suffix3-01-attempt1-raw.png",
+      "selected": false,
+      "note": "Reference at attempt 1 used the rejected purple initial G fallback for GrsAI. The selected attempt uses the current simplified actual geometric GrsAI reference."
+    },
+    {
+      "attempt": 2,
+      "prompt": "Create a clean THREE BY THREE transparent icon asset sheet from Image 1, matching Image 2's selected matte soft-clay material. Exactly nine icons in fixed equal cells, row-major order: shadcn/ui, Penpot, X; Doubao, Kimi, angular GrsAI mark; Pansoo, WeChat, Net.Coffee.\nImportant: the latest Image 1 contains GrsAI's actual black angular interlocking geometric G in row 2 column 3. Render that angular mark, NOT a white letter G and NOT a purple tile.\nPreserve every reference logo silhouette, proportions, original brand colors, internal details, and intentional letter glyphs. Black logo shapes on transparent alpha are actual visible subjects. Use premium tactile matte clay, gentle shallow rounded extrusion, FRONT VIEW, restrained edge rounding, soft upper-left studio light, faint soft shading, same style family as Image 2. No extra backing plates; source logo's own colored geometry only.\nSTRICT POSITIONING so the sheet can be cut into nine equal squares: subject centers at canvas coordinates (16.667%,16.667%), (50%,16.667%), (83.333%,16.667%); (16.667%,50%), (50%,50%), (83.333%,50%); (16.667%,83.333%), (50%,83.333%), (83.333%,83.333%). Maximum width OR height of EACH icon is 24% of entire canvas, meaning 72% of one cell. Keep a fully transparent margin at least 4% canvas around every cell boundary, do not let shadows cross cells. Keep the first row vertically centered at 16.667%, not shifted downward.\nTRUE transparent alpha everywhere outside the nine marks. Square 1254x1254 or 1536x1536 output. No grid lines, no labels/captions, no text except intrinsic logo glyphs, no Figma icon, watermark, scene, white backdrop, checkerboard, app tiles, pedestals or frames.",
+      "referencePaths": [
+        "C:/Users/xgwnj/Documents/XGWNJE/MarkPad/design/builtin-icons/sheets/suffix3-01-reference.png",
+        "C:/Users/xgwnj/Documents/XGWNJE/MarkPad/design/icon-style-study/icons/e-brand-clay/figma.png"
+      ],
+      "nativeGeneratedPath": "C:\\Users\\xgwnj\\.codex\\generated_images\\01a156fb-676e-7521-92c9-dccdf6e2861b\\exec-6707dd01-801f-49c2-be8f-58f98838b23d.png",
+      "localRawPath": "sheets/suffix3-01-raw.png",
+      "selected": true
+    }
+  ],
+  "review": {
+    "backgrounds": [
+      "#f1f0ec",
+      "#282b2c"
+    ],
+    "preview": "references/suffix3-01-review.png",
+    "reviewedDisplaySize": 128,
+    "notes": "Second attempt fixes Kimi fragments and GrsAI; coordinator accepted black/white clay volume variations in shadcn/Penpot/Net.Coffee."
+  },
+  "exports": [
+    {
+      "id": "shadcn",
+      "target": "C:\\Users\\xgwnj\\Documents\\XGWNJE\\MarkPad\\assets\\bookmark-icons\\clay\\shadcn.png",
+      "crop": {
+        "left": 0,
+        "top": 0,
+        "width": 418,
+        "height": 418
+      },
+      "placement": {
+        "bounds": {
+          "left": 90,
+          "top": 97,
+          "width": 313,
+          "height": 310
+        },
+        "rendered": {
+          "width": 196,
+          "height": 194
+        },
+        "position": {
+          "left": 30,
+          "top": 31
+        }
+      },
+      "validation": {
+        "width": 256,
+        "height": 256,
+        "alphaMin": 0,
+        "alphaMax": 255,
+        "borderAlphaMax": 0
+      }
+    },
+    {
+      "id": "penpot",
+      "target": "C:\\Users\\xgwnj\\Documents\\XGWNJE\\MarkPad\\assets\\bookmark-icons\\clay\\penpot.png",
+      "crop": {
+        "left": 418,
+        "top": 0,
+        "width": 418,
+        "height": 418
+      },
+      "placement": {
+        "bounds": {
+          "left": 84,
+          "top": 85,
+          "width": 253,
+          "height": 324
+        },
+        "rendered": {
+          "width": 153,
+          "height": 196
+        },
+        "position": {
+          "left": 52,
+          "top": 30
+        }
+      },
+      "validation": {
+        "width": 256,
+        "height": 256,
+        "alphaMin": 0,
+        "alphaMax": 255,
+        "borderAlphaMax": 0
+      }
+    },
+    {
+      "id": "xgwnje",
+      "target": "C:\\Users\\xgwnj\\Documents\\XGWNJE\\MarkPad\\assets\\bookmark-icons\\clay\\xgwnje.png",
+      "crop": {
+        "left": 836,
+        "top": 0,
+        "width": 418,
+        "height": 418
+      },
+      "placement": {
+        "bounds": {
+          "left": 15,
+          "top": 97,
+          "width": 312,
+          "height": 310
+        },
+        "rendered": {
+          "width": 196,
+          "height": 195
+        },
+        "position": {
+          "left": 30,
+          "top": 31
+        }
+      },
+      "validation": {
+        "width": 256,
+        "height": 256,
+        "alphaMin": 0,
+        "alphaMax": 255,
+        "borderAlphaMax": 0
+      }
+    },
+    {
+      "id": "doubao",
+      "target": "C:\\Users\\xgwnj\\Documents\\XGWNJE\\MarkPad\\assets\\bookmark-icons\\clay\\doubao.png",
+      "crop": {
+        "left": 0,
+        "top": 418,
+        "width": 418,
+        "height": 418
+      },
+      "placement": {
+        "bounds": {
+          "left": 114,
+          "top": 70,
+          "width": 272,
+          "height": 301
+        },
+        "rendered": {
+          "width": 177,
+          "height": 196
+        },
+        "position": {
+          "left": 40,
+          "top": 30
+        }
+      },
+      "validation": {
+        "width": 256,
+        "height": 256,
+        "alphaMin": 0,
+        "alphaMax": 255,
+        "borderAlphaMax": 0
+      }
+    },
+    {
+      "id": "kimi",
+      "target": "C:\\Users\\xgwnj\\Documents\\XGWNJE\\MarkPad\\assets\\bookmark-icons\\clay\\kimi.png",
+      "crop": {
+        "left": 418,
+        "top": 418,
+        "width": 418,
+        "height": 418
+      },
+      "placement": {
+        "bounds": {
+          "left": 82,
+          "top": 73,
+          "width": 271,
+          "height": 266
+        },
+        "rendered": {
+          "width": 196,
+          "height": 192
+        },
+        "position": {
+          "left": 30,
+          "top": 32
+        }
+      },
+      "validation": {
+        "width": 256,
+        "height": 256,
+        "alphaMin": 0,
+        "alphaMax": 255,
+        "borderAlphaMax": 0
+      }
+    },
+    {
+      "id": "grsai",
+      "target": "C:\\Users\\xgwnj\\Documents\\XGWNJE\\MarkPad\\assets\\bookmark-icons\\clay\\grsai.png",
+      "crop": {
+        "left": 836,
+        "top": 418,
+        "width": 418,
+        "height": 418
+      },
+      "placement": {
+        "bounds": {
+          "left": 27,
+          "top": 71,
+          "width": 293,
+          "height": 298
+        },
+        "rendered": {
+          "width": 193,
+          "height": 196
+        },
+        "position": {
+          "left": 32,
+          "top": 30
+        }
+      },
+      "validation": {
+        "width": 256,
+        "height": 256,
+        "alphaMin": 0,
+        "alphaMax": 255,
+        "borderAlphaMax": 0
+      }
+    },
+    {
+      "id": "pansoo",
+      "target": "C:\\Users\\xgwnj\\Documents\\XGWNJE\\MarkPad\\assets\\bookmark-icons\\clay\\pansoo.png",
+      "crop": {
+        "left": 0,
+        "top": 836,
+        "width": 418,
+        "height": 418
+      },
+      "placement": {
+        "bounds": {
+          "left": 87,
+          "top": 23,
+          "width": 310,
+          "height": 305
+        },
+        "rendered": {
+          "width": 196,
+          "height": 193
+        },
+        "position": {
+          "left": 30,
+          "top": 32
+        }
+      },
+      "validation": {
+        "width": 256,
+        "height": 256,
+        "alphaMin": 0,
+        "alphaMax": 255,
+        "borderAlphaMax": 0
+      }
+    },
+    {
+      "id": "wechat",
+      "target": "C:\\Users\\xgwnj\\Documents\\XGWNJE\\MarkPad\\assets\\bookmark-icons\\clay\\wechat.png",
+      "crop": {
+        "left": 418,
+        "top": 836,
+        "width": 418,
+        "height": 418
+      },
+      "placement": {
+        "bounds": {
+          "left": 47,
+          "top": 43,
+          "width": 326,
+          "height": 278
+        },
+        "rendered": {
+          "width": 196,
+          "height": 167
+        },
+        "position": {
+          "left": 30,
+          "top": 45
+        }
+      },
+      "validation": {
+        "width": 256,
+        "height": 256,
+        "alphaMin": 0,
+        "alphaMax": 255,
+        "borderAlphaMax": 0
+      }
+    },
+    {
+      "id": "netcoffee",
+      "target": "C:\\Users\\xgwnj\\Documents\\XGWNJE\\MarkPad\\assets\\bookmark-icons\\clay\\netcoffee.png",
+      "crop": {
+        "left": 836,
+        "top": 836,
+        "width": 418,
+        "height": 418
+      },
+      "placement": {
+        "bounds": {
+          "left": 26,
+          "top": 40,
+          "width": 333,
+          "height": 279
+        },
+        "rendered": {
+          "width": 196,
+          "height": 164
+        },
+        "position": {
+          "left": 30,
+          "top": 46
+        }
+      },
+      "validation": {
+        "width": 256,
+        "height": 256,
+        "alphaMin": 0,
+        "alphaMax": 255,
+        "borderAlphaMax": 0
+      }
+    }
+  ],
+  "rawSha256": "0ff92a12ec21adb0e874409068d37e03770ff9eb9fbe214442ba37bb1d6bb4ab",
+  "rawMatchesNative": true,
+  "supersededExports": {
+    "kimi": "receipts/kimi-repair.json"
+  }
+}

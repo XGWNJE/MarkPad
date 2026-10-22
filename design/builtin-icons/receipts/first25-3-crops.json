@@ -1,0 +1,193 @@
+[
+  {
+    "id": "aplaybox",
+    "target": "C:\\Users\\xgwnj\\Documents\\XGWNJE\\MarkPad\\assets\\bookmark-icons\\clay\\aplaybox.png",
+    "crop": {
+      "left": 0,
+      "top": 0,
+      "width": 418,
+      "height": 418
+    },
+    "placement": {
+      "bounds": {
+        "left": 72,
+        "top": 64,
+        "width": 318,
+        "height": 326
+      },
+      "rendered": {
+        "width": 191,
+        "height": 196
+      },
+      "position": {
+        "left": 33,
+        "top": 30
+      }
+    },
+    "sourceSheet": "C:\\Users\\xgwnj\\Documents\\XGWNJE\\MarkPad\\design\\builtin-icons\\sheets\\first25-3-attempt2.png"
+  },
+  {
+    "id": "lookae",
+    "target": "C:\\Users\\xgwnj\\Documents\\XGWNJE\\MarkPad\\assets\\bookmark-icons\\clay\\lookae.png",
+    "crop": {
+      "left": 418,
+      "top": 0,
+      "width": 418,
+      "height": 418
+    },
+    "placement": {
+      "bounds": {
+        "left": 46,
+        "top": 59,
+        "width": 337,
+        "height": 334
+      },
+      "rendered": {
+        "width": 196,
+        "height": 194
+      },
+      "position": {
+        "left": 30,
+        "top": 31
+      }
+    },
+    "sourceSheet": "C:\\Users\\xgwnj\\Documents\\XGWNJE\\MarkPad\\design\\builtin-icons\\sheets\\first25-3-attempt2.png"
+  },
+  {
+    "id": "blenderco",
+    "target": "C:\\Users\\xgwnj\\Documents\\XGWNJE\\MarkPad\\assets\\bookmark-icons\\clay\\blenderco.png",
+    "crop": {
+      "left": 836,
+      "top": 0,
+      "width": 418,
+      "height": 418
+    },
+    "placement": {
+      "bounds": {
+        "left": 46,
+        "top": 58,
+        "width": 329,
+        "height": 333
+      },
+      "rendered": {
+        "width": 194,
+        "height": 196
+      },
+      "position": {
+        "left": 31,
+        "top": 30
+      }
+    },
+    "sourceSheet": "C:\\Users\\xgwnj\\Documents\\XGWNJE\\MarkPad\\design\\builtin-icons\\sheets\\first25-3-attempt2.png"
+  },
+  {
+    "id": "lanzou",
+    "target": "C:\\Users\\xgwnj\\Documents\\XGWNJE\\MarkPad\\assets\\bookmark-icons\\clay\\lanzou.png",
+    "crop": {
+      "left": 0,
+      "top": 418,
+      "width": 418,
+      "height": 418
+    },
+    "placement": {
+      "bounds": {
+        "left": 41,
+        "top": 103,
+        "width": 369,
+        "height": 239
+      },
+      "rendered": {
+        "width": 196,
+        "height": 127
+      },
+      "position": {
+        "left": 30,
+        "top": 65
+      }
+    },
+    "sourceSheet": "C:\\Users\\xgwnj\\Documents\\XGWNJE\\MarkPad\\design\\builtin-icons\\sheets\\first25-3-attempt2.png"
+  },
+  {
+    "id": "pixabay",
+    "target": "C:\\Users\\xgwnj\\Documents\\XGWNJE\\MarkPad\\assets\\bookmark-icons\\clay\\pixabay.png",
+    "sourceSheet": "C:\\Users\\xgwnj\\Documents\\XGWNJE\\MarkPad\\design\\builtin-icons\\sheets\\first25-3-attempt1.png",
+    "crop": {
+      "left": 450,
+      "top": 460,
+      "width": 360,
+      "height": 370
+    },
+    "placement": {
+      "bounds": {
+        "left": 14,
+        "top": 34,
+        "width": 326,
+        "height": 325
+      },
+      "rendered": {
+        "width": 196,
+        "height": 195
+      },
+      "position": {
+        "left": 30,
+        "top": 31
+      }
+    },
+    "manualCrop": true,
+    "reason": "Preserve the original native transparent px counters; exclude neighbouring top-row content. Crop and placement only; no alpha masking or repainting."
+  },
+  {
+    "id": "aigei",
+    "target": "C:\\Users\\xgwnj\\Documents\\XGWNJE\\MarkPad\\assets\\bookmark-icons\\clay\\aigei.png",
+    "crop": {
+      "left": 836,
+      "top": 418,
+      "width": 418,
+      "height": 418
+    },
+    "placement": {
+      "bounds": {
+        "left": 43,
+        "top": 52,
+        "width": 333,
+        "height": 327
+      },
+      "rendered": {
+        "width": 196,
+        "height": 192
+      },
+      "position": {
+        "left": 30,
+        "top": 32
+      }
+    },
+    "sourceSheet": "C:\\Users\\xgwnj\\Documents\\XGWNJE\\MarkPad\\design\\builtin-icons\\sheets\\first25-3-attempt2.png"
+  },
+  {
+    "id": "heiliaowang",
+    "target": "C:\\Users\\xgwnj\\Documents\\XGWNJE\\MarkPad\\assets\\bookmark-icons\\clay\\heiliaowang.png",
+    "crop": {
+      "left": 0,
+      "top": 836,
+      "width": 418,
+      "height": 418
+    },
+    "placement": {
+      "bounds": {
+        "left": 59,
+        "top": 30,
+        "width": 339,
+        "height": 323
+      },
+      "rendered": {
+        "width": 196,
+        "height": 187
+      },
+      "position": {
+        "left": 30,
+        "top": 35
+      }
+    },
+    "sourceSheet": "C:\\Users\\xgwnj\\Documents\\XGWNJE\\MarkPad\\design\\builtin-icons\\sheets\\first25-3-attempt2.png"
+  }
+]

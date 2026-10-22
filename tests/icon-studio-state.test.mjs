@@ -94,3 +94,34 @@ test('analysis rejection leaves the current display usable and reports retry out
   assert.equal(writes[0][0], 'background');
   assert.equal(writes[0][2].scale, 2);
 });
+
+test('searching and applying an unmatched built-in stores a theme-following identity', async () => {
+  const { instance, find, writes } = await setupDialog('IconStudio');
+  instance.show({ ...bookmark, title: '控制台' });
+  find('#icon-library-search').value = 'VisionGuard';
+  instance.renderLibraryCandidates();
+  find('.icon-studio-local-tile').click();
+  assert.equal(instance.currentIcon().kind, 'image');
+  instance.setIconScale(1.5);
+  instance.applySelectedIcon();
+  const record = writes[0][2];
+  assert.equal(record.kind, 'builtin');
+  assert.equal(record.iconId, 'visionguard');
+  assert.equal(record.scale, 1.5);
+  assert.equal(record.data, undefined);
+  assert.equal(record.value, undefined);
+});
+
+test('reopening a built-in selection restores its preview, scale and generation prompt', async () => {
+  const { instance, find, writes } = await setupDialog('IconStudio', {
+    getCustomIcon: () => ({ kind: 'builtin', iconId: 'github', scale: 1.2 })
+  });
+  instance.show(bookmark);
+  assert.equal(instance.selectedIcon.id, 'github');
+  assert.equal(instance.upload, null);
+  assert.equal(instance.currentIcon().kind, 'image');
+  assert.equal(instance.iconScale, 1.2);
+  assert.match(find('.icon-prompt-text').value, /ONE MarkPad/);
+  instance.applySelectedIcon();
+  assert.equal(writes[0][2].iconId, 'github');
+});

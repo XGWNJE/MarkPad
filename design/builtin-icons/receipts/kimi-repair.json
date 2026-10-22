@@ -1,0 +1,29 @@
+{
+  "id": "kimi",
+  "tool": "built-in image_gen__imagegen",
+  "reason": "Use the dark-ink K variant for contrast on the shared pale tile. Keep blue brand dot, geometry and matte clay material.",
+  "prompt": "Edit the attached Kimi brand icon. Change ONLY the WHITE clay K glyph to a dark charcoal gray #262825 matte polymer clay. Keep the blue dot in its existing bright brand blue. Preserve the exact K silhouette, proportions, contours, blue dot position, centered composition, shallow rounded thickness, straight-on front view and soft upper-left light. This is the dark-ink variant for display on a pale warm-gray tile, so the K must be charcoal and clearly readable at 64px. Repair the cutout alpha boundary: remove all disconnected specks, colored fringe, halos and fragments around the glyph. Transparent PNG with a real clean alpha channel, including true transparency around and between all parts. No background color, tile, frame, pedestal, labels, extra symbols, checkerboard, watermark or cast-shadow floor. Square canvas. The mark's longest side occupies 72–76% of the canvas with equal generous transparent margins. Keep this one brand icon only.\n",
+  "nativeOriginal": "C:/Users/xgwnj/.codex/generated_images/01a156ed-ffc3-7dd1-aa83-9a8e092404b8/exec-7856bbe1-7f71-48f6-aa5f-39d62ab072e5.png",
+  "savedOriginal": "sheets/kimi-contrast-repair.png",
+  "inputSnapshot": "sources/kimi-light-before-repair.png",
+  "inputSha256": "6515b84314d44cda6ae3a741e3930b7181726e0a9434e34fa27bda8bda0e7633",
+  "transparentBackground": true,
+  "placement": {
+    "bounds": {
+      "left": 143,
+      "top": 150,
+      "width": 1001,
+      "height": 975
+    },
+    "rendered": {
+      "width": 196,
+      "height": 191
+    },
+    "position": {
+      "left": 30,
+      "top": 33
+    }
+  },
+  "flatTransformation": "The original white K is rendered in neutral charcoal #262825; blue #1783FF and brand path geometry are retained.",
+  "postProcessing": "Crop, uniform scale and transparent centering only. No alpha masking or repaint."
+}

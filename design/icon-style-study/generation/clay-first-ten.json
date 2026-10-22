@@ -1,0 +1,461 @@
+{
+  "tool": "built-in image_gen__imagegen",
+  "style": "E 品牌软陶材质",
+  "postProcessing": "None. Originals preserved; selected native PNGs copied byte-for-byte.",
+  "purpose": "Style selection samples; some native alpha edges need cleanup before production adoption.",
+  "verificationSummary": {
+    "requested": 10,
+    "generated": 10,
+    "missing": 0,
+    "nativeSize": [
+      1254,
+      1254
+    ],
+    "allRgba": true,
+    "allCornerAlphaZero": true,
+    "allCopiesByteIdentical": true,
+    "knownProductionLimits": "Native colored fringe and isolated edge pixels remain on several icons, most visible on BiliBili, YouTube and Outlook. These are flagged style samples, not production-ready exports."
+  },
+  "records": [
+    {
+      "id": "chatgpt",
+      "reference": "C:/Users/xgwnj/Documents/XGWNJE/MarkPad/design/icon-style-study/references/brand/chatgpt.png",
+      "output": "C:/Users/xgwnj/Documents/XGWNJE/MarkPad/design/icon-style-study/icons/e-brand-clay/chatgpt.png",
+      "selectedOriginal": "C:\\Users\\xgwnj\\.codex\\generated_images\\01a156fb-11d4-7553-abf3-0dd9082c7f58\\exec-9a524f10-c396-42de-ac4c-53c0b3943c4e.png",
+      "attempts": [
+        {
+          "attempt": 1,
+          "prompt": "Use case: style-transfer.\nAsset type: one premium MarkPad bookmark icon, square 1024×1024 transparent PNG.\nInput image 1 is the exact ChatGPT brand mark reference. Make this exact mark into an isolated premium matte soft-clay 3D object. Preserve its exact six-loop interlocking knot silhouette, ribbon construction, open central hexagon, all transparent negative spaces, proportions and distinguishing details. Keep original dark charcoal color; do not turn it green.\nStyle: tactile matte ceramic/soft clay, subtly rounded edges and shallow extrusion, fine matte surface, soft upper-left studio light with restrained shading. Centered orthographic FRONT VIEW, no strong perspective. Keep the entire object and tiny soft contact shadow inside the central 76% of the square canvas.\nBackground: true transparent alpha, including the open holes; no opaque backdrop.\nConstraints: one icon only, no scene, no extra objects, no added app tile, no typography, no watermark. Change only material and shallow volume, preserve reference geometry. It must visibly look tactile and 3D, not flat vector.",
+          "originalPath": "C:\\Users\\xgwnj\\.codex\\generated_images\\01a156fb-11d4-7553-abf3-0dd9082c7f58\\exec-9a524f10-c396-42de-ac4c-53c0b3943c4e.png"
+        }
+      ],
+      "status": "style-review-sample",
+      "qualityNote": "主体和镂空完整；存在极低 alpha 的透明层噪点，常规图标尺寸不可见。",
+      "verification": {
+        "id": "chatgpt",
+        "exists": true,
+        "bytes": 971534,
+        "size": [
+          1254,
+          1254
+        ],
+        "mode": "RGBA",
+        "alpha_extrema": [
+          0,
+          255
+        ],
+        "bbox_alpha8": [
+          180,
+          169,
+          1079,
+          1089
+        ],
+        "corner_alpha": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "sha256_matches_original": true
+      }
+    },
+    {
+      "id": "deepseek",
+      "reference": "C:/Users/xgwnj/Documents/XGWNJE/MarkPad/design/icon-style-study/references/brand/deepseek.png",
+      "output": "C:/Users/xgwnj/Documents/XGWNJE/MarkPad/design/icon-style-study/icons/e-brand-clay/deepseek.png",
+      "selectedOriginal": "C:\\Users\\xgwnj\\.codex\\generated_images\\01a156fb-11d4-7553-abf3-0dd9082c7f58\\exec-c6fe66bd-72c2-4bb8-93c5-2d9a91dc1e82.png",
+      "attempts": [
+        {
+          "attempt": 1,
+          "prompt": "Use case: style-transfer.\nAsset type: one premium MarkPad bookmark icon, square 1024×1024 transparent PNG.\nInput image 1 is the exact DeepSeek blue whale brand mark reference. Render this exact flat silhouette into an isolated premium matte soft-clay 3D object. Preserve EXACT outline: curled whale body facing left, large open mouth crescent, small eye and teardrop eye detail, right raised split tail, lower flipper and pointed smile. Preserve all transparent negative spaces and original vivid periwinkle-blue brand color.\nStyle: tactile fine matte ceramic/soft clay, subtly rounded edges and shallow extrusion, soft upper-left studio light, restrained shadows. Centered orthographic FRONT VIEW, no large perspective. Entire object and restrained soft shadow inside the central 76% of square canvas.\nBackground: genuine transparent alpha including the mouth opening. No opaque fill behind the whale.\nConstraints: one icon only, no scene, no added app tile, no extra objects, no text, no watermark. Keep reference proportions and brand geometry; change only material and shallow volume. Visibly tactile and 3D, not flat vector.",
+          "originalPath": "C:\\Users\\xgwnj\\.codex\\generated_images\\01a156fb-11d4-7553-abf3-0dd9082c7f58\\exec-c6fe66bd-72c2-4bb8-93c5-2d9a91dc1e82.png"
+        }
+      ],
+      "status": "style-review-sample",
+      "qualityNote": "主体完整；放大可见少量蓝色透明边缘碎点。",
+      "verification": {
+        "id": "deepseek",
+        "exists": true,
+        "bytes": 708388,
+        "size": [
+          1254,
+          1254
+        ],
+        "mode": "RGBA",
+        "alpha_extrema": [
+          0,
+          255
+        ],
+        "bbox_alpha8": [
+          142,
+          286,
+          1129,
+          1021
+        ],
+        "corner_alpha": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "sha256_matches_original": true
+      }
+    },
+    {
+      "id": "huggingface",
+      "reference": "C:/Users/xgwnj/Documents/XGWNJE/MarkPad/design/icon-style-study/references/brand/huggingface.png",
+      "output": "C:/Users/xgwnj/Documents/XGWNJE/MarkPad/design/icon-style-study/icons/e-brand-clay/huggingface.png",
+      "selectedOriginal": "C:\\Users\\xgwnj\\.codex\\generated_images\\01a156fb-11d4-7553-abf3-0dd9082c7f58\\exec-166fc983-9d3a-4337-b443-c9c4d2719324.png",
+      "attempts": [
+        {
+          "attempt": 1,
+          "prompt": "Use case: style-transfer.\nAsset type: one premium MarkPad bookmark icon, square 1024×1024 transparent PNG.\nInput image 1 is the exact Hugging Face brand mascot reference. Convert this exact graphic into an isolated premium matte soft-clay 3D icon. Preserve the reference silhouette and construction precisely: round yellow smiling face, dark curved joyful eyes, two orange cheek dots, wide dark smiling mouth with small pink tongue, two yellow open hugging hands in front with the same finger structure, orange edge accents and fine cream-white outer rim. Keep original recognizable colors, relative proportions, expression and every distinguishing detail.\nStyle: tactile fine matte ceramic/soft clay, softly rounded shallow extrusion, no gloss. Soft upper-left studio light. Centered orthographic FRONT VIEW with no large perspective; the complete face, hands and restrained soft shadow remain within the central 76% of the square canvas.\nBackground: true transparent alpha surrounding the silhouette. No backdrop or app tile.\nConstraints: one icon only; no extra fingers, text, watermark, scenery, decoration or additional objects. Change only material and shallow volume. Clearly tangible 3D clay, not flat vector.",
+          "originalPath": "C:\\Users\\xgwnj\\.codex\\generated_images\\01a156fb-11d4-7553-abf3-0dd9082c7f58\\exec-5080fdc2-5955-45bc-921d-993a280060bc.png"
+        },
+        {
+          "attempt": 2,
+          "prompt": "Use case: background-extraction and precise-object-edit.\nImage 1 is the official Hugging Face mascot shape reference. Image 2 is the first soft-clay render, the edit target. Keep its colors, mascot details, front view, matte clay surface, upper-left lighting and original silhouette, but fix its edge quality and framing.\nThe final asset must be one extremely clean, contiguous 3D clay mascot: smooth cream-white outer rim with a clean antialiased edge. Remove every detached white fleck, speckle, dust, fringe or isolated fragment around the silhouette. Alpha must be EXACTLY ZERO everywhere outside the clean icon silhouette; do not paint white or grey on the transparent background. Preserve the two hands, yellow face, orange accents and dark smiling expression. Keep the main icon centered and occupying only 70% of the square canvas width and height, leaving at least 15% fully empty transparent padding on every side. No contact shadow, no scene, no text, no added objects. Deliver square 1024×1024 true RGBA transparent PNG. Change only edge cleanup and framing, keep the chosen tactile matte 3D clay treatment.",
+          "originalPath": "C:\\Users\\xgwnj\\.codex\\generated_images\\01a156fb-11d4-7553-abf3-0dd9082c7f58\\exec-166fc983-9d3a-4337-b443-c9c4d2719324.png"
+        }
+      ],
+      "status": "style-review-sample",
+      "qualityNote": "已做一次原生边缘修正；主体完整，放大仍有少量乳白色边缘毛点。",
+      "verification": {
+        "id": "huggingface",
+        "exists": true,
+        "bytes": 746073,
+        "size": [
+          1254,
+          1254
+        ],
+        "mode": "RGBA",
+        "alpha_extrema": [
+          0,
+          255
+        ],
+        "bbox_alpha8": [
+          236,
+          265,
+          1018,
+          1014
+        ],
+        "corner_alpha": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "sha256_matches_original": true
+      }
+    },
+    {
+      "id": "github",
+      "reference": "C:/Users/xgwnj/Documents/XGWNJE/MarkPad/design/icon-style-study/references/brand/github.png",
+      "output": "C:/Users/xgwnj/Documents/XGWNJE/MarkPad/design/icon-style-study/icons/e-brand-clay/github.png",
+      "selectedOriginal": "C:\\Users\\xgwnj\\.codex\\generated_images\\01a156fb-11d4-7553-abf3-0dd9082c7f58\\exec-53d33c9e-e6a8-4c6c-aa73-1547d69cc3f8.png",
+      "attempts": [
+        {
+          "attempt": 1,
+          "prompt": "Use case: style-transfer.\nAsset type: one premium MarkPad bookmark icon, square 1024×1024 transparent PNG.\nInput image 1 is the exact GitHub circular Octocat mark reference. Make the same mark into one isolated matte soft-clay 3D object. Preserve EXACT circular dark charcoal disc, transparent Octocat-shaped cutout with two pointed ears, curved head, body, left curling tail, and bottom openings. The cat is NEGATIVE SPACE through the charcoal material, not a white cat and not a raised cat. Keep all holes truly transparent and preserve reference outline, proportions, and geometry.\nStyle: tactile fine matte ceramic/soft clay, subtle rounded shallow extrusion, soft upper-left studio light and restrained shading. Centered orthographic FRONT VIEW with no large perspective. Entire object occupies about 72% of square canvas, surrounded by generous fully transparent padding on every side.\nBackground: true transparent alpha. Outside and all cutouts are transparent. Clean antialiased silhouette.\nConstraints: one icon only; no extra app tile, no text, no scene, no decoration, no particles, no watermark. Original dark charcoal brand color. Change only material and shallow volume. The result visibly tactile and 3D, not flat vector.",
+          "originalPath": "C:\\Users\\xgwnj\\.codex\\generated_images\\01a156fb-11d4-7553-abf3-0dd9082c7f58\\exec-53d33c9e-e6a8-4c6c-aa73-1547d69cc3f8.png"
+        }
+      ],
+      "status": "style-review-sample",
+      "qualityNote": "主体与 Octocat 镂空完整；仅轻微边缘噪点。",
+      "verification": {
+        "id": "github",
+        "exists": true,
+        "bytes": 768827,
+        "size": [
+          1254,
+          1254
+        ],
+        "mode": "RGBA",
+        "alpha_extrema": [
+          0,
+          255
+        ],
+        "bbox_alpha8": [
+          167,
+          164,
+          1088,
+          1067
+        ],
+        "corner_alpha": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "sha256_matches_original": true
+      }
+    },
+    {
+      "id": "figma",
+      "reference": "C:/Users/xgwnj/Documents/XGWNJE/MarkPad/design/icon-style-study/references/brand/figma.png",
+      "output": "C:/Users/xgwnj/Documents/XGWNJE/MarkPad/design/icon-style-study/icons/e-brand-clay/figma.png",
+      "selectedOriginal": "C:\\Users\\xgwnj\\.codex\\generated_images\\01a156fb-11d4-7553-abf3-0dd9082c7f58\\exec-fc5df23a-915c-487d-aa71-f8898d7e7e0a.png",
+      "attempts": [
+        {
+          "attempt": 1,
+          "prompt": "Use case: style-transfer.\nAsset type: one premium MarkPad bookmark icon, square 1024×1024 transparent PNG.\nInput image 1 is the exact Figma brand mark reference. Convert this exact five-piece mark into an isolated matte soft-clay 3D icon. Preserve exact geometry and color positions: top left orange-red rounded lobe, top right salmon rounded lobe sharing the top horizontal pill; middle left violet rounded lobe; middle right cyan-blue full circle; bottom left green round-bottom lobe. Preserve the F-like arrangement, contact edges, proportions and empty bottom-right area. Keep recognizable original brand colors.\nStyle: tactile fine matte ceramic/soft clay, subtle rounded shallow extrusion, soft upper-left studio light, restrained shading, no gloss. Centered orthographic FRONT VIEW, no large perspective. Entire mark should occupy about 72% of canvas height and stay wholly within the central 76% square, leaving fully transparent padding.\nBackground: true transparent alpha around all pieces; clean antialiased edges.\nConstraints: one icon only, no scene, no extra objects or detached speckles, no app tile, no typography, no watermark. Change only material and shallow volume; do not redesign or rearrange the five pieces. Must visibly look tactile and 3D rather than flat vector.",
+          "originalPath": "C:\\Users\\xgwnj\\.codex\\generated_images\\01a156fb-11d4-7553-abf3-0dd9082c7f58\\exec-fc5df23a-915c-487d-aa71-f8898d7e7e0a.png"
+        }
+      ],
+      "status": "style-review-sample",
+      "qualityNote": "五块色形与配色完整；放大可见少量彩色毛边及顶部碎点。",
+      "verification": {
+        "id": "figma",
+        "exists": true,
+        "bytes": 757498,
+        "size": [
+          1254,
+          1254
+        ],
+        "mode": "RGBA",
+        "alpha_extrema": [
+          0,
+          255
+        ],
+        "bbox_alpha8": [
+          290,
+          151,
+          962,
+          1132
+        ],
+        "corner_alpha": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "sha256_matches_original": true
+      }
+    },
+    {
+      "id": "bilibili",
+      "reference": "C:/Users/xgwnj/Documents/XGWNJE/MarkPad/design/icon-style-study/references/brand/bilibili.png",
+      "output": "C:/Users/xgwnj/Documents/XGWNJE/MarkPad/design/icon-style-study/icons/e-brand-clay/bilibili.png",
+      "selectedOriginal": "C:\\Users\\xgwnj\\.codex\\generated_images\\01a156fb-11d4-7553-abf3-0dd9082c7f58\\exec-eac97a19-e96c-4470-99ab-45d53018419e.png",
+      "attempts": [
+        {
+          "attempt": 1,
+          "prompt": "Use case: style-transfer.\nAsset type: one premium MarkPad bookmark icon, square 1024×1024 transparent PNG.\nInput image 1 is the exact BiliBili pink television mark reference. Convert this exact mark into an isolated premium matte soft-clay 3D icon. Preserve EXACT outline and construction: thick continuous rounded rectangular TV frame, open transparent screen, two small vertical round-ended pink eye bars floating inside, two short diagonal antennae that point outwards from the top. Retain the brand pink color, dimensions, proportions, corner curve, antenna lengths and eye positions. The screen must remain a transparent hole, never a filled panel.\nStyle: tactile fine matte ceramic/soft clay, subtly rounded shallow extrusion, soft upper-left studio light, restrained shading. Centered orthographic FRONT VIEW, no large perspective. The entire mark fits within the central 74% square of the canvas with fully clear transparent padding.\nBackground: true transparent alpha around the frame and inside the screen. Clean antialiased edges.\nConstraints: one icon only, no scene, no extra app tile, no mouth or additional face details, no text, no watermark, no decorative objects or particles. Change only material and shallow volume. Must look tactile and 3D, not flat vector.",
+          "originalPath": "C:\\Users\\xgwnj\\.codex\\generated_images\\01a156fb-11d4-7553-abf3-0dd9082c7f58\\exec-c1bde1ef-4790-4247-a194-58e5b3304318.png"
+        },
+        {
+          "attempt": 2,
+          "prompt": "Use case: background-extraction and precise-object-edit.\nImage 1 is the BiliBili pink TV brand mark reference. Image 2 is the 3D soft-clay render to correct. Keep the exact front-facing TV outline, two outward diagonal antennae, two detached oval eyes, bubblegum-pink color, rounded clay volume, matte texture and upper-left lighting.\nFix ONLY the transparency and edge artifacts: remove all red/pink debris, loose fragments, speckles, color fringe, rough edge chips and stray pixels. There must be a perfectly clean, smooth antialiased contour and nothing scattered around it. The empty TV screen, except the two pink eyes, must have alpha EXACTLY ZERO. All padding outside the mark must also have alpha EXACTLY ZERO. No shadow, no background colors or gradients. Keep the entire single icon centered inside a 72% square area, with at least 14% completely empty transparent padding on each side. No text, watermark, scene, plate, app tile, decoration, particles or added details. Square 1024×1024 true RGBA transparent PNG.",
+          "originalPath": "C:\\Users\\xgwnj\\.codex\\generated_images\\01a156fb-11d4-7553-abf3-0dd9082c7f58\\exec-eac97a19-e96c-4470-99ab-45d53018419e.png"
+        }
+      ],
+      "status": "style-review-sample",
+      "qualityNote": "已达两次原生生成/编辑上限；轮廓和材质正确，仍有高 alpha 粉红色边缘碎点，定稿需修边。",
+      "verification": {
+        "id": "bilibili",
+        "exists": true,
+        "bytes": 523245,
+        "size": [
+          1254,
+          1254
+        ],
+        "mode": "RGBA",
+        "alpha_extrema": [
+          0,
+          255
+        ],
+        "bbox_alpha8": [
+          200,
+          231,
+          1054,
+          1004
+        ],
+        "corner_alpha": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "sha256_matches_original": true
+      }
+    },
+    {
+      "id": "youtube",
+      "reference": "C:/Users/xgwnj/Documents/XGWNJE/MarkPad/design/icon-style-study/references/brand/youtube.png",
+      "output": "C:/Users/xgwnj/Documents/XGWNJE/MarkPad/design/icon-style-study/icons/e-brand-clay/youtube.png",
+      "selectedOriginal": "C:\\Users\\xgwnj\\.codex\\generated_images\\01a156fb-11d4-7553-abf3-0dd9082c7f58\\exec-8e656860-1c04-4468-a8c2-2024a51352b3.png",
+      "attempts": [
+        {
+          "attempt": 1,
+          "prompt": "Use case: style-transfer.\nAsset type: one premium MarkPad bookmark icon, square 1024×1024 transparent PNG.\nInput image 1 is the exact YouTube play-button brand mark reference. Transform the reference into a single isolated matte soft-clay 3D object. Preserve exact wide rounded red button silhouette and centered right-facing triangular cutout, brand red hue, outline, proportions and triangle dimensions. The triangle is a clean transparent opening through the clay, not black or white material.\nStyle: tactile fine matte ceramic/soft clay, very shallow rounded extrusion, softly domed surface, soft upper-left studio light, gentle smooth tonal shading with no gloss. Centered orthographic FRONT VIEW, no perspective. Keep the complete object in a central 72% square area with wide fully empty transparent padding all around.\nTransparent background: genuine alpha, including the triangle; exactly empty outside the silhouette. Very clean smooth antialiased edges, no color fringe, no noise.\nConstraints: one icon only, no other objects, no added app tile, no text or watermark, no shadow or scene, no particles or flecks. Change only material and shallow volume, keep reference shape. It must look tactile and 3D rather than flat vector.",
+          "originalPath": "C:\\Users\\xgwnj\\.codex\\generated_images\\01a156fb-11d4-7553-abf3-0dd9082c7f58\\exec-2bea789f-be3f-43ac-95d4-f9439839fb76.png"
+        },
+        {
+          "attempt": 2,
+          "prompt": "Use case: precise-object-edit.\nImage 1 is the original YouTube brand mark. Image 2 is the clay render to repair. Preserve the tactile matte red soft-clay treatment, exact wide rounded rectangular shape, front view, shallow volume, and triangular play cutout.\nRemove ALL floating red particles, red fringe, frayed chips, rough pixels, and all tiny detached fragments around the object and inside the triangular hole. Create one clean, smooth, continuous antialiased silhouette. The triangular opening and every pixel outside the icon must be true empty transparency with zero alpha. Keep the object centered within the central 72% of a square 1024×1024 canvas, with at least 14% fully transparent padding on each side. Soft upper-left lighting stays on the object only; no cast shadow. No background, no floor, no decoration, no typography, no watermark, no added objects. Do not change the original brand identity or add an app tile. True RGBA transparent PNG.",
+          "originalPath": "C:\\Users\\xgwnj\\.codex\\generated_images\\01a156fb-11d4-7553-abf3-0dd9082c7f58\\exec-8e656860-1c04-4468-a8c2-2024a51352b3.png"
+        }
+      ],
+      "status": "style-review-sample",
+      "qualityNote": "已达两次原生生成/编辑上限；主体与播放镂空正确，仍有红色边缘毛点，定稿需修边。",
+      "verification": {
+        "id": "youtube",
+        "exists": true,
+        "bytes": 767414,
+        "size": [
+          1254,
+          1254
+        ],
+        "mode": "RGBA",
+        "alpha_extrema": [
+          0,
+          255
+        ],
+        "bbox_alpha8": [
+          159,
+          303,
+          1093,
+          949
+        ],
+        "corner_alpha": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "sha256_matches_original": true
+      }
+    },
+    {
+      "id": "123pan",
+      "reference": "C:/Users/xgwnj/Documents/XGWNJE/MarkPad/design/icon-style-study/references/brand/123pan.png",
+      "output": "C:/Users/xgwnj/Documents/XGWNJE/MarkPad/design/icon-style-study/icons/e-brand-clay/123pan.png",
+      "selectedOriginal": "C:\\Users\\xgwnj\\.codex\\generated_images\\01a156fb-11d4-7553-abf3-0dd9082c7f58\\exec-b7142bbe-ac09-4c74-8ae9-b7aa002eb192.png",
+      "attempts": [
+        {
+          "attempt": 1,
+          "prompt": "Use case: style-transfer.\nAsset type: one premium MarkPad bookmark icon, square 1024×1024 transparent PNG.\nInput image 1 is the exact 123云盘 / 123pan brand icon. Render this exact icon as an isolated premium matte soft-clay 3D object. This brand DOES include its blue rounded-square tile: preserve that blue tile and its original corner curve. Keep the three white custom logo numeral shapes from the reference, same geometry, proportions, stroke widths and positions: slim vertical 1 at left, customized 2 in center, customized 3 at right. Do not re-typeset the numerals using a font, do not add any other lettering. The front graphic must match the reference.\nStyle: tactile fine matte ceramic/soft clay, shallow softly rounded blue slab, the three white shapes as shallow raised white clay inlay; no gloss. Soft upper-left studio light, restrained shadows. Centered orthographic FRONT VIEW, no large perspective. Complete icon fits within the central 72% square area, leaving generous fully transparent padding.\nBackground: genuine transparent alpha outside the single tile. Clean smooth antialiased silhouette, no noise or color fringe.\nConstraints: one icon only, no extra plate behind the original blue tile, no text additions, no scene, no watermark or particles, no additional objects. Change only material and shallow volume. Keep exact recognizable original blue-and-white brand colors. Visibly tactile 3D, not flat vector.",
+          "originalPath": "C:\\Users\\xgwnj\\.codex\\generated_images\\01a156fb-11d4-7553-abf3-0dd9082c7f58\\exec-b7142bbe-ac09-4c74-8ae9-b7aa002eb192.png"
+        }
+      ],
+      "status": "style-review-sample",
+      "qualityNote": "保留蓝色原品牌底板及 123 定制字形；放大可见少量蓝色毛边。",
+      "verification": {
+        "id": "123pan",
+        "exists": true,
+        "bytes": 942500,
+        "size": [
+          1254,
+          1254
+        ],
+        "mode": "RGBA",
+        "alpha_extrema": [
+          0,
+          255
+        ],
+        "bbox_alpha8": [
+          197,
+          198,
+          1058,
+          1057
+        ],
+        "corner_alpha": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "sha256_matches_original": true
+      }
+    },
+    {
+      "id": "gmail",
+      "reference": "C:/Users/xgwnj/Documents/XGWNJE/MarkPad/design/icon-style-study/references/brand/gmail.png",
+      "output": "C:/Users/xgwnj/Documents/XGWNJE/MarkPad/design/icon-style-study/icons/e-brand-clay/gmail.png",
+      "selectedOriginal": "C:\\Users\\xgwnj\\.codex\\generated_images\\01a156fb-11d4-7553-abf3-0dd9082c7f58\\exec-9394be41-9c9a-4d5d-8c33-83caf75aa5a7.png",
+      "attempts": [
+        {
+          "attempt": 1,
+          "prompt": "Use case: style-transfer.\nAsset type: one premium MarkPad bookmark icon, square 1024×1024 transparent PNG.\nInput image 1 is the exact Gmail multicolor M brand mark reference. Render this exact M logo as an isolated premium matte soft-clay 3D icon. Preserve EXACT silhouette and original five-color block construction: dark red upper-left fold, blue lower-left vertical, vivid red descending-and-rising central M ribbon, yellow upper-right fold, green lower-right vertical. Keep proportions, widths, corner curves, the open top and transparent interior/bottom space. No white envelope body, no envelope rectangle, and no extra badge; only the colored M shapes in the reference.\nStyle: tactile fine matte ceramic/soft clay, subtle rounded shallow extrusion, soft upper-left studio light, gentle shading with no gloss. Centered orthographic FRONT VIEW and no large perspective. Keep the entire logo inside a central 72% square area with fully transparent padding.\nBackground: true transparent alpha around and inside the mark. Clean smooth antialiased edges, no fragments or color fringe.\nConstraints: preserve all reference colors and geometry. Change only material and shallow volume. One icon only, no shadow, no scene, no particles, no text, no app tile, no watermark. Must visibly look tactile and 3D rather than flat vector.",
+          "originalPath": "C:\\Users\\xgwnj\\.codex\\generated_images\\01a156fb-11d4-7553-abf3-0dd9082c7f58\\exec-9394be41-9c9a-4d5d-8c33-83caf75aa5a7.png"
+        }
+      ],
+      "status": "style-review-sample",
+      "qualityNote": "M 色块、镂空和材质正确；仅轻微边缘噪点。",
+      "verification": {
+        "id": "gmail",
+        "exists": true,
+        "bytes": 640615,
+        "size": [
+          1254,
+          1254
+        ],
+        "mode": "RGBA",
+        "alpha_extrema": [
+          0,
+          255
+        ],
+        "bbox_alpha8": [
+          148,
+          314,
+          1106,
+          975
+        ],
+        "corner_alpha": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "sha256_matches_original": true
+      }
+    },
+    {
+      "id": "outlook",
+      "reference": "C:/Users/xgwnj/Documents/XGWNJE/MarkPad/design/icon-style-study/references/brand/outlook.png",
+      "output": "C:/Users/xgwnj/Documents/XGWNJE/MarkPad/design/icon-style-study/icons/e-brand-clay/outlook.png",
+      "selectedOriginal": "C:\\Users\\xgwnj\\.codex\\generated_images\\01a156fb-11d4-7553-abf3-0dd9082c7f58\\exec-dd861bff-1c80-4625-bb64-e36b946adbf1.png",
+      "attempts": [
+        {
+          "attempt": 1,
+          "prompt": "Use case: style-transfer.\nAsset type: one premium MarkPad bookmark icon, square 1024×1024 transparent PNG.\nInput image 1 is the exact monochrome blue Outlook brand reference. Preserve this specific reference, do not substitute another Outlook logo version. Convert the SAME geometry into one isolated premium matte soft-clay 3D icon: left foreground rounded-square blue panel with O-shaped transparent cutout and blue oval center; behind it an upright blue calendar rectangle with the same rectangular window cutouts; lower-right outlined blue envelope with the same triangular fold openings. Preserve exact overlap, positions, thicknesses, proportions, all holes and original brand blue color. Do not add white letter shapes or multicolor gradients.\nStyle: tactile fine matte ceramic/soft clay, softly rounded shallow extrusion, soft upper-left studio light and restrained shading, no gloss. Centered orthographic FRONT VIEW, no large perspective. Keep the complete icon within a central 72% square area, generous fully transparent padding on every side.\nBackground: true transparent alpha outside the mark and THROUGH every negative-space opening. Clean smooth antialiased contours, no color fringe or speckles.\nConstraints: change only material and shallow volume, preserve all reference construction. One icon only, no added app tile, no added text, no watermark, no scene, no shadow, no particles or decorative objects. Visibly tactile 3D, not flat vector.",
+          "originalPath": "C:\\Users\\xgwnj\\.codex\\generated_images\\01a156fb-11d4-7553-abf3-0dd9082c7f58\\exec-ddfdf02d-a134-454d-9346-b411c96e8509.png"
+        },
+        {
+          "attempt": 2,
+          "prompt": "Use case: background-extraction and precise-object-edit.\nImage 1 is the exact Outlook blue brand reference. Image 2 is the soft-clay render to repair. Preserve the blue matte soft-clay material, exact front-facing three-part mark, O-shaped cutout with blue center, calendar windows and envelope folds, geometry, color, volume and upper-left lighting.\nFix the transparent edge extraction. Delete every cyan or vivid blue fringe, ragged chip, floating particle, loose fragment and stray pixel that is not part of the smooth main silhouette. Make every inner hole smooth and completely empty with EXACTLY ZERO alpha, including the O ring, calendar windows and envelope openings. All padding outside the main body is fully transparent with no shadows or colored haze. One clean contiguous material silhouette plus the intentional O center. Keep the whole icon centered inside the central 72% of a 1024×1024 square canvas. No text additions, no scene, no decoration or watermark. Change only edge quality and transparency; do not redesign the mark. Output true RGBA transparent PNG.",
+          "originalPath": "C:\\Users\\xgwnj\\.codex\\generated_images\\01a156fb-11d4-7553-abf3-0dd9082c7f58\\exec-dd861bff-1c80-4625-bb64-e36b946adbf1.png"
+        }
+      ],
+      "status": "style-review-sample",
+      "qualityNote": "已达两次原生生成/编辑上限；品牌结构与镂空正确，孔洞仍有蓝/青色毛边，定稿需修边。",
+      "verification": {
+        "id": "outlook",
+        "exists": true,
+        "bytes": 681659,
+        "size": [
+          1254,
+          1254
+        ],
+        "mode": "RGBA",
+        "alpha_extrema": [
+          0,
+          255
+        ],
+        "bbox_alpha8": [
+          210,
+          250,
+          1081,
+          1033
+        ],
+        "corner_alpha": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "sha256_matches_original": true
+      }
+    }
+  ]
+}

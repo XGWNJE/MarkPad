@@ -1,0 +1,77 @@
+{
+  "123community": [
+    "design/builtin-icons/sources/123community-official.png"
+  ],
+  "civitai": [
+    "design/builtin-icons/sources/civitai-official.png",
+    "design/builtin-icons/sources/civitai-official.svg"
+  ],
+  "jpsmile": [
+    "design/builtin-icons/sources/jpsmile-official.png",
+    "design/builtin-icons/sources/jpsmile-traced.svg"
+  ],
+  "imyshare": [
+    "design/builtin-icons/sources/imyshare-official.png",
+    "design/builtin-icons/sources/imyshare-traced.svg"
+  ],
+  "ghxi": [],
+  "laogou": [
+    "design/builtin-icons/sources/laogou-official.png",
+    "design/builtin-icons/sources/laogou-traced.svg"
+  ],
+  "rutracker": [
+    "design/builtin-icons/sources/rutracker-official.png",
+    "design/builtin-icons/sources/rutracker-official.svg",
+    "design/builtin-icons/sources/rutracker-traced.svg"
+  ],
+  "byrut": [
+    "design/builtin-icons/sources/byrut-official.svg"
+  ],
+  "kkpans": [
+    "design/builtin-icons/sources/kkpans-official.svg"
+  ],
+  "xclient": [
+    "design/builtin-icons/sources/xclient-official.png",
+    "design/builtin-icons/sources/xclient-traced.svg"
+  ],
+  "ipastore": [],
+  "greasyfork": [
+    "design/builtin-icons/sources/greasyfork-official.svg"
+  ],
+  "macked": [],
+  "cgown": [
+    "design/builtin-icons/sources/cgown-official.jpg",
+    "design/builtin-icons/sources/cgown-traced.svg"
+  ],
+  "adobeae": [
+    "design/builtin-icons/sources/adobeae-clear-brand.svg",
+    "design/builtin-icons/sources/adobeae-official.png",
+    "design/builtin-icons/sources/adobeae-traced.svg"
+  ],
+  "c4dsky": [],
+  "gfxcamp": [
+    "design/builtin-icons/sources/gfxcamp-official.png",
+    "design/builtin-icons/sources/gfxcamp-traced.svg"
+  ],
+  "wszyk": [],
+  "aplaybox": [
+    "design/builtin-icons/sources/aplaybox-official.png",
+    "design/builtin-icons/sources/aplaybox-traced.svg"
+  ],
+  "lookae": [
+    "design/builtin-icons/sources/lookae-official.png",
+    "design/builtin-icons/sources/lookae-traced.svg"
+  ],
+  "blenderco": [
+    "design/builtin-icons/sources/blenderco-official.png",
+    "design/builtin-icons/sources/blenderco-traced.svg"
+  ],
+  "lanzou": [
+    "design/builtin-icons/sources/lanzou-official.gif"
+  ],
+  "pixabay": [
+    "design/builtin-icons/sources/pixabay-official.svg"
+  ],
+  "aigei": [],
+  "heiliaowang": []
+}

@@ -4,6 +4,7 @@ import test from 'node:test';
 import vm from 'node:vm';
 import { setPanelVisible } from '../core/MenuInteraction.js';
 import { Element } from './helpers/grid-harness.mjs';
+import { getIconStyle, setIconStyle } from '../core/icons/IconStyle.js';
 
 const read = path => readFile(new URL('../' + path, import.meta.url), 'utf8');
 const pages = ['appearance', 'text', 'behavior'];
@@ -98,7 +99,7 @@ async function setupSettings(overrides = {}) {
   };
   const trigger = ids.get('menu-trigger');
   document.activeElement = trigger;
-  const context = vm.createContext({ document, localStorage, console });
+  const context = vm.createContext({ document, localStorage, console, getIconStyle: () => getIconStyle(localStorage), setIconStyle: value => setIconStyle(value, localStorage) });
   vm.runInContext('globalThis.EventBus = (() => {' + busSource.replace('export default new EventBus();', 'return new EventBus();') + '})()', context);
   vm.runInContext(settings.replace(/^import .*;\r?\n/gm, '').replace('export default SettingsPanel;', 'globalThis.SettingsPanel = SettingsPanel;'), context);
   const panel = vm.runInContext('new SettingsPanel()', context);
@@ -145,6 +146,24 @@ function assertPage(h, selected) {
     assert.ok(h.tabStops().every(node => !h.pane(page).contains(node)), 'Inactive pane must not participate in Tab navigation');
   }
 }
+
+test('icon style defaults to clay and switches without changing the color theme or custom icons', async () => {
+  const h = await setupSettings();
+  const group = h.ids.get('icon-style-group');
+  const buttons = group.querySelectorAll('[data-value]');
+  const clay = buttons.find(button => button.dataset.value === 'clay');
+  const flat = buttons.find(button => button.dataset.value === 'flat');
+  assert.equal(clay.getAttribute('aria-pressed'), 'true');
+  const events = [];
+  h.bus.on('icons:styleChanged', () => events.push('changed'));
+  h.dispatch(flat, 'click');
+  assert.equal(h.stored.get('bookmarkIconStyle'), 'flat');
+  assert.equal(flat.getAttribute('aria-pressed'), 'true');
+  assert.equal(clay.getAttribute('aria-pressed'), 'false');
+  assert.equal(h.stored.get('themeMode'), 'dark');
+  assert.equal(h.stored.get('custom_icon_cache'), '{"keep":"custom"}');
+  assert.deepEqual(events, ['changed']);
+});
 
 test('settings group all existing controls into three linked panes while keeping header and tabs outside the scroll region', async () => {
   const h = await setupSettings();

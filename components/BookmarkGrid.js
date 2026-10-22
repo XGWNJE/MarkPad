@@ -9,6 +9,7 @@ import { iconSvg } from '../core/IconLibrary.js';
 import { getMoveDestination, getPreviewOrder } from '../core/DragOrder.js';
 import GridDragController from './GridDragController.js';
 import CardNavigation from './CardNavigation.js';
+import { resolveBookmarkIcon } from '../core/icons/IconResolver.js';
 
 class BookmarkGrid {
   constructor() {
@@ -67,6 +68,13 @@ class BookmarkGrid {
       const card = this.cards.get(id);
       if (card) {
         card.updateIcon(iconData);
+      }
+    });
+
+    EventBus.on('icons:styleChanged', () => {
+      for (const card of this.cards.values()) {
+        const local = resolveBookmarkIcon(card.data, { storage: BookmarkStore });
+        if (local) card.updateIcon(local);
       }
     });
 

@@ -31,7 +31,10 @@ function applyImageToElement(el, url, options = {}) {
   el.style.backgroundImage = '';
   const image = document.createElement('img');
   image.className = 'card-icon-image';
-  image.addEventListener('error', () => options.onError?.());
+  image.addEventListener('error', () => {
+    if (options.fallbackValue && image.src !== options.fallbackValue) image.src = options.fallbackValue;
+    else options.onError?.();
+  });
   image.src = url;
   image.alt = '';
   image.referrerPolicy = 'no-referrer';
@@ -40,6 +43,7 @@ function applyImageToElement(el, url, options = {}) {
 
 function applyDefaultFolderIcon(el) {
   el.innerHTML = iconSvg('folder', { className: 'app-icon card-folder-svg' });
+  el.style.background = '';
   el.style.backgroundImage = '';
   el.style.backgroundSize = '';
   el.style.removeProperty('--icon-content-scale');
@@ -65,11 +69,11 @@ function applyIconModelToElement(el, model, options = {}) {
   if (model.type === 'svg') {
     applySvgToElement(el, model.value);
   } else if (model.type === 'image') {
-    applyImageToElement(el, model.value, options);
+    applyImageToElement(el, model.value, { ...options, fallbackValue: model.fallbackValue });
   } else {
     clearIconElement(el);
   }
-  const cssBackground = backgroundCssValue(background);
+  const cssBackground = model.source === 'curated-library' ? 'var(--color-builtin-icon-bg)' : backgroundCssValue(background);
   el.style.background = cssBackground;
   el.style.setProperty('--icon-content-scale', String(scale));
 }
@@ -147,9 +151,9 @@ class BookmarkCard {
 
     if (this.isFolder) {
       icon.classList.add('folder');
-      const customIcon = BookmarkStore.getCustomIcon(this.data.id);
-      if (customIcon) {
-        applyIconModelToElement(icon, resolveBookmarkIcon(this.data, { storage: BookmarkStore }));
+      const iconModel = resolveBookmarkIcon(this.data, { storage: BookmarkStore });
+      if (iconModel) {
+        applyIconModelToElement(icon, iconModel);
       } else {
         icon.classList.add('folder-default');
         applyDefaultFolderIcon(icon);
@@ -542,6 +546,7 @@ class BookmarkCard {
         this.childCount = children.length;
       }
       metaEl.textContent = `${this.childCount} 项`;
+      if (previousTitle !== this.data.title) this.updateIcon(null);
     } else {
       metaEl.textContent = this.getDomain(this.data.url);
       if (previousTitle !== this.data.title || previousUrl !== this.data.url) {
@@ -745,7 +750,7 @@ class BookmarkCard {
     // 图标工坊保存的是 { kind, data, background } 记录，不是可直接赋给
     // <img src> 的渲染模型。先走解析器，避免浏览器把对象字符串化成
     // "[object Object]"，导致关闭弹窗后出现破图、刷新才恢复。
-    if (iconData && typeof iconData === 'object' && !iconData.type && iconData.data) {
+    if (iconData && typeof iconData === 'object' && !iconData.type && (iconData.data || iconData.kind === 'builtin')) {
       this.updateIcon(resolveBookmarkIcon(this.data, { storage: BookmarkStore }));
       return;
     }
@@ -782,9 +787,14 @@ class BookmarkCard {
           applyImageToElement(iconEl, iconData);
         }
       } else {
-        // 恢复默认文件夹图标
-        iconEl.classList.add('folder-default');
-        applyDefaultFolderIcon(iconEl);
+        const libraryIcon = resolveBookmarkIcon(this.data, { storage: BookmarkStore });
+        if (libraryIcon) {
+          iconEl.classList.remove('folder-default');
+          applyIconModelToElement(iconEl, libraryIcon);
+        } else {
+          iconEl.classList.add('folder-default');
+          applyDefaultFolderIcon(iconEl);
+        }
       }
     } else {
       const fallbackIcon = iconData || resolveBookmarkIcon(this.data, { storage: BookmarkStore });

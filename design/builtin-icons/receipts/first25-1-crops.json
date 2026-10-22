@@ -1,0 +1,245 @@
+[
+  {
+    "id": "123community",
+    "target": "C:\\Users\\xgwnj\\Documents\\XGWNJE\\MarkPad\\assets\\bookmark-icons\\clay\\123community.png",
+    "crop": {
+      "left": 0,
+      "top": 0,
+      "width": 418,
+      "height": 418
+    },
+    "placement": {
+      "bounds": {
+        "left": 61,
+        "top": 71,
+        "width": 322,
+        "height": 321
+      },
+      "rendered": {
+        "width": 196,
+        "height": 195
+      },
+      "position": {
+        "left": 30,
+        "top": 31
+      }
+    },
+    "sourceSheet": "C:\\Users\\xgwnj\\Documents\\XGWNJE\\MarkPad\\design\\builtin-icons\\sheets\\first25-1-attempt2.png"
+  },
+  {
+    "id": "civitai",
+    "target": "C:\\Users\\xgwnj\\Documents\\XGWNJE\\MarkPad\\assets\\bookmark-icons\\clay\\civitai.png",
+    "crop": {
+      "left": 418,
+      "top": 0,
+      "width": 418,
+      "height": 418
+    },
+    "placement": {
+      "bounds": {
+        "left": 64,
+        "top": 73,
+        "width": 290,
+        "height": 326
+      },
+      "rendered": {
+        "width": 174,
+        "height": 196
+      },
+      "position": {
+        "left": 41,
+        "top": 30
+      }
+    },
+    "sourceSheet": "C:\\Users\\xgwnj\\Documents\\XGWNJE\\MarkPad\\design\\builtin-icons\\sheets\\first25-1-attempt2.png"
+  },
+  {
+    "id": "jpsmile",
+    "target": "C:\\Users\\xgwnj\\Documents\\XGWNJE\\MarkPad\\assets\\bookmark-icons\\clay\\jpsmile.png",
+    "crop": {
+      "left": 836,
+      "top": 0,
+      "width": 418,
+      "height": 418
+    },
+    "placement": {
+      "bounds": {
+        "left": 37,
+        "top": 71,
+        "width": 323,
+        "height": 321
+      },
+      "rendered": {
+        "width": 196,
+        "height": 195
+      },
+      "position": {
+        "left": 30,
+        "top": 31
+      }
+    },
+    "sourceSheet": "C:\\Users\\xgwnj\\Documents\\XGWNJE\\MarkPad\\design\\builtin-icons\\sheets\\first25-1-attempt2.png"
+  },
+  {
+    "id": "imyshare",
+    "target": "C:\\Users\\xgwnj\\Documents\\XGWNJE\\MarkPad\\assets\\bookmark-icons\\clay\\imyshare.png",
+    "crop": {
+      "left": 0,
+      "top": 418,
+      "width": 418,
+      "height": 418
+    },
+    "placement": {
+      "bounds": {
+        "left": 64,
+        "top": 99,
+        "width": 344,
+        "height": 235
+      },
+      "rendered": {
+        "width": 196,
+        "height": 134
+      },
+      "position": {
+        "left": 30,
+        "top": 61
+      }
+    },
+    "sourceSheet": "C:\\Users\\xgwnj\\Documents\\XGWNJE\\MarkPad\\design\\builtin-icons\\sheets\\first25-1-attempt2.png"
+  },
+  {
+    "id": "ghxi",
+    "target": "C:\\Users\\xgwnj\\Documents\\XGWNJE\\MarkPad\\assets\\bookmark-icons\\clay\\ghxi.png",
+    "crop": {
+      "left": 418,
+      "top": 418,
+      "width": 418,
+      "height": 418
+    },
+    "placement": {
+      "bounds": {
+        "left": 49,
+        "top": 49,
+        "width": 321,
+        "height": 329
+      },
+      "rendered": {
+        "width": 191,
+        "height": 196
+      },
+      "position": {
+        "left": 33,
+        "top": 30
+      }
+    },
+    "sourceSheet": "C:\\Users\\xgwnj\\Documents\\XGWNJE\\MarkPad\\design\\builtin-icons\\sheets\\first25-1-attempt2.png"
+  },
+  {
+    "id": "laogou",
+    "target": "C:\\Users\\xgwnj\\Documents\\XGWNJE\\MarkPad\\assets\\bookmark-icons\\clay\\laogou.png",
+    "crop": {
+      "left": 836,
+      "top": 418,
+      "width": 418,
+      "height": 418
+    },
+    "placement": {
+      "bounds": {
+        "left": 76,
+        "top": 51,
+        "width": 258,
+        "height": 346
+      },
+      "rendered": {
+        "width": 146,
+        "height": 196
+      },
+      "position": {
+        "left": 55,
+        "top": 30
+      }
+    },
+    "sourceSheet": "C:\\Users\\xgwnj\\Documents\\XGWNJE\\MarkPad\\design\\builtin-icons\\sheets\\first25-1-attempt2.png"
+  },
+  {
+    "id": "rutracker",
+    "target": "C:\\Users\\xgwnj\\Documents\\XGWNJE\\MarkPad\\assets\\bookmark-icons\\clay\\rutracker.png",
+    "crop": {
+      "left": 0,
+      "top": 836,
+      "width": 418,
+      "height": 418
+    },
+    "placement": {
+      "bounds": {
+        "left": 64,
+        "top": 79,
+        "width": 317,
+        "height": 226
+      },
+      "rendered": {
+        "width": 196,
+        "height": 140
+      },
+      "position": {
+        "left": 30,
+        "top": 58
+      }
+    },
+    "sourceSheet": "C:\\Users\\xgwnj\\Documents\\XGWNJE\\MarkPad\\design\\builtin-icons\\sheets\\first25-1-attempt2.png"
+  },
+  {
+    "id": "byrut",
+    "target": "C:\\Users\\xgwnj\\Documents\\XGWNJE\\MarkPad\\assets\\bookmark-icons\\clay\\byrut.png",
+    "crop": {
+      "left": 418,
+      "top": 836,
+      "width": 418,
+      "height": 418
+    },
+    "placement": {
+      "bounds": {
+        "left": 49,
+        "top": 27,
+        "width": 321,
+        "height": 309
+      },
+      "rendered": {
+        "width": 196,
+        "height": 189
+      },
+      "position": {
+        "left": 30,
+        "top": 34
+      }
+    },
+    "sourceSheet": "C:\\Users\\xgwnj\\Documents\\XGWNJE\\MarkPad\\design\\builtin-icons\\sheets\\first25-1-attempt2.png"
+  },
+  {
+    "id": "kkpans",
+    "target": "C:\\Users\\xgwnj\\Documents\\XGWNJE\\MarkPad\\assets\\bookmark-icons\\clay\\kkpans.png",
+    "crop": {
+      "left": 836,
+      "top": 836,
+      "width": 418,
+      "height": 418
+    },
+    "placement": {
+      "bounds": {
+        "left": 37,
+        "top": 27,
+        "width": 331,
+        "height": 317
+      },
+      "rendered": {
+        "width": 196,
+        "height": 188
+      },
+      "position": {
+        "left": 30,
+        "top": 34
+      }
+    },
+    "sourceSheet": "C:\\Users\\xgwnj\\Documents\\XGWNJE\\MarkPad\\design\\builtin-icons\\sheets\\first25-1-attempt2.png"
+  }
+]

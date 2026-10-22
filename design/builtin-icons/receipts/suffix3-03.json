@@ -1,0 +1,319 @@
+{
+  "sheetId": "suffix3-03",
+  "generationTool": "built-in image_gen__imagegen",
+  "style": "品牌软陶",
+  "order": [
+    "aliyun",
+    "okx",
+    "qqmail",
+    "lisahost",
+    "iproyal",
+    "grok",
+    "gemini",
+    "meiguodizhi"
+  ],
+  "selectedAttempt": 1,
+  "sourcePaths": [
+    "sources/aliyun.source.svg",
+    "sources/okx.source.svg",
+    "sources/qqmail.source.svg",
+    "sources/lisahost.source.svg",
+    "sources/iproyal.source.svg",
+    "sources/grok.source.svg",
+    "sources/gemini.source.svg",
+    "sources/meiguodizhi.source.svg"
+  ],
+  "rawSheet": "sheets/suffix3-03-raw.png",
+  "sourceReceipt": "receipts/suffix3-sources.json",
+  "exportMethod": "User-authorized contact-sheet generation and equal-grid cropping; exportCenteredIcon crops alpha>=64 subject bounds with 1.5% buffer, preserves native colors/alpha, scales longest edge to 196px, centers on transparent 256x256. No matte, background removal or repainting.",
+  "attempts": [
+    {
+      "attempt": 1,
+      "prompt": "Create ONE transparent square THREE-BY-THREE contact sheet. Image 1 contains exactly EIGHT logo references in the first eight cells and an empty ninth cell. Image 2 is MATERIAL REFERENCE ONLY (matte soft-clay Figma), do not include Figma.\nFixed row-major order: row1 orange Alibaba Cloud bracket mark, black OKX pixel-block logo, QQ Mail multicolor ring with blue interior; row2 LisaHost blue geometric L, teal I initial fallback, Grok black slashed-circle mark; row3 Gemini four-point multicolor star, blue M initial fallback, EMPTY TRANSPARENT CELL.\nPreserve all eight reference silhouettes, intrinsic colors, letterforms, topology and details exactly. OKX is black geometry, Grok is black geometry; do not put them on new tiles. White holes/background inside QQ Mail are part of its reference ring only.\nMaterial: premium tactile MATTE SOFT CLAY matching Image 2, shallow rounded extrusion, restrained edges, FRONT VIEW, upper-left soft studio light, faint shading, clean antialiased alpha contours with no white flecks or colored fringe. Keep original brand palette.\nGrid placement: centers at x=16.667%,50%,83.333% and y=16.667%,50%,83.333%. Each logo's longest dimension only 20%-21% of entire canvas to ensure generous empty transparent spacing; the final crop will enlarge and center individual icons. No part, extrusion or shadow crosses its own 1/3 cell. Eighth M sits row3 col2; ninth cell entirely empty transparent alpha.\nTRUE transparent alpha background and between icons, transparent holes. NO added app tile, backing square, plate, pedestal, panel, frame or external label. Retain only intrinsic colored shapes in the input logos. No grid lines, text labels, scene, watermark, checkerboard, extra icons or white blank panel in cell9. Square at least 1024px.",
+      "referencePaths": [
+        "C:/Users/xgwnj/Documents/XGWNJE/MarkPad/design/builtin-icons/sheets/suffix3-03-reference.png",
+        "C:/Users/xgwnj/Documents/XGWNJE/MarkPad/design/icon-style-study/icons/e-brand-clay/figma.png"
+      ],
+      "nativeGeneratedPath": "C:\\Users\\xgwnj\\.codex\\generated_images\\01a156fb-676e-7521-92c9-dccdf6e2861b\\exec-ff1ddad2-be9f-4853-8ff7-238c707eec58.png",
+      "localRawPath": "sheets/suffix3-03-raw.png",
+      "selected": true
+    }
+  ],
+  "review": {
+    "backgrounds": [
+      "#f1f0ec",
+      "#282b2c"
+    ],
+    "preview": "references/suffix3-03-review.png",
+    "reviewedDisplaySize": 128,
+    "notes": "First attempt has isolated clean subjects and empty ninth cell; reviewed light/dark display."
+  },
+  "exports": [
+    {
+      "id": "aliyun",
+      "target": "C:\\Users\\xgwnj\\Documents\\XGWNJE\\MarkPad\\assets\\bookmark-icons\\clay\\aliyun.png",
+      "crop": {
+        "left": 0,
+        "top": 0,
+        "width": 418,
+        "height": 418
+      },
+      "placement": {
+        "bounds": {
+          "left": 39,
+          "top": 127,
+          "width": 369,
+          "height": 249
+        },
+        "rendered": {
+          "width": 196,
+          "height": 132
+        },
+        "position": {
+          "left": 30,
+          "top": 62
+        }
+      },
+      "validation": {
+        "width": 256,
+        "height": 256,
+        "alphaMin": 0,
+        "alphaMax": 255,
+        "borderAlphaMax": 0
+      }
+    },
+    {
+      "id": "okx",
+      "target": "C:\\Users\\xgwnj\\Documents\\XGWNJE\\MarkPad\\assets\\bookmark-icons\\clay\\okx.png",
+      "crop": {
+        "left": 418,
+        "top": 0,
+        "width": 418,
+        "height": 418
+      },
+      "placement": {
+        "bounds": {
+          "left": 62,
+          "top": 109,
+          "width": 294,
+          "height": 293
+        },
+        "rendered": {
+          "width": 196,
+          "height": 195
+        },
+        "position": {
+          "left": 30,
+          "top": 31
+        }
+      },
+      "validation": {
+        "width": 256,
+        "height": 256,
+        "alphaMin": 0,
+        "alphaMax": 255,
+        "borderAlphaMax": 0
+      }
+    },
+    {
+      "id": "qqmail",
+      "target": "C:\\Users\\xgwnj\\Documents\\XGWNJE\\MarkPad\\assets\\bookmark-icons\\clay\\qqmail.png",
+      "crop": {
+        "left": 836,
+        "top": 0,
+        "width": 418,
+        "height": 418
+      },
+      "placement": {
+        "bounds": {
+          "left": 49,
+          "top": 102,
+          "width": 320,
+          "height": 312
+        },
+        "rendered": {
+          "width": 196,
+          "height": 191
+        },
+        "position": {
+          "left": 30,
+          "top": 33
+        }
+      },
+      "validation": {
+        "width": 256,
+        "height": 256,
+        "alphaMin": 0,
+        "alphaMax": 255,
+        "borderAlphaMax": 0
+      }
+    },
+    {
+      "id": "lisahost",
+      "target": "C:\\Users\\xgwnj\\Documents\\XGWNJE\\MarkPad\\assets\\bookmark-icons\\clay\\lisahost.png",
+      "crop": {
+        "left": 0,
+        "top": 418,
+        "width": 418,
+        "height": 418
+      },
+      "placement": {
+        "bounds": {
+          "left": 98,
+          "top": 48,
+          "width": 272,
+          "height": 322
+        },
+        "rendered": {
+          "width": 166,
+          "height": 196
+        },
+        "position": {
+          "left": 45,
+          "top": 30
+        }
+      },
+      "validation": {
+        "width": 256,
+        "height": 256,
+        "alphaMin": 0,
+        "alphaMax": 255,
+        "borderAlphaMax": 0
+      }
+    },
+    {
+      "id": "iproyal",
+      "target": "C:\\Users\\xgwnj\\Documents\\XGWNJE\\MarkPad\\assets\\bookmark-icons\\clay\\iproyal.png",
+      "crop": {
+        "left": 418,
+        "top": 418,
+        "width": 418,
+        "height": 418
+      },
+      "placement": {
+        "bounds": {
+          "left": 61,
+          "top": 69,
+          "width": 296,
+          "height": 293
+        },
+        "rendered": {
+          "width": 196,
+          "height": 194
+        },
+        "position": {
+          "left": 30,
+          "top": 31
+        }
+      },
+      "validation": {
+        "width": 256,
+        "height": 256,
+        "alphaMin": 0,
+        "alphaMax": 255,
+        "borderAlphaMax": 0
+      }
+    },
+    {
+      "id": "grok",
+      "target": "C:\\Users\\xgwnj\\Documents\\XGWNJE\\MarkPad\\assets\\bookmark-icons\\clay\\grok.png",
+      "crop": {
+        "left": 836,
+        "top": 418,
+        "width": 418,
+        "height": 418
+      },
+      "placement": {
+        "bounds": {
+          "left": 29,
+          "top": 66,
+          "width": 329,
+          "height": 313
+        },
+        "rendered": {
+          "width": 196,
+          "height": 186
+        },
+        "position": {
+          "left": 30,
+          "top": 35
+        }
+      },
+      "validation": {
+        "width": 256,
+        "height": 256,
+        "alphaMin": 0,
+        "alphaMax": 255,
+        "borderAlphaMax": 0
+      }
+    },
+    {
+      "id": "gemini",
+      "target": "C:\\Users\\xgwnj\\Documents\\XGWNJE\\MarkPad\\assets\\bookmark-icons\\clay\\gemini.png",
+      "crop": {
+        "left": 0,
+        "top": 836,
+        "width": 418,
+        "height": 418
+      },
+      "placement": {
+        "bounds": {
+          "left": 82,
+          "top": 26,
+          "width": 293,
+          "height": 293
+        },
+        "rendered": {
+          "width": 196,
+          "height": 196
+        },
+        "position": {
+          "left": 30,
+          "top": 30
+        }
+      },
+      "validation": {
+        "width": 256,
+        "height": 256,
+        "alphaMin": 0,
+        "alphaMax": 255,
+        "borderAlphaMax": 0
+      }
+    },
+    {
+      "id": "meiguodizhi",
+      "target": "C:\\Users\\xgwnj\\Documents\\XGWNJE\\MarkPad\\assets\\bookmark-icons\\clay\\meiguodizhi.png",
+      "crop": {
+        "left": 418,
+        "top": 836,
+        "width": 418,
+        "height": 418
+      },
+      "placement": {
+        "bounds": {
+          "left": 58,
+          "top": 27,
+          "width": 302,
+          "height": 298
+        },
+        "rendered": {
+          "width": 196,
+          "height": 193
+        },
+        "position": {
+          "left": 30,
+          "top": 32
+        }
+      },
+      "validation": {
+        "width": 256,
+        "height": 256,
+        "alphaMin": 0,
+        "alphaMax": 255,
+        "borderAlphaMax": 0
+      }
+    }
+  ],
+  "rawSha256": "0327c734f89689951ae54a328dce8e926c433cef93043e06e6a8d1e37efa43c4",
+  "rawMatchesNative": true
+}

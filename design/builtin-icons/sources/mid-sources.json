@@ -1,0 +1,254 @@
+{
+  "worker": "mid-25",
+  "ids": [
+    "missav",
+    "redcap",
+    "sefan",
+    "tapnow",
+    "artstation",
+    "pixiv",
+    "ggac",
+    "huaban",
+    "wallhaven",
+    "zcool",
+    "afdian",
+    "iconfont",
+    "dribbble",
+    "awwwards",
+    "funletu",
+    "comfyui",
+    "liblib",
+    "jimeng",
+    "runninghub",
+    "photomosh",
+    "ps6b",
+    "pencil",
+    "stitch",
+    "gptimages",
+    "aiart"
+  ],
+  "records": [
+    {
+      "id": "missav",
+      "kind": "initial-fallback",
+      "initial": "M",
+      "sourceUrl": "https://missav.ws/",
+      "license": "Original MarkPad initial artwork.",
+      "note": "Official origin returned HTTP 403; no reusable vector mark found.",
+      "flat": "assets/bookmark-icons/flat/missav.svg",
+      "reference": "design/builtin-icons/references/missav.png"
+    },
+    {
+      "id": "redcap",
+      "kind": "initial-fallback",
+      "initial": "R",
+      "sourceUrl": null,
+      "license": "Original MarkPad initial artwork.",
+      "note": "Local hotspot entry; no device or private management page was accessed.",
+      "flat": "assets/bookmark-icons/flat/redcap.svg",
+      "reference": "design/builtin-icons/references/redcap.png"
+    },
+    {
+      "id": "sefan",
+      "kind": "initial-fallback",
+      "initial": "S",
+      "sourceUrl": "https://ma.sefan.pw/",
+      "license": "Original MarkPad initial artwork.",
+      "note": "Official origin returned HTTP 404; no reusable mark found.",
+      "flat": "assets/bookmark-icons/flat/sefan.svg",
+      "reference": "design/builtin-icons/references/sefan.png"
+    },
+    {
+      "id": "tapnow",
+      "kind": "reviewed-vector-redraw",
+      "sourceUrl": "https://fe-assets.tapnow.media/7ad370fbd58d60ca3fe69efcd10d257144faa85e/assets/favicons/apple-touch-icon.png",
+      "license": "Brand artwork rights retained by its owner; no separate reuse license was published.",
+      "note": "Editable simplified vector redraw from the official public mark; not a claim of an official supplied vector.",
+      "flat": "assets/bookmark-icons/flat/tapnow.svg",
+      "reference": "design/builtin-icons/references/tapnow.png"
+    },
+    {
+      "id": "artstation",
+      "kind": "downloaded-vector",
+      "sourceUrl": "https://cdn.simpleicons.org/artstation",
+      "license": "CC0-1.0 (Simple Icons); brand trademark rights remain with the owner.",
+      "flat": "assets/bookmark-icons/flat/artstation.svg",
+      "reference": "design/builtin-icons/references/artstation.png"
+    },
+    {
+      "id": "pixiv",
+      "kind": "downloaded-vector",
+      "sourceUrl": "https://cdn.simpleicons.org/pixiv",
+      "license": "CC0-1.0 (Simple Icons); brand trademark rights remain with the owner.",
+      "flat": "assets/bookmark-icons/flat/pixiv.svg",
+      "reference": "design/builtin-icons/references/pixiv.png"
+    },
+    {
+      "id": "ggac",
+      "kind": "reviewed-vector-redraw",
+      "sourceUrl": "https://cdn-prd.ggac.com/ggac/assets/image/favicon.png",
+      "license": "Brand artwork rights retained by its owner; no separate reuse license was published.",
+      "note": "Editable simplified vector redraw from the official public mark; not a claim of an official supplied vector.",
+      "flat": "assets/bookmark-icons/flat/ggac.svg",
+      "reference": "design/builtin-icons/references/ggac.png"
+    },
+    {
+      "id": "huaban",
+      "kind": "initial-fallback",
+      "initial": "H",
+      "sourceUrl": "https://huaban.com/",
+      "license": "Original MarkPad initial artwork.",
+      "note": "Public origin returned browser-verification markup; no reusable vector mark found.",
+      "flat": "assets/bookmark-icons/flat/huaban.svg",
+      "reference": "design/builtin-icons/references/huaban.png"
+    },
+    {
+      "id": "wallhaven",
+      "kind": "initial-fallback",
+      "initial": "W",
+      "sourceUrl": "https://wallhaven.cc/",
+      "license": "Original MarkPad initial artwork.",
+      "note": "Official horizontal raster wordmark is too wide for a small icon; an editable W initial is used.",
+      "flat": "assets/bookmark-icons/flat/wallhaven.svg",
+      "reference": "design/builtin-icons/references/wallhaven.png"
+    },
+    {
+      "id": "zcool",
+      "kind": "downloaded-vector",
+      "sourceUrl": "https://cdn.simpleicons.org/zcool",
+      "license": "CC0-1.0 (Simple Icons); brand trademark rights remain with the owner.",
+      "flat": "assets/bookmark-icons/flat/zcool.svg",
+      "reference": "design/builtin-icons/references/zcool.png"
+    },
+    {
+      "id": "afdian",
+      "kind": "downloaded-vector",
+      "sourceUrl": "https://cdn.simpleicons.org/afdian",
+      "license": "CC0-1.0 (Simple Icons); brand trademark rights remain with the owner.",
+      "flat": "assets/bookmark-icons/flat/afdian.svg",
+      "reference": "design/builtin-icons/references/afdian.png"
+    },
+    {
+      "id": "iconfont",
+      "kind": "downloaded-vector",
+      "sourceUrl": "https://img.alicdn.com/imgextra/i4/O1CN01Z5paLz1O0zuCC7osS_!!6000000001644-55-tps-83-82.svg",
+      "license": "Brand artwork rights retained by its owner; no separate reuse license was published.",
+      "flat": "assets/bookmark-icons/flat/iconfont.svg",
+      "reference": "design/builtin-icons/references/iconfont.png"
+    },
+    {
+      "id": "dribbble",
+      "kind": "downloaded-vector",
+      "sourceUrl": "https://cdn.simpleicons.org/dribbble",
+      "license": "CC0-1.0 (Simple Icons); brand trademark rights remain with the owner.",
+      "flat": "assets/bookmark-icons/flat/dribbble.svg",
+      "reference": "design/builtin-icons/references/dribbble.png"
+    },
+    {
+      "id": "awwwards",
+      "kind": "downloaded-vector",
+      "sourceUrl": "https://cdn.simpleicons.org/awwwards",
+      "license": "CC0-1.0 (Simple Icons); brand trademark rights remain with the owner.",
+      "flat": "assets/bookmark-icons/flat/awwwards.svg",
+      "reference": "design/builtin-icons/references/awwwards.png"
+    },
+    {
+      "id": "funletu",
+      "kind": "initial-fallback",
+      "initial": "F",
+      "sourceUrl": "https://pan.funletu.com/",
+      "license": "Original MarkPad initial artwork.",
+      "note": "Original public origin redirects to an unrelated service; its mark was not adopted.",
+      "flat": "assets/bookmark-icons/flat/funletu.svg",
+      "reference": "design/builtin-icons/references/funletu.png"
+    },
+    {
+      "id": "comfyui",
+      "kind": "downloaded-vector",
+      "sourceUrl": "https://cdn.jsdelivr.net/npm/@lobehub/icons-static-svg@1.95.1/icons/comfyui-color.svg",
+      "license": "MIT (@lobehub/icons-static-svg 1.95.1); brand trademark rights remain with the owner.",
+      "flat": "assets/bookmark-icons/flat/comfyui.svg",
+      "reference": "design/builtin-icons/references/comfyui.png"
+    },
+    {
+      "id": "liblib",
+      "kind": "reviewed-vector-redraw",
+      "sourceUrl": "https://www.liblib.art/favicon.ico",
+      "license": "Brand artwork rights retained by its owner; no separate reuse license was published.",
+      "note": "Editable simplified vector redraw from the official public mark; not a claim of an official supplied vector.",
+      "flat": "assets/bookmark-icons/flat/liblib.svg",
+      "reference": "design/builtin-icons/references/liblib.png"
+    },
+    {
+      "id": "jimeng",
+      "kind": "downloaded-vector",
+      "sourceUrl": "https://cdn.jsdelivr.net/npm/@lobehub/icons-static-svg@1.95.1/icons/jimeng-color.svg",
+      "license": "MIT (@lobehub/icons-static-svg 1.95.1); brand trademark rights remain with the owner.",
+      "flat": "assets/bookmark-icons/flat/jimeng.svg",
+      "reference": "design/builtin-icons/references/jimeng.png"
+    },
+    {
+      "id": "runninghub",
+      "kind": "reviewed-vector-redraw",
+      "sourceUrl": "https://www.runninghub.ai/assets/images/logo.png",
+      "license": "Brand artwork rights retained by its owner; no separate reuse license was published.",
+      "note": "Editable simplified vector redraw from the official public mark; not a claim of an official supplied vector.",
+      "flat": "assets/bookmark-icons/flat/runninghub.svg",
+      "reference": "design/builtin-icons/references/runninghub.png"
+    },
+    {
+      "id": "photomosh",
+      "kind": "downloaded-vector",
+      "sourceUrl": "https://moshpro.app/favicon.svg",
+      "license": "Brand artwork rights retained by its owner; no separate reuse license was published.",
+      "flat": "assets/bookmark-icons/flat/photomosh.svg",
+      "reference": "design/builtin-icons/references/photomosh.png"
+    },
+    {
+      "id": "ps6b",
+      "kind": "initial-fallback",
+      "initial": "P",
+      "sourceUrl": "https://help2.ps6b.com/",
+      "license": "Original MarkPad initial artwork.",
+      "note": "Public origin has an expired TLS certificate; no certificate bypass was used.",
+      "flat": "assets/bookmark-icons/flat/ps6b.svg",
+      "reference": "design/builtin-icons/references/ps6b.png"
+    },
+    {
+      "id": "pencil",
+      "kind": "reviewed-vector-redraw",
+      "sourceUrl": "https://www.pen.dev/apple-touch-icon.png",
+      "license": "Brand artwork rights retained by its owner; no separate reuse license was published.",
+      "note": "Editable simplified vector redraw from the official public mark; not a claim of an official supplied vector.",
+      "flat": "assets/bookmark-icons/flat/pencil.svg",
+      "reference": "design/builtin-icons/references/pencil.png"
+    },
+    {
+      "id": "stitch",
+      "kind": "reviewed-vector-redraw",
+      "sourceUrl": "https://www.gstatic.com/labs-code/stitch/favicon-192x192.png",
+      "license": "Brand artwork rights retained by its owner; no separate reuse license was published.",
+      "note": "Editable simplified vector redraw from the official public mark; not a claim of an official supplied vector.",
+      "flat": "assets/bookmark-icons/flat/stitch.svg",
+      "reference": "design/builtin-icons/references/stitch.png"
+    },
+    {
+      "id": "gptimages",
+      "kind": "downloaded-vector",
+      "sourceUrl": "https://gptimges.com/favicon.svg",
+      "license": "Brand artwork rights retained by its owner; no separate reuse license was published.",
+      "flat": "assets/bookmark-icons/flat/gptimages.svg",
+      "reference": "design/builtin-icons/references/gptimages.png"
+    },
+    {
+      "id": "aiart",
+      "kind": "initial-fallback",
+      "initial": "A",
+      "sourceUrl": "https://aiart.pics/",
+      "license": "Original MarkPad initial artwork.",
+      "note": "Official 32px stacked wordmark has no reusable vector source; an editable A initial is used.",
+      "flat": "assets/bookmark-icons/flat/aiart.svg",
+      "reference": "design/builtin-icons/references/aiart.png"
+    }
+  ]
+}
