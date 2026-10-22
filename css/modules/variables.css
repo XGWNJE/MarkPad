@@ -50,9 +50,20 @@
   --ui-font-weight: 400;
   --ui-heading-weight: 600;
   --ui-line-height: 1.6;
-  --toolbar-height: 72px;
-  --content-max-width: 1200px;
-  --drag-panel-inset: 16px;
+  --ui-icon-size: 18px;
+  --ui-icon-control-size: 20px;
+  --ui-icon-display-size: 32px;
+  --toolbar-height: 80px;
+  --toolbar-row-height: 80px;
+  --content-max-width: 1192px;
+  --drag-panel-inset: clamp(12px, 1.5vw, 24px);
+  --drag-panel-room: max(0px, calc(100dvh - var(--toolbar-height) - var(--drag-panel-inset) * 2));
+  --drag-panel-radius: 24px;
+  --drag-panel-surface: color-mix(in srgb, var(--color-surface) 94%, transparent);
+  --drag-move-width: 288px;
+  --drag-move-max-height: 560px;
+  --drag-delete-width: 144px;
+  --drag-delete-height: 216px;
   --font-size-xs: 12px;
   --font-size-sm: 13px;
   --font-size-base: 14px;
@@ -126,10 +137,10 @@
   --card-spotlight-blend: multiply;
   --card-spotlight-peak: 0.1;
 
-  --card-gap: 52px;
-  --card-size: 84px;
-  --card-width: clamp(116px, calc(var(--card-size) * 1.45), 320px);
-  --card-radius: 10%;
+  --card-gap: 28px;
+  --card-size: 88px;
+  --card-width: calc(var(--card-size) + 24px);
+  --card-radius: 32%;
   --card-corner-shape: squircle;
   --card-overlay-bg: rgb(0 0 0 / 0.64);
   --card-overlay-blur: 24px;
@@ -143,17 +154,6 @@
   --page-inset: min(var(--grid-page-margin), max(12px, calc((100vw - 240px) / 2)));
 }
 
-@media (max-width: 768px) {
-  :root {
-    --toolbar-height: 68px;
-  }
-}
-
-@media (max-width: 520px) {
-  :root {
-    --drag-panel-inset: 8px;
-  }
-}
 
 /* 深色模式：中性深灰，卡片只比背景亮一阶，保持轻度对比。 */
 :root[data-theme="dark"] {

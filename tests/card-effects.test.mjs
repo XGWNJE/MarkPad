@@ -25,7 +25,7 @@ test('card.css removes scan borders, surface glow, particles and ripple while ke
   const cardCss = await read('css/modules/card.css');
   assert.doesNotMatch(cardCss, /card-effect-active::after|card-effect-active::before|\.card-particle|\.card-ripple/);
   assert.match(cardCss, /background: transparent;/);
-  assert.match(cardCss, /border: 0;/);
+  assert.match(cardCss, /border: 1px solid transparent;/);
   assert.match(cardCss, /border-radius: var\(--card-radius\)/);
 
   // 旧的悬停边缘反馈下线：卡片不再用 CSS 改 transform，交给 gsap 接管
@@ -37,12 +37,10 @@ test('the card retains clipping for rounded icon backgrounds without a visual su
   const cardCss = await read('css/modules/card.css');
   const cardBlock = cardCss.match(/\.bookmark-card \{[\s\S]*?\n\}/)?.[0] || '';
   assert.match(cardBlock, /position: relative;/);
-  assert.match(cardBlock, /overflow: hidden;/);
-  const wrapper = cardCss.match(/\.card-icon-wrapper \{[\s\S]*?\n\}/)?.[0] || '';
-  assert.match(wrapper, /overflow: hidden;/);
-  assert.doesNotMatch(wrapper, /border-radius:/);
+  assert.doesNotMatch(cardBlock, /overflow: hidden;/);
+
   const surface = cardCss.match(/\.card-surface \{[\s\S]*?\n\}/)?.[0] || '';
-  assert.match(surface, /border-radius: inherit;/);
+  assert.match(surface, /border-radius: var\(--card-radius\);/);
   assert.match(surface, /overflow: hidden;/);
 });
 

@@ -15,9 +15,7 @@ const examples = [
   ['grok', 'Grok', 'https://grok.com/'],
   ['github', 'GitHub', 'https://github.com/'],
   ['figma', 'Figma', 'https://www.figma.com/'],
-  ['penpot', 'Penpot', 'https://penpot.app/'],
   ['stitch', 'Stitch', 'https://stitch.withgoogle.com/'],
-  ['pencil', 'Pencil', 'https://www.pencil.dev/'],
   ['artstation', 'ArtStation', 'https://www.artstation.com/'],
   ['dribbble', 'Dribbble', 'https://dribbble.com/'],
   ['comfyui', 'ComfyUI', 'https://www.comfy.org/'],
@@ -33,10 +31,12 @@ const examples = [
 ];
 
 function installFixture(examples) {
-  const defaults = { themeMode: 'dark', bookmarkIconStyle: 'clay', cardSize: '84', cardGap: '52', cardRadiusPercent: '10', cardFontFamily: 'system', cardTitleSize: '16', cardTitleTracking: '1', headerOpacity: '94' };
+  const defaults = { themeMode: 'dark', bookmarkIconStyle: 'clay', cardSize: '88', cardGap: '28', cardRadiusPercent: '32', cardFontFamily: 'system', cardTitleSize: '14', cardTitleTracking: '0', headerOpacity: '94' };
   for (const [key, value] of Object.entries(defaults)) localStorage.setItem(key, value);
+  // Reset icon overrides on this local sample origin so screenshots use the bundled assets.
+  for (const key of ['custom_icon_cache', 'site_icon_background_cache_v1']) localStorage.setItem(key, '{}');
   const sites = examples.map(([id, title, url], index) => ({ id, title, url, index: index + 3, parentId: '1' }));
-  const folders = [['archive', '长期留存', [0, 1, 2, 3, 4, 5]], ['share', '分享', [16, 17, 18, 19]], ['visual', '视觉', [7, 8, 9, 10, 11, 12]]]
+  const folders = [['archive', '长期留存', [0, 1, 2, 3, 4, 5]], ['share', '分享', [14, 15, 16, 17]], ['visual', '视觉', [7, 8, 9, 10]]]
     .map(([id, title, entries], index) => ({ id, title, index, parentId: '1', children: entries.map((entry, index) => ({ ...sites[entry], id: `${id}-${sites[entry].id}`, parentId: id, index })) }));
   const tree = [{ id: '0', children: [{ id: '1', title: '书签栏', folderType: 'bookmarks-bar', children: [...folders, ...sites] }, { id: '2', title: '其他书签', folderType: 'other', children: [] }] }];
   const nodes = new Map();

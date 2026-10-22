@@ -139,19 +139,13 @@ class EditDialog {
       this.urlInput.focus();
       return;
     }
-    if (!this.isEditMode) {
-      EventBus.emit(isBookmark ? 'bookmark:create' : 'folder:create', {
-        parentId: this.currentParentId, title, ...(isBookmark && { url })
-      });
-      this.hide();
-      return;
-    }
-
     const request = this.showRequest;
     this.setBusy(true);
     this.setStatus('正在保存…');
     try {
-      await BookmarkStore.update(this.currentId, title);
+      if (this.isEditMode) await BookmarkStore.update(this.currentId, title);
+      else await BookmarkStore.create(this.currentParentId, title, url);
+      EventBus.emit('grid:refresh');
       if (request === this.showRequest) this.hide();
     } catch {
       if (request === this.showRequest) this.setStatus('保存失败，请重试。', true);
@@ -192,8 +186,8 @@ class EditDialog {
     this.isEditMode = false;
     this.currentId = null;
     this.currentTitle = null;
-    if (this.returnFocus?.isConnected && !this.returnFocus.closest?.('[inert], .hidden')) this.returnFocus.focus();
-    else document.getElementById('menu-trigger')?.focus();
+    if (this.returnFocus?.isConnected && !this.returnFocus.disabled && this.returnFocus.tabIndex !== -1 && !this.returnFocus.closest?.('[inert], [hidden], .hidden')) this.returnFocus.focus();
+    else document.getElementById('more-trigger')?.focus();
     this.returnFocus = null;
   }
 

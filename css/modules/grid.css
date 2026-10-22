@@ -18,7 +18,7 @@
   overflow-x: hidden;
   min-height: 0;
   box-sizing: border-box;
-  padding: calc(var(--toolbar-height) + var(--grid-page-margin)) var(--page-inset) var(--grid-page-margin);
+  padding: 46px clamp(16px, 3vw, 32px) 80px;
 }
 
 .grid-scroll-inner {
@@ -29,7 +29,7 @@
 .bookmark-grid {
   position: relative;
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(min(100%, var(--card-width)), var(--card-width)));
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, var(--card-width)), 1fr));
   justify-content: center;
   gap: var(--card-gap);
   width: 100%;
@@ -111,50 +111,17 @@
   z-index: -1;
 }
 
-.grid-create-card {
-  width: 100%;
-  min-width: 0;
-  min-height: 44px;
-  aspect-ratio: 1;
+.grid-state {
+  grid-column: 1/-1;
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
-  gap: var(--space-3);
-  padding: var(--space-3);
-  border: 1px dashed var(--color-border-strong);
-  border-radius: var(--card-radius);
-  corner-shape: var(--card-corner-shape);
-  background: color-mix(in srgb, var(--color-surface) 40%, transparent);
-  color: var(--text-secondary);
-  font-family: var(--font-family-ui);
-  font-size: var(--menu-font-size);
-  line-height: var(--ui-line-height);
+  gap: 20px;
+  padding: 14vh 12px;
   text-align: center;
-  transition:
-    background var(--transition-fast),
-    border-color var(--transition-fast),
-    color var(--transition-fast);
+  color: var(--text-secondary);
 }
-
-.grid-create-card:hover,
-.grid-create-card:focus-visible {
-  background: var(--color-bg-soft);
-  border-color: var(--text-secondary);
-  color: var(--text-primary);
-}
-
-.grid-create-icon .app-icon {
-  width: var(--space-8);
-  height: var(--space-8);
-}
-
-.grid-create-label {
-  font-weight: var(--ui-heading-weight);
-  overflow-wrap: anywhere;
-}
-@media (max-width: 768px) {
-  .bookmark-grid {
-    gap: var(--card-gap);
-  }
+.grid-state h2 {
+  font-size: 17px;
+  font-weight: 500;
 }

@@ -23,7 +23,7 @@ for (const [draggedId, targetId, action, expected, index] of [
     for (const [id, card] of cards) assert.equal(harness.instance.cards.get(id), card, 'sorting should reuse existing cards');
     assert.equal(harness.lifecycle.rendered.length, 5);
     assert.equal(harness.lifecycle.destroyed.length, 0);
-    assert.deepEqual(harness.fullOrder().slice(-2), ['bookmark', 'folder']);
+    assert.equal(harness.fullOrder().length, harness.instance.cards.size);
     assert.deepEqual(harness.errors, []);
   });
 }
@@ -94,21 +94,11 @@ test('a failed move restores the authoritative order and a later drag still succ
   assert.deepEqual(harness.order(), harness.model.order('root'));
 });
 
-test('move rejection followed by read rejection still rolls back the optimistic order', async () => {
-  const harness = await setupGrid();
-  const cards = new Map(harness.instance.cards);
-  harness.model.rejectNextMove();
-  harness.model.rejectNextChildren();
-  assert.equal(await harness.instance.moveCard({ draggedId: 'A', targetId: 'C', action: 'after' }), false);
-  await harness.settle();
-  assert.deepEqual(harness.model.order('root'), ['A', 'B', 'F', 'C', 'G']);
-  assert.deepEqual(harness.order(), harness.model.order('root'), 'rollback must not depend on a successful refetch');
-  for (const [id, card] of cards) assert.equal(harness.instance.cards.get(id), card);
-  assert.equal(harness.lifecycle.destroyed.length, 0);
-  assert.match(harness.status.textContent, /失败.*重试/);
-  assert.equal(await harness.instance.moveCard({ draggedId: 'A', targetId: 'B', action: 'after' }), true);
-  await harness.settle();
-  assert.deepEqual(harness.order(), ['B', 'A', 'F', 'C', 'G']);
+test('move rejection followed by read rejection shows an error and retry restores authoritative order', async () => {
+  const h=await setupGrid();h.model.rejectNextMove();h.model.rejectNextChildren();
+  assert.equal(await h.instance.moveCard({draggedId:'A',targetId:'C',action:'after'}),false);
+  await h.settle();assert.deepEqual(h.order(),[]);assert.match(h.instance.stateElement.children[0].textContent,/无法读取/);
+  await h.instance.refresh();assert.deepEqual(h.order(),h.model.order('root'));
 });
 
 test('failed source/target lookup does not write or leave the grid busy', async () => {
@@ -178,20 +168,13 @@ test('refresh reuses cards and updates a folder count after an external child mo
   assert.equal(harness.instance.cards.get('F').options.childCount, 2);
 });
 
-test('a failed folder refresh preserves the existing cards and permits retry', async () => {
-  const harness = await setupGrid();
-  const cards = new Map(harness.instance.cards);
-  harness.model.rejectNextChildren();
-  await harness.instance.refresh();
-  assert.deepEqual(harness.order(), ['A', 'B', 'F', 'C', 'G']);
-  for (const [id, card] of cards) assert.equal(harness.instance.cards.get(id), card);
-  assert.equal(harness.lifecycle.destroyed.length, 0);
-  assert.match(harness.status.textContent, /读取书签失败/);
-  await harness.instance.refresh();
-  assert.deepEqual(harness.order(), harness.model.order('root'));
+test('a failed folder refresh hides old cards and permits retry', async () => {
+  const h=await setupGrid();h.model.rejectNextChildren();await h.instance.refresh();
+  assert.deepEqual(h.order(),[]);assert.equal(h.instance.cards.size,0);assert.match(h.instance.stateElement.children[0].textContent,/无法读取/);
+  await h.instance.refresh();assert.deepEqual(h.order(),h.model.order('root'));
 });
 
-test('navigation disposes cards from the old folder and keeps both creation actions', async () => {
+test('navigation disposes cards from the old folder and leaves an empty state', async () => {
   const harness = await setupGrid();
   const oldCards = [...harness.instance.cards.values()];
   await harness.navigate('F');
@@ -199,7 +182,7 @@ test('navigation disposes cards from the old folder and keeps both creation acti
   for (const card of oldCards) assert.equal(harness.lifecycle.destroyed.filter(item => item === card).length, 1);
   const childCard = harness.instance.cards.get('F1');
   await harness.navigate('G');
-  assert.deepEqual(harness.fullOrder(), ['bookmark', 'folder']);
+  assert.deepEqual(harness.fullOrder(), []);
   assert.equal(harness.instance.cards.size, 0);
   assert.equal(harness.lifecycle.destroyed.filter(item => item === childCard).length, 1);
 });
@@ -213,7 +196,7 @@ test('the latest folder request wins when an earlier data read finishes last', a
   gate.release();
   await older;
   await harness.settle();
-  assert.deepEqual(harness.fullOrder(), ['bookmark', 'folder']);
+  assert.deepEqual(harness.fullOrder(), []);
   assert.equal(harness.instance.cards.has('F1'), false);
   assert.equal(harness.lifecycle.created.some(card => card.data.id === 'F1'), false, 'stale data must not create a card');
 });
@@ -227,7 +210,7 @@ test('a stale asynchronous card render is disposed after navigating elsewhere', 
   gate.release();
   await older;
   await harness.settle();
-  assert.deepEqual(harness.fullOrder(), ['bookmark', 'folder']);
+  assert.deepEqual(harness.fullOrder(), []);
   assert.equal(harness.instance.cards.has('F1'), false);
   const staleCard = harness.lifecycle.created.find(card => card.data.id === 'F1');
   assert.equal(harness.lifecycle.destroyed.filter(card => card === staleCard).length, 1);

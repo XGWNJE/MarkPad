@@ -9,9 +9,9 @@ const CARD_FONT_FAMILIES = Object.freeze({
   serif: '"Noto Serif SC", "Songti SC", serif'
 });
 
-// 圆角以卡片边长的百分比保存，改卡片尺寸不需要重新调整；50% 即圆形。
+// 圆角以卡片边长的百分比保存，改卡片尺寸不需要重新调整；上限为 50%。
 const CARD_RADIUS_MAX_PERCENT = 50;
-const CARD_RADIUS_DEFAULT_PERCENT = 10;
+const CARD_RADIUS_DEFAULT_PERCENT = 32;
 // 卡片宽度与 --card-width 的换算：clamp(116px, 卡片尺寸 * 1.45, 320px)。
 const CARD_WIDTH_MIN = 116;
 const CARD_WIDTH_MAX = 320;
@@ -49,12 +49,12 @@ class SettingsPanel {
     // theme-init.js 已在首次绘制前写好 data-theme，这里只同步界面状态
     this.currentTheme = document.documentElement.dataset.theme === 'dark' ? 'dark' : 'light';
     this.currentHeaderOpacity = this.readPercent(this.headerOpacityKey, 94, 55, 100);
-    this.currentCardSize = this.readNumber(this.cardSizeKey, 84, this.cardSizeMin, this.cardSizeMax);
+    this.currentCardSize = this.readNumber(this.cardSizeKey, 88, this.cardSizeMin, this.cardSizeMax);
     this.currentCardRadiusPercent = this.readCardRadiusPercent();
     this.currentCardFontFamily = this.readChoice(this.cardFontFamilyKey, 'system', CARD_FONT_FAMILIES);
-    this.currentCardTitleSize = this.readNumber(this.cardTitleSizeKey, 16, 14, 20);
-    this.currentCardTitleTracking = this.readNumber(this.cardTitleTrackingKey, 1, -2, 8);
-    this.currentCardGap = this.readNumber(this.cardGapKey, 52, 8, 64);
+    this.currentCardTitleSize = this.readNumber(this.cardTitleSizeKey, 14, 14, 20);
+    this.currentCardTitleTracking = this.readNumber(this.cardTitleTrackingKey, 0, -2, 8);
+    this.currentCardGap = this.readNumber(this.cardGapKey, 28, 8, 64);
     this.currentOpenMode = this.readChoice(this.openModeKey, 'current', { new: true, current: true });
 
     this.init();

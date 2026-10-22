@@ -48,6 +48,7 @@ function createCard(icon, classes) {
   const card = new BookmarkCard({ id: 'bookmark-1', title: 'Example', url: 'https://example.com' }, null);
   card.element = {
     isConnected: true,
+    setAttribute() {},
     querySelector: () => icon,
     classList: {
       toggle(name, enabled) {
@@ -87,7 +88,7 @@ test('missing and failed website icons show text until an icon is applied', () =
   assert.equal(classes.has('iconless'), false);
 });
 
-test('an undecodable cached icon always falls back to the text surface and is demoted once', () => {
+test('an undecodable cached icon falls back to the bookmark symbol and is demoted once', () => {
   const { icon, classes, card } = prepare();
 
   const demoted = [];
@@ -100,7 +101,7 @@ test('an undecodable cached icon always falls back to the text surface and is de
   // 解码失败时不留破图：退回文字面，并把这份字节降级为带退避的失败记录。
   icon.image.dispatch('error');
   assert.equal(classes.has('iconless'), true);
-  assert.equal(icon.innerHTML, '');
+  assert.match(icon.innerHTML, /<svg/);
   assert.equal(card.siteIconModel, null);
   assert.deepEqual(demoted, [['https://example.com', model.value]]);
 
@@ -108,7 +109,7 @@ test('an undecodable cached icon always falls back to the text surface and is de
   card.updateIcon(model);
   icon.image.dispatch('error');
   assert.equal(classes.has('iconless'), true);
-  assert.equal(icon.innerHTML, '');
+  assert.match(icon.innerHTML, /<svg/);
   assert.equal(demoted.length, 1);
 });
 

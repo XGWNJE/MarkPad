@@ -48,11 +48,11 @@ test('card menu names its target and separates rename, move, icon and delete act
   const h = await setup();
   assert.equal(h.menu.children[0].textContent, '测试目标');
   assert.equal(h.menu.getAttribute('aria-label'), '测试目标的操作');
-  assert.deepEqual(h.labels(), ['重命名…', '移动到…', '选择或上传图标…', '重新获取网站图标', '删除']);
+  assert.deepEqual(h.labels(), ['重命名…', '移动与排序…', '选择或上传图标…', '重新获取网站图标', '删除']);
   assert.equal(h.items[0].getAttribute('aria-keyshortcuts'), 'F2');
   assert.equal(h.items.at(-1).classList.contains('danger'), true);
   assert.equal(h.menu.querySelectorAll('.context-menu-separator').length, 2);
-  h.choose('移动到…');
+  h.choose('移动与排序…');
   assert.equal(h.emitted[0][0], 'card:move');
   assert.equal(h.emitted[0][1].id, 'A');
   assert.equal(h.emitted[0][1].returnFocus, h.card.element);
@@ -62,7 +62,7 @@ test('card menu names its target and separates rename, move, icon and delete act
 
 test('a custom folder restores the default folder icon without website actions', async () => {
   const h = await setup({ url: null, custom: true });
-  assert.deepEqual(h.labels(), ['重命名…', '移动到…', '编辑图标…', '恢复默认文件夹图标', '删除']);
+  assert.deepEqual(h.labels(), ['重命名…', '移动与排序…', '编辑图标…', '恢复默认文件夹图标', '删除']);
   h.choose('恢复默认文件夹图标');
   assert.deepEqual(h.actions, ['restore']);
   assert.deepEqual(h.emitted, []);
@@ -70,7 +70,7 @@ test('a custom folder restores the default folder icon without website actions',
 
 test('a custom bookmark edits its icon or restores the normal icon resolution', async () => {
   const h = await setup({ custom: true });
-  assert.deepEqual(h.labels(), ['重命名…', '移动到…', '编辑图标…', '恢复默认图标', '删除']);
+  assert.deepEqual(h.labels(), ['重命名…', '移动与排序…', '编辑图标…', '恢复默认图标', '删除']);
   h.choose('编辑图标…');
   assert.equal(h.emitted[0][0], 'iconStudio:open');
   assert.equal(h.emitted[0][1].bookmark, h.card.data);
@@ -79,7 +79,7 @@ test('a custom bookmark edits its icon or restores the normal icon resolution', 
 
 test('website appearance is offered only for an available website icon', async () => {
   const h = await setup({ site: true });
-  assert.deepEqual(h.labels(), ['重命名…', '移动到…', '选择或上传图标…', '调整网站图标…', '重新获取网站图标', '删除']);
+  assert.deepEqual(h.labels(), ['重命名…', '移动与排序…', '选择或上传图标…', '调整网站图标…', '重新获取网站图标', '删除']);
   h.choose('调整网站图标…');
   assert.equal(h.emitted[0][0], 'iconStudio:openSiteBackground');
 });

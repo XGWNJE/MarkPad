@@ -97,13 +97,14 @@ async function setupSettings(overrides = {}) {
     setItem(key, value) { writes.push(key); stored.set(key, String(value)); },
     removeItem(key) { stored.delete(key); }
   };
-  const trigger = ids.get('menu-trigger');
+  const trigger = ids.get('more-trigger');
   document.activeElement = trigger;
   const context = vm.createContext({ document, localStorage, console, getIconStyle: () => getIconStyle(localStorage), setIconStyle: value => setIconStyle(value, localStorage) });
   vm.runInContext('globalThis.EventBus = (() => {' + busSource.replace('export default new EventBus();', 'return new EventBus();') + '})()', context);
   vm.runInContext(settings.replace(/^import .*;\r?\n/gm, '').replace('export default SettingsPanel;', 'globalThis.SettingsPanel = SettingsPanel;'), context);
   const panel = vm.runInContext('new SettingsPanel()', context);
   const menu = ids.get('menu-panel');
+  menu.classList.remove('hidden');
   setPanelVisible(menu, trigger, true);
   const tab = page => ids.get('settings-tab-' + page);
   const pane = page => ids.get('settings-pane-' + page);
@@ -170,9 +171,9 @@ test('settings group all existing controls into three linked panes while keeping
   assert.deepEqual(pages.map(page => h.tab(page).textContent), ['外观', '文字', '操作']);
   assert.equal(h.menu.getAttribute('role'), 'dialog');
   assert.equal(h.menu.getAttribute('aria-labelledby'), h.ids.get('settings-title').getAttribute('id'));
-  assert.equal(h.menu.getAttribute('aria-modal'), null, 'Settings remain a nonmodal panel');
-  assert.equal(h.menu.classList.contains('dialog'), false, 'Settings must not use fullscreen modal styling');
-  assert.equal(h.trigger.getAttribute('aria-haspopup'), 'dialog');
+  assert.equal(h.menu.getAttribute('aria-modal'), 'true');
+  assert.equal(h.menu.classList.contains('dialog'), true);
+  assert.equal(h.trigger.getAttribute('aria-label'), '更多');
   assert.equal(h.ids.get('settings-tabs').getAttribute('role'), 'tablist');
   for (const page of pages) {
     assert.equal(h.tab(page).getAttribute('role'), 'tab');
@@ -182,7 +183,8 @@ test('settings group all existing controls into three linked panes while keeping
   assert.doesNotMatch(h.html, /grid-page-margin/);
   for (const id of ['card-font-family', 'card-title-size', 'card-title-tracking']) assert.ok(h.pane('text').contains(h.ids.get(id)));
   assert.ok(h.pane('behavior').contains(h.ids.get('open-mode-group')));
-  assert.ok(h.pane('behavior').querySelector('.shortcuts-list'));
+  assert.ok(h.pane('behavior').querySelector('a'));
+  assert.equal(h.pane('behavior').querySelector('.shortcuts-list'), null);
   const content = h.ids.get('settings-content');
   assert.equal(content.contains(h.ids.get('settings-tabs')), false);
   assert.equal(content.contains(h.ids.get('settings-close')), false);
@@ -270,7 +272,7 @@ test('card radius is a percentage of the card side and survives card size change
   assert.equal(h.document.documentElement.style.getPropertyValue('--card-radius'), '20%');
   assert.equal(h.stored.get('cardRadiusPercent'), '20');
 
-  // 50% 是上限（圆形），超出直接夹取。
+  // 50% 是上限，超出直接夹取。
   h.input('card-radius', '50');
   assert.equal(h.document.documentElement.style.getPropertyValue('--card-radius'), '50%');
   h.input('card-radius', '80');
@@ -285,21 +287,25 @@ test('legacy pixel card radius migrates once into a percentage of the card width
   assert.equal(h.stored.has('cardRadius'), false);
   assert.equal(h.document.documentElement.style.getPropertyValue('--card-radius'), '8%');
 
-  // 旧值超过卡片一半时按 50%（圆形）夹取。
+  // 旧值超过卡片一半时按 50% 夹取。
   const clamped = await setupSettings({ cardRadiusPercent: undefined, cardRadius: '200', cardSize: '80' });
   assert.equal(clamped.stored.get('cardRadiusPercent'), '50');
 });
 
-test('first run defaults to 84px cards with 52px gaps and opens bookmarks in the current page', async () => {
-  const h = await setupSettings({ cardSize: undefined, cardGap: undefined, openMode: undefined });
-  assert.equal(h.ids.get('card-size').value, '84');
-  assert.equal(h.ids.get('card-size-value').textContent, '84px');
-  assert.equal(h.ids.get('card-gap').value, '52');
-  assert.equal(h.ids.get('card-gap-value').textContent, '52px');
-  assert.equal(h.document.documentElement.style.getPropertyValue('--card-size'), '84px');
-  assert.equal(h.document.documentElement.style.getPropertyValue('--card-gap'), '52px');
-  assert.equal(h.stored.get('cardSize'), '84');
-  assert.equal(h.stored.get('cardGap'), '52');
+test('first run defaults to 88px cards with 32% corners, 28px gaps and current-page opening', async () => {
+  const h = await setupSettings({ cardSize: undefined, cardRadiusPercent: undefined, cardGap: undefined, openMode: undefined });
+  assert.equal(h.ids.get('card-size').value, '88');
+  assert.equal(h.ids.get('card-size-value').textContent, '88px');
+  assert.equal(h.ids.get('card-radius').value, '32');
+  assert.equal(h.ids.get('card-radius-value').textContent, '32%');
+  assert.equal(h.ids.get('card-gap').value, '28');
+  assert.equal(h.ids.get('card-gap-value').textContent, '28px');
+  assert.equal(h.document.documentElement.style.getPropertyValue('--card-size'), '88px');
+  assert.equal(h.document.documentElement.style.getPropertyValue('--card-radius'), '32%');
+  assert.equal(h.document.documentElement.style.getPropertyValue('--card-gap'), '28px');
+  assert.equal(h.stored.get('cardSize'), '88');
+  assert.equal(h.stored.get('cardRadiusPercent'), undefined, '默认圆角不覆盖已有设置或额外写入存储键');
+  assert.equal(h.stored.get('cardGap'), '28');
   assert.equal(h.stored.get('openMode'), undefined, '默认打开方式不额外写入存储键');
   for (const value of ['new', 'current']) {
     const button = h.ids.get('open-mode-' + value);

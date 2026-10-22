@@ -2,114 +2,65 @@
   position: relative;
   display: flex;
   flex-direction: column;
-  gap: 0;
-  padding: 0;
-  /* 文字默认收起，卡片保持正方形；文字展开时盖在图标上，不改变卡片尺寸、不触发网格重排 */
-  min-height: 0;
-  aspect-ratio: 1;
-  overflow: hidden;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  min-width: 0;
+  padding: 8px 4px 10px;
+  text-decoration: none;
+  border: 1px solid transparent;
+  border-radius: 18px;
   background: transparent;
-  border: 0;
-  border-radius: var(--card-radius);
-  corner-shape: var(--card-corner-shape);
   cursor: pointer;
-  /* 光效变量：由 components/CardEffects.js 在指针移动时改写 */
-  --glow-x: 50%;
-  --glow-y: 50%;
-  --glow-intensity: 0;
-  --glow-radius: var(--card-glow-radius);
+  text-align: center;
 }
 
-/* 根卡片只承载排序位置，悬停变换在现有 card-surface 内层完成。 */
 .bookmark-card:hover {
+  background: color-mix(in srgb, var(--color-surface) 70%, transparent);
   z-index: 2;
 }
 
-.bookmark-card:focus {
-  outline: none;
-}
-
-.bookmark-card.selected,
 .bookmark-card:focus-visible {
-  outline: 3px solid var(--color-focus);
+  outline: 2px solid var(--color-focus);
   outline-offset: 2px;
 }
 
 .card-surface {
-  position: absolute;
-  inset: 0;
+  position: relative;
+  flex: none;
+  width: var(--card-size);
+  max-width: 100%;
+  aspect-ratio: 1;
   overflow: hidden;
   background: var(--color-bg-soft);
-  border-radius: inherit;
-  corner-shape: inherit;
-  /* 图标和遮罩先合成，再统一裁圆角，避免底图从两层的抗锯齿边缘漏出。 */
+  border-radius: var(--card-radius);
+  corner-shape: var(--card-corner-shape);
   clip-path: inset(0 round var(--card-radius));
 }
 
 @supports (corner-shape: squircle) {
   .card-surface {
-    /* 用自身溢出边界裁切连续圆角，避免 geometry-box 路径的坐标偏移。 */
     clip-path: none;
     isolation: isolate;
   }
 }
 
-.card-icon-wrapper {
-  position: relative;
-  z-index: 1;
+.card-icon-wrapper,
+.card-icon {
   width: 100%;
   height: 100%;
-  aspect-ratio: auto;
   display: flex;
   align-items: center;
   justify-content: center;
-  overflow: hidden;
-  background: transparent;
-  border: 0;
-  transition: filter var(--transition-base);
-}
-
-/* 图标在卡片挂载后才加载时，也直接模糊底图，保证文字层的磨砂效果。 */
-.bookmark-card:hover .card-icon-wrapper,
-.bookmark-card:focus-visible .card-icon-wrapper,
-.bookmark-card:focus-within .card-icon-wrapper,
-.bookmark-card.text-revealed .card-icon-wrapper {
-  filter: blur(var(--card-overlay-blur));
 }
 
 .card-icon {
-  position: relative;
-  width: 100%;
-  height: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: var(--text-primary);
   background-size: contain;
   background-position: center;
   background-repeat: no-repeat;
-  transition: transform var(--transition-base);
 }
 
-.bookmark-card:hover .card-icon {
-  transform: scale(var(--card-icon-hover-scale));
-}
-
-.bookmark-card.interaction-paused:not(.text-revealed) .card-icon-wrapper {
-  filter: none;
-}
-
-.bookmark-card.interaction-paused .card-icon {
-  transform: none;
-}
-
-/* 图标内容默认铺满卡片，缩放 100% 就是填满；默认文件夹图标单独收窄。 */
-.card-icon svg {
-  width: 100%;
-  height: 100%;
-  transform: scale(var(--icon-content-scale, 1));
-}
-
+.card-icon svg,
 .card-icon-image {
   width: 100%;
   height: 100%;
@@ -120,125 +71,83 @@
 }
 
 .card-icon.folder-default {
-  background:
-    linear-gradient(180deg, var(--color-surface), var(--color-bg-soft));
-  overflow: hidden;
+  background: linear-gradient(180deg, var(--color-surface), var(--color-bg-soft));
 }
 
 .card-icon.folder-default .card-folder-svg {
   width: 56%;
   height: 56%;
-  color: color-mix(in srgb, var(--color-action) 24%, var(--text-secondary));
-  stroke-width: 1.55;
-}
-
-.card-icon .icon-light,
-.card-icon .icon-dark {
-  display: block;
-}
-
-.card-gradient {
-  display: none;
+  color: var(--text-secondary);
+  stroke-width: 1.6;
 }
 
 .card-info {
-  position: absolute;
-  inset: 0;
-  z-index: 2;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  gap: clamp(4px, calc(var(--card-width) * 0.04), 8px);
-  padding: clamp(8px, calc(var(--card-width) * 0.07), 16px);
+  width: 100%;
+  min-width: 0;
   text-align: center;
-  color: var(--card-overlay-text);
-  /* 底图已由 .card-icon-wrapper 预先模糊，这里不再叠加 backdrop-filter：
-     卡片悬停时 .card-surface 带 3D 变换，backdrop-filter 会把没有按圆角裁切的
-     模糊底图铺到卡片边缘，圆角处出现毛刺和漏光。 */
-  background: var(--card-overlay-bg);
-  /* 保持矩形覆盖，圆角仅由共同的 .card-surface 裁切。 */
-  opacity: 0;
-  visibility: hidden;
   pointer-events: none;
-  transition:
-    opacity var(--transition-base),
-    visibility var(--transition-base);
-}
-
-/* 默认藏起文字：指针悬停、键盘聚焦，或在触屏上点开（.text-revealed）时动画展开 */
-.bookmark-card:hover .card-info,
-.bookmark-card:focus-visible .card-info,
-.bookmark-card:focus-within .card-info,
-.bookmark-card.text-revealed .card-info,
-.bookmark-card.iconless .card-info {
-  opacity: 1;
-  visibility: visible;
-  pointer-events: auto;
-}
-
-.bookmark-card.iconless .card-icon-wrapper {
-  filter: none;
-}
-
-.bookmark-card.iconless .card-info {
-  background: var(--card-iconless-bg);
-}
-
-.bookmark-card.interaction-paused:not(.iconless):not(.text-revealed) .card-info {
-  opacity: 0;
-  visibility: hidden;
 }
 
 .card-title {
   width: 100%;
-  color: var(--card-overlay-text);
-  font-family: var(--card-font-family, var(--font-family));
-  font-size: var(--card-title-size, 16px);
-  font-weight: var(--card-overlay-title-weight);
+  color: var(--text-primary);
+  font-size: var(--card-title-size, 14px);
+  font-weight: 500;
   line-height: 1.4;
-  letter-spacing: var(--card-title-tracking, 0.01em);
-  -webkit-font-smoothing: antialiased;
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
+  letter-spacing: var(--card-title-tracking, 0em);
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  word-break: normal;
 }
 
 .card-meta {
-  width: 100%;
-  min-height: 1.5em;
-  display: block;
-  color: var(--card-overlay-text);
-  font-family: var(--card-font-family, var(--font-family));
-  font-size: var(--card-meta-size, var(--font-size-xs));
-  font-weight: 400;
-  line-height: 1.5;
-  letter-spacing: 0.01em;
-  -webkit-font-smoothing: antialiased;
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  font-variant-numeric: tabular-nums;
-  opacity: var(--card-overlay-meta-opacity);
+  display: none;
 }
 
-.bookmark-card.new-card {
-  outline: 1px dashed var(--color-border-strong);
-  background: transparent;
+.bookmark-card.iconless .card-icon svg {
+  width: 44%;
+  height: 44%;
+  color: var(--text-secondary);
 }
 
-.bookmark-card.new-card:hover {
-  outline-color: var(--color-action);
-  background: transparent;
+.bookmark-card.selected {
+  background: var(--color-bg-soft);
 }
 
-.bookmark-card.new-card .card-icon {
-  color: var(--text-tertiary);
+.bookmark-card.selected .card-surface {
+  box-shadow:
+    0 0 0 3px var(--color-bg),
+    0 0 0 5px var(--color-action);
+}
+
+.selection-mark {
+  display: none;
+  position: absolute;
+  top: 1px;
+  right: max(4px, calc((100% - var(--card-size)) / 2 - 7px));
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  color: transparent;
+  place-items: center;
+  pointer-events: none;
+}
+
+.is-organizing .selection-mark {
+  display: grid;
+}
+
+.selection-mark .app-icon {
+  width: 14px;
+  height: 14px;
+}
+
+.selected .selection-mark {
+  background: var(--color-action);
+  color: var(--color-action-text);
+  border-color: var(--color-action);
 }
 
 .bookmark-card.deleting .card-surface {
@@ -250,10 +159,12 @@
     transform: scale(1);
     opacity: 1;
   }
+
   50% {
     transform: scale(0.98);
     background: color-mix(in srgb, var(--color-danger) 10%, var(--color-surface));
   }
+
   100% {
     transform: scale(0.92);
     opacity: 0;
@@ -269,6 +180,7 @@
     transform: translateY(8px);
     opacity: 0;
   }
+
   100% {
     transform: translateY(0);
     opacity: 1;
@@ -305,6 +217,7 @@
     opacity: 0;
     transform: translateY(calc(var(--overlay-enter-offset) * -1));
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
@@ -363,8 +276,8 @@
 }
 
 .context-menu-item .app-icon {
-  width: 18px;
-  height: 18px;
+  width: var(--ui-icon-size);
+  height: var(--ui-icon-size);
   color: var(--text-secondary);
 }
 
@@ -376,12 +289,6 @@
   height: 1px;
   margin: var(--space-2) 0;
   background: var(--color-border);
-}
-
-@media (max-width: 520px) {
-  .card-info {
-    padding-inline: var(--space-2);
-  }
 }
 
 @media (prefers-reduced-motion: reduce) {

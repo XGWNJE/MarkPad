@@ -34,8 +34,8 @@ body {
 }
 
 .app-icon {
-  width: 1.15em;
-  height: 1.15em;
+  width: var(--ui-icon-size);
+  height: var(--ui-icon-size);
   display: block;
   flex: 0 0 auto;
   color: currentColor;

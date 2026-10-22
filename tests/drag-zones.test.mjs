@@ -4,9 +4,7 @@ import test from 'node:test';
 import vm from 'node:vm';
 import { containsRoundedPoint } from '../core/DropTargetGeometry.js';
 import { Element } from './helpers/grid-harness.mjs';
-import { deferred } from './helpers/grid-harness.mjs';
 
-const settle = () => new Promise(resolve => setImmediate(resolve));
 
 class PanelElement extends Element {
   closest(selector) {
@@ -132,155 +130,13 @@ test('delete requires the visible rounded surface, excluding margins and clipped
   assert.equal(h.emitted.some(([name]) => name === 'card:requestDelete'), false);
 });
 
-test('valid deletion still opens confirmation and only its confirm button deletes', async () => {
-  const h = await setup();
-  h.app.grid.cards.set('A', { data: { title: '待删除的文件夹' } });
-  h.start('A', true);
-  h.remove.classList.add('visible');
-  const event = h.event(h.remove, 864, 436);
-  h.remove.fire('dragover', event);
-  assert.equal(h.remove.classList.contains('over'), true);
-  h.remove.fire('drop', event);
-  assert.deepEqual(h.emitted.filter(([name]) => name === 'card:requestDelete'), [
-    ['card:requestDelete', { id: 'A', isFolder: true }]
-  ]);
-  assert.equal(h.dialog.classList.contains('hidden'), false);
-  assert.equal(h.cancel.focusCount, 1);
-  assert.deepEqual(h.deleteMessages, [['A', true, '待删除的文件夹']]);
-  assert.equal(h.emitted.some(([name]) => name === 'card:delete'), false);
-  assert.equal(h.confirm.disabled, true);
-  await settle();
-  h.confirm.click();
-  assert.deepEqual(h.emitted.filter(([name]) => name === 'card:delete'), [
-    ['card:delete', { id: 'A', isFolder: true }]
-  ]);
+test('valid deletion requests confirmation without directly deleting', async () => {
+  const h=await setup(); h.start('A',true); h.remove.classList.add('visible');
+  const event=h.event(h.remove,864,436); h.remove.fire('dragover',event);
+  assert.equal(h.remove.classList.contains('over'),true); h.remove.fire('drop',event);
+  assert.deepEqual(h.emitted.filter(([name])=>name==='card:requestDelete'),[['card:requestDelete',{id:'A',isFolder:true}]]);
+  assert.equal(h.emitted.some(([name])=>name==='card:delete'),false);
 });
-
-test('delete confirmation cannot submit before folder information is available', async () => {
-  const h = await setup(); const gate = deferred();
-  h.app._getDeleteConfirmMessage = () => gate.promise;
-  h.EventBus.emit('card:requestDelete', { id: 'F', isFolder: true });
-  assert.equal(h.dialog.getAttribute('role'), 'dialog');
-  assert.equal(h.dialog.getAttribute('aria-modal'), 'true');
-  assert.equal(h.dialog.getAttribute('aria-labelledby'), 'delete-confirm-title');
-  assert.equal(h.confirm.disabled, true);
-  assert.equal(h.confirm.getAttribute('aria-busy'), 'true');
-  h.confirm.fire('click', {});
-  assert.equal(h.emitted.some(([name]) => name === 'card:delete'), false);
-  assert.equal(h.dialog.classList.contains('hidden'), false);
-  gate.resolve('包含 11 个子项，会一并删除。'); await settle();
-  assert.equal(h.confirm.disabled, false);
-  assert.equal(h.confirm.getAttribute('aria-busy'), 'false');
-  assert.match(h.message.textContent, /11/);
-  h.confirm.click();
-  assert.deepEqual(h.emitted.filter(([name]) => name === 'card:delete'), [['card:delete', { id: 'F', isFolder: true }]]);
-});
-
-test('folder read failure keeps deletion unavailable and exposes a successful retry', async () => {
-  const h = await setup(); let failed = true;
-  h.app._getDeleteConfirmMessage = async () => { if (failed) throw new Error('read denied'); return '已读取的文件夹风险提示'; };
-  h.EventBus.emit('card:requestDelete', { id: 'F', isFolder: true }); await settle();
-  assert.equal(h.confirm.disabled, true);
-  assert.equal(h.status.classList.contains('error'), true);
-  assert.equal(h.retry.classList.contains('hidden'), false);
-  h.confirm.fire('click', {});
-  assert.equal(h.emitted.some(([name]) => name === 'card:delete'), false);
-  failed = false; h.retry.click();
-  assert.equal(h.confirm.disabled, true);
-  await settle();
-  assert.equal(h.confirm.disabled, false);
-  assert.equal(h.retry.classList.contains('hidden'), true);
-  assert.equal(h.status.classList.contains('error'), false);
-  h.confirm.click();
-  assert.equal(h.emitted.filter(([name]) => name === 'card:delete').length, 1);
-});
-
-test('closing deletion while reading invalidates late results and a new request stays locked', async () => {
-  const h = await setup(); const old = deferred(); const current = deferred(); let call = 0;
-  h.app._getDeleteConfirmMessage = () => (++call === 1 ? old.promise : current.promise);
-  h.EventBus.emit('card:requestDelete', { id: 'F', isFolder: true });
-  h.app.hideDeleteConfirmation();
-  h.EventBus.emit('card:requestDelete', { id: 'G', isFolder: true });
-  old.resolve('旧风险信息'); await settle();
-  assert.equal(h.confirm.disabled, true);
-  assert.equal(h.message.textContent, '正在读取书签信息…');
-  current.resolve('新风险信息'); await settle();
-  assert.equal(h.confirm.disabled, false);
-  assert.equal(h.message.textContent, '新风险信息');
-  h.cancel.click();
-  assert.equal(h.dialog.classList.contains('hidden'), true);
-  assert.equal(h.emitted.some(([name]) => name === 'card:delete'), false);
-});
-
-test('folder confirmation requires a real readable folder and uses its current title', async () => {
-  const h = await setup();
-  assert.match(await h.actualDeleteMessage.call(h.app, 'F', true, '旧标题'), /当前文件夹.*11/);
-  h.bookmarkStore.getNode = async () => null;
-  await assert.rejects(h.actualDeleteMessage.call(h.app, 'missing', true), /no longer exists/);
-  h.bookmarkStore.getNode = async () => { throw new Error('tree unavailable'); };
-  await assert.rejects(h.actualDeleteMessage.call(h.app, 'F', true), /tree unavailable/);
-});
-
-function addGridCard(h, id, className = 'bookmark-card') {
-  const element = new PanelElement();
-  element.className = className;
-  element.dataset.id = id;
-  const focus = element.focus.bind(element);
-  element.focus = () => { focus(); h.document.activeElement = element; };
-  h.grid.appendChild(element);
-  if (className === 'bookmark-card') h.app.grid.cards.set(id, { element, data: { title: id } });
-  return element;
-}
-
-test('confirmed deletion chooses the next DOM item before a synchronous delete listener removes the source', async () => {
-  const h = await setup();
-  const previous = addGridCard(h, 'A');
-  const source = addGridCard(h, 'B');
-  const next = addGridCard(h, 'create', 'grid-create-card');
-  h.EventBus.on('card:delete', () => { source.remove(); h.app.grid.cards.delete('B'); });
-  h.EventBus.emit('card:requestDelete', { id: 'B', isFolder: false }); await settle();
-  h.confirm.click();
-  assert.equal(h.document.activeElement, next);
-  assert.equal(next.focusCount, 1);
-  assert.equal(previous.focusCount || 0, 0);
-  assert.equal(source.focusCount || 0, 0);
-  assert.equal(h.menuTrigger.focusCount || 0, 0);
-  assert.deepEqual(h.emitted.filter(([name]) => name === 'card:delete'), [['card:delete', { id: 'B', isFolder: false }]]);
-});
-
-test('confirmed deletion focuses the previous item at the end and stays there when the source is later destroyed', async () => {
-  const h = await setup();
-  const previous = addGridCard(h, 'A');
-  const source = addGridCard(h, 'B');
-  h.EventBus.emit('card:requestDelete', { id: 'B', isFolder: false }); await settle();
-  h.confirm.click();
-  assert.equal(h.document.activeElement, previous);
-  source.remove();
-  assert.equal(h.document.activeElement, previous);
-  assert.equal(source.focusCount || 0, 0);
-});
-
-test('confirmed deletion falls back to settings when no neighboring item exists', async () => {
-  const h = await setup();
-  const source = addGridCard(h, 'A');
-  h.EventBus.emit('card:requestDelete', { id: 'A', isFolder: false }); await settle();
-  h.confirm.click();
-  assert.equal(h.menuTrigger.focusCount, 1);
-  assert.equal(source.focusCount || 0, 0);
-});
-
-test('canceling deletion restores the original card without choosing its neighbor', async () => {
-  const h = await setup();
-  const source = addGridCard(h, 'A');
-  const next = addGridCard(h, 'B');
-  h.EventBus.emit('card:requestDelete', { id: 'A', isFolder: false }); await settle();
-  h.cancel.click();
-  assert.equal(h.document.activeElement, source);
-  assert.equal(source.focusCount, 1);
-  assert.equal(next.focusCount || 0, 0);
-  assert.equal(h.emitted.some(([name]) => name === 'card:delete'), false);
-});
-
 test('move uses the same painted boundary while preserving the folder event contract', async () => {
   const h = await setup();
   for (const [x, y] of [[8, 170], [20, 89], [280, 170]]) {

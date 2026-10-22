@@ -12,7 +12,9 @@ import MoveDialog from './components/MoveDialog.js';
 import IconStudio from './components/IconStudio.js';
 import BookmarkStore from './core/BookmarkStore.js';
 import SettingsPanel from './components/SettingsPanel.js';
-import { activateMenu, closeMenus, releaseMenu, setPanelVisible } from './core/MenuInteraction.js';
+import Toolbar from './components/Toolbar.js';
+import DeleteDialog from './components/DeleteDialog.js';
+import { closeMenus } from './core/MenuInteraction.js';
 
 class App {
   constructor() {
@@ -42,6 +44,9 @@ class App {
     this.iconStudio = new IconStudio();
     // 外观偏好直接映射到主题与卡片令牌。
     new SettingsPanel();
+    new Toolbar(this.grid);
+    this.deleteDialog = new DeleteDialog(this.grid);
+    this.hideDeleteConfirmation = () => this.deleteDialog.hide();
     renderIcons(document);
 
     // 全局快捷键
@@ -71,10 +76,11 @@ class App {
           else if (openDialog.id === 'move-dialog') this.moveDialog.hide();
           else if (openDialog.id === 'icon-studio') this.iconStudio.hide();
           else if (openDialog.id === 'delete-confirm-dialog') this.hideDeleteConfirmation?.();
+          else if (openDialog.id === 'menu-panel') this.setMenuVisible(false);
           return;
         }
         const controls = Array.from(openDialog.querySelectorAll(
-          'button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])'
+          'button:not([disabled]), a[href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])'
         )).filter(control => control.getClientRects().length > 0);
         const first = controls[0];
         const last = controls[controls.length - 1];
@@ -90,6 +96,7 @@ class App {
       if (e.target.closest?.('.context-menu')) return;
       if (key === 'escape') {
         closeMenus({ returnFocus: true });
+        EventBus.emit('grid:organize', false);
         return;
       }
 
@@ -99,7 +106,12 @@ class App {
       }
       if (e.target.closest?.('#menu-panel')) return;
 
+      if (key === '?') { e.preventDefault(); location.href = 'help.html'; return; }
       const ctrl = e.ctrlKey || e.metaKey;
+      if (ctrl && key === 'a' && this.grid.organizing) { e.preventDefault(); this.grid.selectAll(); return; }
+      if (key === 'delete' && this.grid.organizing && this.grid.selectedCards.size) {
+        e.preventDefault(); e.stopImmediatePropagation(); EventBus.emit('selection:delete'); return;
+      }
       const shift = e.shiftKey;
 
       // N - 新建书签
@@ -189,51 +201,25 @@ class App {
     for (const name of [
       'toolbar:newBookmark', 'toolbar:newFolder', 'card:editTitle', 'card:move',
       'iconStudio:open', 'iconStudio:openSiteBackground', 'card:requestDelete',
-      'card:dragstart', 'navigate'
+      'card:dragstart', 'navigate', 'settings:open'
     ]) EventBus.on(name, () => closeMenus());
   }
 
   bindMenuPanel() {
-    const trigger = document.getElementById('menu-trigger');
-    const panel   = document.getElementById('menu-panel');
-    const setMenuVisible = (visible, options) => {
-      if (visible) activateMenu(panel, returnFocus => setMenuVisible(false, { returnFocus }), { trigger });
-      else releaseMenu(panel);
-      setPanelVisible(panel, trigger, visible, options);
+    const panel = document.getElementById('menu-panel');
+    this.setMenuVisible = (visible) => {
+      const wasOpen = !panel.classList.contains('hidden');
+      if (visible) this.settingsReturnFocus = document.activeElement;
+      panel.classList.toggle('hidden', !visible);
+      panel.inert = !visible;
+      panel.setAttribute('aria-hidden', String(!visible));
+      if (visible) (panel.querySelector('[role="tab"][aria-selected="true"]') || panel.querySelector('button'))?.focus();
+      else if (wasOpen) (this.settingsReturnFocus?.isConnected ? this.settingsReturnFocus : document.getElementById('more-trigger'))?.focus();
     };
-    this.setMenuVisible = setMenuVisible;
-    setMenuVisible(false);
-
-    EventBus.on('settings:close', () => setMenuVisible(false, { returnFocus: true }));
-    const focusEntry = () => {
-      const entry = panel.querySelector('[role="tab"][aria-selected="true"]')
-        || panel.querySelector('button, input, select');
-      entry?.focus({ preventScroll: true });
-    };
-
-    // 点击触发按钮切换面板
-    trigger.addEventListener('click', (e) => {
-      e.stopPropagation();
-      const visible = !panel.classList.contains('visible');
-      setMenuVisible(visible);
-      if (visible && e.detail === 0) focusEntry();
-    });
-
-    trigger.addEventListener('keydown', event => {
-      const entersPanel = event.key === 'ArrowDown'
-        || (event.key === 'Tab' && !event.shiftKey && panel.classList.contains('visible'));
-      if (!entersPanel) return;
-      event.preventDefault();
-      setMenuVisible(true);
-      focusEntry();
-    });
-
-    panel.addEventListener('keydown', event => {
-      if (event.key === 'Tab' && event.shiftKey && event.target === panel.querySelector('button, input, select')) {
-        event.preventDefault();
-        trigger.focus({ preventScroll: true });
-      }
-    });
+    this.setMenuVisible(false);
+    EventBus.on('settings:open', () => this.setMenuVisible(true));
+    EventBus.on('settings:close', () => this.setMenuVisible(false));
+    panel.querySelector('.dialog-overlay').addEventListener('click', () => this.setMenuVisible(false));
   }
 
   // ── 拖拽侧边区域 ──────────────────────────────────────────────────────────
@@ -350,79 +336,6 @@ class App {
     });
 
     // ── 右侧删除区域 dragover/dragleave/drop ──
-    let pendingDeleteId = null;
-    let pendingDeleteIsFolder = false;
-    let deleteReturnFocus = null;
-    let deleteRequest = 0;
-    let deleteInfoReady = false;
-    let deleteTitle = '';
-    const deleteConfirmDialog = document.getElementById('delete-confirm-dialog');
-    const deleteConfirmBtn = document.getElementById('delete-confirm-btn');
-    const deleteStatus = document.createElement('div');
-    deleteStatus.className = 'dialog-status';
-    deleteStatus.setAttribute('role', 'status');
-    deleteStatus.setAttribute('aria-live', 'polite');
-    const deleteRetryBtn = document.createElement('button');
-    deleteRetryBtn.type = 'button';
-    deleteRetryBtn.className = 'btn btn-secondary hidden';
-    deleteRetryBtn.textContent = '重试';
-    const deleteFooter = deleteConfirmDialog.querySelector('.dialog-footer');
-    deleteFooter.prepend(deleteStatus);
-    deleteFooter.insertBefore(deleteRetryBtn, deleteConfirmBtn);
-    const deleteHeading = deleteConfirmDialog.querySelector('.dialog-header h3');
-    deleteHeading.id = 'delete-confirm-title';
-    deleteConfirmDialog.setAttribute('role', 'dialog');
-    deleteConfirmDialog.setAttribute('aria-modal', 'true');
-    deleteConfirmDialog.setAttribute('aria-labelledby', deleteHeading.id);
-    deleteConfirmBtn.disabled = true;
-    this.hideDeleteConfirmation = () => {
-      deleteRequest++;
-      deleteInfoReady = false;
-      pendingDeleteId = null;
-      pendingDeleteIsFolder = false;
-      deleteTitle = '';
-      deleteConfirmBtn.disabled = true;
-      deleteConfirmBtn.setAttribute('aria-busy', 'false');
-      deleteRetryBtn.classList.add('hidden');
-      deleteStatus.textContent = '';
-      deleteStatus.classList.remove('error');
-      deleteConfirmDialog.classList.add('hidden');
-      if (deleteReturnFocus?.isConnected && !deleteReturnFocus.closest?.('[inert], .hidden')) deleteReturnFocus.focus();
-      else document.getElementById('menu-trigger')?.focus();
-      deleteReturnFocus = null;
-    };
-    const loadDeleteConfirmation = async () => {
-      if (!pendingDeleteId) return;
-      const request = ++deleteRequest;
-      const id = pendingDeleteId;
-      const isFolder = pendingDeleteIsFolder;
-      const message = document.getElementById('delete-confirm-message');
-      deleteInfoReady = false;
-      deleteConfirmBtn.disabled = true;
-      deleteConfirmBtn.setAttribute('aria-busy', 'true');
-      if (document.activeElement === deleteRetryBtn) deleteConfirmDialog.querySelector('[data-action="cancel"]').focus();
-      deleteRetryBtn.classList.add('hidden');
-      deleteStatus.textContent = '';
-      deleteStatus.classList.remove('error');
-      message.textContent = '正在读取书签信息…';
-      try {
-        const text = await this._getDeleteConfirmMessage(id, isFolder, deleteTitle);
-        if (request !== deleteRequest) return;
-        message.textContent = text;
-        deleteInfoReady = true;
-        deleteConfirmBtn.disabled = false;
-      } catch {
-        if (request !== deleteRequest) return;
-        message.textContent = '暂时无法确认要删除的项目。';
-        deleteStatus.textContent = '信息读取失败，请重试或关闭。';
-        deleteStatus.classList.add('error');
-        deleteRetryBtn.classList.remove('hidden');
-      } finally {
-        if (request === deleteRequest) deleteConfirmBtn.setAttribute('aria-busy', 'false');
-      }
-    };
-    deleteRetryBtn.addEventListener('click', () => { void loadDeleteConfirmation(); });
-
     let lastDeletePointer = null;
     const requestDragDelete = (id) => {
       lastDeletePointer = null;
@@ -473,35 +386,6 @@ class App {
       if (!insideDeleteZone(pointer.x, pointer.y, 8)) return;
       requestDragDelete(id);
     }, true);
-
-    // 删除确认弹窗确认按钮
-    deleteConfirmBtn.addEventListener('click', () => {
-      if (pendingDeleteId && deleteInfoReady) {
-        const source = this.grid?.cards.get(pendingDeleteId)?.element || deleteReturnFocus;
-        const cards = [...document.querySelectorAll('#bookmark-grid > .bookmark-card, #bookmark-grid > .grid-create-card')];
-        const index = cards.indexOf(source);
-        deleteReturnFocus = (index >= 0 ? cards[index + 1] || cards[index - 1] : null)
-          || document.getElementById('menu-trigger');
-        EventBus.emit('card:delete', { id: pendingDeleteId, isFolder: pendingDeleteIsFolder });
-        this.hideDeleteConfirmation();
-      }
-    });
-
-    // 删除确认弹窗取消/关闭
-    deleteConfirmDialog.querySelectorAll('[data-action="cancel"], [data-action="close"]').forEach(btn => {
-      btn.addEventListener('click', () => this.hideDeleteConfirmation());
-    });
-    deleteConfirmDialog.querySelector('.dialog-overlay').addEventListener('click', () => this.hideDeleteConfirmation());
-
-    EventBus.on('card:requestDelete', ({ id, isFolder, title, returnFocus }) => {
-      deleteReturnFocus = returnFocus || this.grid?.cards.get(id)?.element || document.activeElement;
-      pendingDeleteId = id;
-      pendingDeleteIsFolder = isFolder;
-      deleteConfirmDialog.classList.remove('hidden');
-      deleteConfirmDialog.querySelector('[data-action="cancel"]').focus();
-      deleteTitle = title || this.grid?.cards.get(id)?.data?.title || '';
-      void loadDeleteConfirmation();
-    });
 
     // ── 左侧面板内的 dragover/drop ──
     let _scrollRaf = null;
@@ -612,6 +496,7 @@ class App {
 
       const item = document.createElement('div');
       item.className = 'drag-folder-item';
+      item.classList.toggle('drag-folder-root', depth === 0);
       item.dataset.id = node.id;
       item.title = node.title;
       item.style.setProperty('--drag-folder-depth', depth);
@@ -644,18 +529,6 @@ class App {
       folderTree._stopAutoScroll?.();
       folderTree.querySelectorAll('.drag-folder-item').forEach(el => el.classList.remove('drag-target'));
     }
-  }
-
-  async _getDeleteConfirmMessage(id, isFolder, title = '') {
-    if (!isFolder) {
-      return `确定要删除书签“${title || '此书签'}”吗？`;
-    }
-
-    const node = await BookmarkStore.getNode(id);
-    if (!node || node.url) throw new Error('Folder no longer exists');
-    const count = BookmarkStore.countDescendants(node);
-    const name = node.title || title || '此文件夹';
-    return `确定要删除文件夹“${name}”吗？其中包含 ${count} 个子项，会一并删除。`;
   }
 
   _escapeHtml(str) {

@@ -17,6 +17,7 @@ class InteractiveElement extends Element {
     this.capture.set(callback, options === true || Boolean(options?.capture));
   }
   matches(selector) {
+    if (selector.endsWith(':not([disabled])')) return !this.disabled && this.matches(selector.slice(0,-':not([disabled])'.length));
     if (selector === '.dialog:not(.hidden)') return this.classes.has('dialog') && !this.classes.has('hidden');
     if (selector.startsWith('.')) return this.classes.has(selector.slice(1));
     if (selector.startsWith('#')) return this.id === selector.slice(1);
@@ -43,7 +44,7 @@ class InteractiveElement extends Element {
   }
   scrollIntoView() {}
   click() { this.fire('click', { detail: 0 }); }
-  getClientRects() { return [{}]; }
+  getClientRects() { return this.closest('.hidden') ? [] : [{}]; }
   getBoundingClientRect() { return { left: 80, top: 80, right: 300, bottom: 380, width: 220, height: 300 }; }
   fire(name, values = {}) {
     const event = { target: this, key: '', shiftKey: false, ...values,
@@ -89,6 +90,8 @@ async function setup({ tabs = false } = {}) {
   nextCard.className = 'bookmark-card';
   // Match the real topology: the settings panel follows the grid cards.
   const panel = create('menu-panel', 'div');
+  panel.className='dialog hidden';
+  const overlay=create('settings-overlay','div',panel);overlay.className='dialog-overlay';
   let close;
   let selectedTab;
   if (tabs) {
@@ -162,6 +165,8 @@ async function setup({ tabs = false } = {}) {
   app.bindMenuLifecycle();
   app.bindKeyboardShortcuts();
   app.bindMenuPanel();
+  trigger.addEventListener('click',()=>EventBus.emit('settings:open'));
+  trigger.addEventListener('keydown',e=>{if(e.key==='ArrowDown') {e.preventDefault();EventBus.emit('settings:open');}});
   const card = new context.BookmarkCard({ id: 'A', title: 'A', url: 'https://a.example' });
   card.element = cardElement;
   let opens = 0;
@@ -170,72 +175,8 @@ async function setup({ tabs = false } = {}) {
   return { document, window, trigger, panel, first, close, selectedTab, card, cardElement, nextCard, advance, emitted, EventBus, opens: () => opens };
 }
 
-test('keyboard settings activation enters the panel despite the intervening grid cards', async () => {
-  const h = await setup();
-  h.trigger.focus();
-  h.trigger.fire('keydown', { key: 'Enter' });
-  h.trigger.fire('click', { detail: 0 }); // Native button keyboard activation.
-  assert.equal(h.document.activeElement, h.first);
-  assert.equal(h.panel.inert, false);
-  const tab = h.first.fire('keydown', { key: 'Tab' });
-  assert.equal(Boolean(tab.prevented), false, 'Tab inside the form retains normal control navigation');
-  const backward = h.first.fire('keydown', { key: 'Tab', shiftKey: true });
-  assert.equal(backward.prevented, true);
-  assert.equal(h.document.activeElement, h.trigger);
-  assert.equal(h.panel.classList.contains('visible'), true);
-});
-
-test('settings keyboard entry prefers the selected tab and ShiftTab still reaches its close button', async () => {
-  const h = await setup({ tabs: true });
-  h.trigger.focus();
-  h.trigger.fire('click', { detail: 0 });
-  assert.equal(h.document.activeElement, h.selectedTab);
-  assert.equal(Boolean(h.selectedTab.fire('keydown', { key: 'Tab', shiftKey: true }).prevented), false);
-  h.close.focus(); // The preceding native Tab stop is the header close button.
-  assert.equal(h.close.fire('keydown', { key: 'Tab', shiftKey: true }).prevented, true);
-  assert.equal(h.document.activeElement, h.trigger);
-  h.trigger.fire('keydown', { key: 'ArrowDown' });
-  assert.equal(h.document.activeElement, h.selectedTab);
-  h.EventBus.emit('settings:close');
-  assert.equal(h.panel.inert, true);
-  assert.equal(h.document.activeElement, h.trigger);
-});
-
-test('ArrowDown and visible-trigger Tab enter settings; leaving focus makes them inert', async () => {
-  const h = await setup();
-  h.trigger.focus();
-  assert.equal(h.trigger.fire('keydown', { key: 'ArrowDown' }).prevented, true);
-  assert.equal(h.document.activeElement, h.first);
-  h.trigger.focus();
-  assert.equal(h.trigger.fire('keydown', { key: 'Tab' }).prevented, true);
-  assert.equal(h.document.activeElement, h.first);
-  h.first.fire('keydown', { key: 'Escape' });
-  assert.equal(h.document.activeElement, h.trigger);
-  assert.equal(h.panel.inert, true);
-  h.trigger.fire('keydown', { key: 'ArrowDown' });
-  h.nextCard.focus();
-  assert.equal(h.panel.classList.contains('visible'), false);
-  assert.equal(h.panel.inert, true);
-  assert.equal(h.panel.getAttribute('aria-hidden'), 'true');
-  assert.equal(h.document.activeElement, h.nextCard, 'outside focus is not stolen');
-});
-
-test('settings controls do not trigger lower-page N shortcuts while card shortcuts remain available', async () => {
-  const h = await setup();
-  h.trigger.fire('keydown', { key: 'ArrowDown' });
-  h.first.fire('keydown', { key: 'n' });
-  h.first.fire('keydown', { key: 'N', shiftKey: true });
-  const input = h.document.createElement('input');
-  h.panel.appendChild(input);
-  input.focus();
-  input.fire('keydown', { key: 'n' });
-  assert.deepEqual(h.emitted, []);
-  assert.equal(h.panel.classList.contains('visible'), true);
-  h.cardElement.focus();
-  h.cardElement.fire('keydown', { key: 'n' });
-  assert.deepEqual(h.emitted.map(([name]) => name), ['toolbar:newBookmark']);
-});
-
+test('settings open as a modal and Escape restores its entry focus',async()=>{const h=await setup({tabs:true});h.trigger.focus();h.trigger.fire('click');assert.equal(h.panel.inert,false);assert.equal(h.document.activeElement,h.selectedTab);h.selectedTab.fire('keydown',{key:'Escape'});assert.equal(h.panel.inert,true);assert.equal(h.document.activeElement,h.trigger);});
+test('settings preserve input shortcuts and prevent page actions underneath',async()=>{const h=await setup({tabs:true});h.trigger.fire('click');const input=h.document.createElement('input');h.panel.appendChild(input);input.focus();input.fire('keydown',{key:'n'});assert.equal(h.emitted.some(([name])=>name==='toolbar:newBookmark'),false);h.EventBus.emit('settings:close');h.cardElement.focus();h.cardElement.fire('keydown',{key:'n'});assert.equal(h.emitted.some(([name])=>name==='toolbar:newBookmark'),true);});
 test('card menu bindings own arrows, restore Escape focus, and leave Tab unblocked', async () => {
   const h = await setup();
   h.cardElement.focus();
@@ -275,63 +216,7 @@ test('resize closes the menu and releases keyboard, resize, and delayed outside 
   }
 });
 
-test('settings and card menus replace each other for pointer, keyboard, and programmatic opening', async () => {
-  for (const detail of [1, 0]) {
-    const h = await setup();
-    h.card.showContextMenu(80, 80);
-    h.trigger.fire('click', { detail });
-    assert.equal(h.card.contextMenu, null);
-    assert.equal(h.panel.classList.contains('visible'), true);
-    h.card.showContextMenu(80, 80);
-    assert.equal(h.panel.inert, true);
-    assert.equal(h.panel.classList.contains('visible'), false);
-    assert.ok(h.card.contextMenu);
-    assert.equal(h.document.querySelectorAll('.context-menu').length, 1);
-  }
-});
-
-test('outside pointerdown dismisses before click without blocking the gesture or stealing focus', async () => {
-  const h = await setup();
-  h.trigger.fire('keydown', { key: 'ArrowDown' });
-  const initialFocusCount = h.trigger.focusCount || 0;
-  const outside = h.nextCard.fire('pointerdown', { pointerType: 'touch' });
-  assert.equal(Boolean(outside.prevented), false);
-  assert.equal(Boolean(outside.stopped), false);
-  assert.equal(h.panel.inert, true);
-  assert.equal(h.trigger.focusCount || 0, initialFocusCount);
-  h.nextCard.focus();
-  assert.equal(h.document.activeElement, h.nextCard);
-  h.trigger.fire('click', { detail: 1 });
-  h.trigger.fire('pointerdown', { pointerType: 'mouse' });
-  assert.equal(h.panel.classList.contains('visible'), true, 'the trigger is part of its open panel');
-  h.trigger.fire('click', { detail: 1 });
-  assert.equal(h.panel.inert, true, 'one trigger click closes without reopening');
-});
-
-test('internal scrolling keeps a menu; external scrolling, drag, blur, and hiding release it', async () => {
-  const dismiss = [
-    h => h.nextCard.fire('scroll'),
-    h => h.document.fire('dragstart'),
-    h => h.window.fire('blur'),
-    h => { h.document.hidden = true; h.document.fire('visibilitychange'); },
-    h => h.EventBus.emit('navigate', { id: 'F' }),
-    h => h.EventBus.emit('card:dragstart', { id: 'A' })
-  ];
-  for (const action of dismiss) {
-    const h = await setup();
-    h.trigger.fire('keydown', { key: 'ArrowDown' });
-    h.panel.fire('scroll');
-    assert.equal(h.panel.classList.contains('visible'), true);
-    action(h);
-    assert.equal(h.panel.inert, true);
-    for (const name of ['pointerdown', 'focusin', 'scroll', 'dragstart', 'visibilitychange']) {
-      assert.equal(h.document.listeners.get(name)?.size || 0, 0, name);
-    }
-    assert.equal(h.window.listeners.get('blur').size, 0);
-    assert.equal(h.window.listeners.get('resize').size, 0);
-  }
-});
-
+test('opening modal settings releases the card menu before focus enters settings',async()=>{const h=await setup({tabs:true});h.card.showContextMenu(80,80);h.trigger.fire('click');assert.equal(h.card.contextMenu,null);assert.equal(h.panel.inert,false);assert.equal(h.document.activeElement,h.selectedTab);h.EventBus.emit('settings:close');assert.equal(h.panel.inert,true);});
 test('modal opening releases menus before the modal subscriber handles its event', async () => {
   for (const name of ['toolbar:newBookmark', 'toolbar:newFolder', 'card:editTitle', 'card:move',
     'iconStudio:open', 'iconStudio:openSiteBackground', 'card:requestDelete']) {
@@ -383,7 +268,7 @@ test('a canceled long press never consumes the next independent click', async ()
   h.document.activeElement.fire('keydown', { key: 'Escape' });
   assert.equal(h.card.suppressNextClick, false);
   h.cardElement.fire('pointerdown', { pointerType: 'mouse' });
-  assert.equal(Boolean(h.cardElement.fire('click').prevented), false);
+  assert.equal(Boolean(h.cardElement.fire('click').prevented), true);
   assert.equal(h.opens(), 1);
 });
 

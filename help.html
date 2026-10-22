@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>帮助 · MarkPad</title>
+    <link rel="icon" href="icons/tab-icon.svg" type="image/svg+xml" />
+    <script src="theme-init.js"></script>
+    <link rel="stylesheet" href="css/main.css" />
+  </head>
+  <body class="help-document">
+    <header class="toolbar">
+      <div class="toolbar-row">
+        <a class="help-back" href="index.html" id="help-back">
+          <span data-icon="chevron-left"></span>
+          书签栏
+        </a>
+        <span>帮助</span>
+      </div>
+    </header>
+    <main class="help-scroll">
+      <article class="help-page">
+        <h1>帮助</h1>
+        <p>操作很少，常用的都在固定位置。</p>
+        <h2>浏览与整理</h2>
+        <p>
+          点击或轻触卡片即可打开。顶部「＋」新建书签或文件夹；勾选按钮进入整理，再选择卡片。重命名、移动、图标与删除共用这条路径。
+        </p>
+        <p>
+          移动面板同时选择目录与放置位置，也能在当前目录调整顺序。可多选移动或删除。鼠标右键、长按和拖拽是快捷方式。
+        </p>
+        <h2>图标</h2>
+        <p>
+          自定义图标优先，其次是按名称匹配的内置图标，最后尝试网站声明图标。品牌软陶和彩色扁平整套切换，自定义图片保持原样。恢复默认后重新按这套规则解析。
+        </p>
+        <p>
+          上传支持 SVG、PNG/APNG、GIF、JPG、WebP。位图至少
+          256×256；静态文件不超过 1 MB，动画不超过 10 MB。SVG
+          会经过安全清理，支持的动画保持原始播放。
+        </p>
+        <p>
+          上传图片或网站图标可调整背景、颜色与缩放；融合分析第一帧的边缘颜色，屏幕取色取决于浏览器支持。内置图标保持统一底板。
+        </p>
+        <p>
+          库里没有合适图标时，在工坊打开「生成模板」，复制提示词并附清晰品牌图形，生成后上传。模板只包含名称、风格和制作约束。
+        </p>
+        <h2 id="shortcuts">快捷键</h2>
+        <table>
+          <tbody>
+            <tr>
+              <td><kbd>N / Shift+N</kbd></td>
+              <td>新建书签 / 文件夹</td>
+            </tr>
+            <tr>
+              <td><kbd>Enter / Space</kbd></td>
+              <td>打开或选择卡片</td>
+            </tr>
+            <tr>
+              <td><kbd>方向键</kbd></td>
+              <td>移动卡片焦点</td>
+            </tr>
+            <tr>
+              <td><kbd>F2</kbd></td>
+              <td>重命名</td>
+            </tr>
+            <tr>
+              <td><kbd>Delete</kbd></td>
+              <td>确认删除</td>
+            </tr>
+            <tr>
+              <td><kbd>Ctrl+A / ⌘A</kbd></td>
+              <td>整理时全选</td>
+            </tr>
+            <tr>
+              <td><kbd>Escape</kbd></td>
+              <td>关闭弹层或退出整理</td>
+            </tr>
+            <tr>
+              <td><kbd>Backspace / Alt+←</kbd></td>
+              <td>返回上一级</td>
+            </tr>
+            <tr>
+              <td><kbd>+ / −</kbd></td>
+              <td>调整卡片大小</td>
+            </tr>
+            <tr>
+              <td><kbd>?</kbd></td>
+              <td>帮助</td>
+            </tr>
+          </tbody>
+        </table>
+        <h2>收藏与数据</h2>
+        <p>
+          浏览网页时，点击浏览器工具栏的 MarkPad
+          图标收藏当前页面；同一完整地址不会重复添加。新标签页内的「新建」用于手动输入网址。
+        </p>
+        <p>
+          MarkPad
+          直接使用浏览器书签，移动和删除会同步到浏览器。删除文件夹前核对名称与子项数；批量操作失败时，已完成的项目保留结果，其余项目可以重试。
+        </p>
+      </article>
+    </main>
+    <script type="module" src="help.js"></script>
+  </body>
+</html>

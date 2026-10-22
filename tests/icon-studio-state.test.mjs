@@ -38,12 +38,12 @@ test('only the latest upload updates the preview and rejected validation leaves 
   });
   instance.show(bookmark);
   assert.equal(find('.icon-studio-results').classList.contains('hidden'), true);
-  assert.equal(find('.icon-studio-body').classList.contains('has-preview'), false);
+  assert.equal(find('.icon-studio-body').classList.contains('has-preview'), true);
   const firstRead = instance.handleUpload(uploadEvent('first.svg'));
   const secondRead = instance.handleUpload(uploadEvent('second.svg'));
   first.resolve({ ok: true, kind: 'svg', data: '<svg id="first"></svg>' }); await firstRead;
   assert.equal(find('[data-action="apply"]').disabled, true);
-  assert.equal(instance.currentIcon(), null);
+  assert.equal(instance.currentIcon().value, 'https://site.test/icon.png');
   second.resolve({ ok: true, kind: 'svg', data: '<svg id="second"></svg>' }); await secondRead;
   assert.equal(instance.currentIcon().value, '<svg id="second"></svg>');
   assert.equal(instance.iconScale, 1);
@@ -62,8 +62,8 @@ test('late upload results cannot alter a newly opened studio or its apply state'
   instance.hide(); instance.show({ ...bookmark, id: 'B', title: '新书签' });
   gate.resolve({ ok: true, kind: 'svg', data: '<svg id="old"></svg>' }); await reading;
   assert.equal(instance.bookmark.id, 'B');
-  assert.equal(instance.currentIcon(), null);
-  assert.equal(find('[data-action="apply"]').disabled, true);
+  assert.equal(instance.currentIcon().value, 'https://site.test/icon.png');
+  assert.equal(find('[data-action="apply"]').disabled, false);
   assert.equal(find('[data-action="apply"]').getAttribute('aria-busy'), 'false');
   assert.equal(find('.icon-studio-status').textContent, '');
 });

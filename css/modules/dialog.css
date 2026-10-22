@@ -38,8 +38,8 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: var(--space-5) var(--space-6);
-  border-bottom: 1px solid var(--color-border);
+  padding: 18px 20px 14px;
+  gap: 16px;
 }
 
 .dialog-header h3 {
@@ -64,8 +64,8 @@
 }
 
 .dialog-close .app-icon {
-  width: 18px;
-  height: 18px;
+  width: var(--ui-icon-control-size);
+  height: var(--ui-icon-control-size);
 }
 
 .dialog-close:hover {
@@ -88,8 +88,8 @@
   flex-wrap: wrap;
   align-items: center;
   justify-content: flex-end;
-  gap: var(--space-3);
-  padding: var(--space-5) var(--space-6);
+  gap: 8px;
+  padding: 14px 20px 18px;
   border-top: 1px solid var(--color-border);
 }
 
@@ -102,9 +102,9 @@
 }
 
 .dialog-status {
-  flex: 1 1 100px;
+  flex: 1 1 100%;
   min-width: 0;
-  min-height: 40px;
+  min-height: 0;
   color: var(--text-secondary);
   font-size: var(--font-size-sm);
   line-height: 1.5;
@@ -163,7 +163,7 @@ textarea.form-input {
   outline-offset: 3px;
 }
 
-.form-input[aria-invalid="true"] {
+.form-input[aria-invalid='true'] {
   border-color: var(--danger);
 }
 
@@ -183,8 +183,8 @@ textarea.form-input {
   align-items: center;
   justify-content: center;
   padding: 0 var(--space-5);
-  border-radius: var(--radius-pill);
-  font-size: var(--menu-font-size);
+  border-radius: 13px;
+  font-size: 14px;
   font-weight: var(--ui-font-weight);
   transition:
     background var(--transition-fast),
@@ -231,7 +231,7 @@ textarea.form-input {
   cursor: not-allowed;
 }
 
-.btn[aria-busy="true"] {
+.btn[aria-busy='true'] {
   cursor: progress;
 }
 
@@ -242,7 +242,10 @@ textarea.form-input {
   align-items: center;
   gap: var(--space-2);
   padding: 0 var(--space-3);
-  padding-inline-start: min(calc(var(--space-3) + var(--folder-depth, 0) * var(--space-4)), calc(100% - 112px));
+  padding-inline-start: min(
+    calc(var(--space-3) + var(--folder-depth, 0) * var(--space-4)),
+    calc(100% - 112px)
+  );
   cursor: pointer;
   border-radius: var(--radius-md);
   border: 0;
@@ -250,7 +253,9 @@ textarea.form-input {
   font: inherit;
   text-align: left;
   color: var(--text-secondary);
-  transition: background var(--transition-fast), color var(--transition-fast);
+  transition:
+    background var(--transition-fast),
+    color var(--transition-fast);
 }
 
 .folder-tree-item:not(:disabled):hover {
@@ -264,18 +269,19 @@ textarea.form-input {
 }
 
 .folder-tree-item.selected {
-  background: var(--color-action);
-  color: var(--color-action-text);
+  background: var(--color-bg-soft);
+  color: var(--text-primary);
+  box-shadow: inset 0 0 0 1px var(--color-border);
 }
 
 .folder-tree-item:disabled {
   cursor: wait;
 }
 
-.folder-tree-item[data-current="true"] {
+.folder-tree-item[data-current='true'] {
   cursor: default;
   background: var(--color-bg-soft);
-  color: var(--text-tertiary);
+  color: var(--text-primary);
 }
 
 .folder-tree-item .folder-current {
@@ -291,12 +297,11 @@ textarea.form-input {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  opacity: 0.7;
 }
 
 .folder-tree-item .folder-icon .app-icon {
-  width: 16px;
-  height: 16px;
+  width: var(--ui-icon-size);
+  height: var(--ui-icon-size);
 }
 
 .folder-tree-item .folder-name {
@@ -309,8 +314,12 @@ textarea.form-input {
 }
 
 @keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
 
 @keyframes slideUp {
@@ -324,19 +333,15 @@ textarea.form-input {
   }
 }
 
-@media (max-width: 480px), (max-height: 600px) {
-  .dialog-header,
-  .dialog-footer {
-    padding: var(--space-4) var(--space-5);
-  }
-
-  .dialog-body {
-    padding: var(--space-5);
-  }
+.dialog-header > div {
+  min-width: 0;
+  overflow-wrap: anywhere;
 }
-
-@media (max-width: 480px) {
-  .dialog-status {
-    flex-basis: 100%;
-  }
+.dialog-status:empty {
+  display: none;
+}
+.folder-tree {
+  max-height: 240px;
+  overflow: auto;
+  margin-bottom: 20px;
 }

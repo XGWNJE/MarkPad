@@ -5,7 +5,6 @@ import EventBus from '../core/EventBus.js';
 import BookmarkStore from '../core/BookmarkStore.js';
 import Router from '../core/Router.js';
 import BookmarkCard from './BookmarkCard.js';
-import { iconSvg } from '../core/IconLibrary.js';
 import { getMoveDestination, getPreviewOrder } from '../core/DragOrder.js';
 import GridDragController from './GridDragController.js';
 import CardNavigation from './CardNavigation.js';
@@ -17,6 +16,7 @@ class BookmarkGrid {
     this.cards = new Map();
     this.selectedCards = new Set();
     this.isLoading = false;
+    this.organizing = false;
     this.loadGeneration = 0;
     this.pendingMoves = new Map();
     this.pendingDeletes = new Set();
@@ -27,8 +27,11 @@ class BookmarkGrid {
   }
 
   init() {
+    EventBus.on('grid:organize', active => this.setOrganizing(active));
+    EventBus.on('grid:refresh', () => this.refresh());
     // 监听导航
     EventBus.on('navigate', async ({ id }) => {
+      this.setOrganizing(false);
       await this.loadFolder(id);
     });
 
@@ -99,19 +102,10 @@ class BookmarkGrid {
       } else {
         this.selectedCards.delete(id);
       }
+      EventBus.emit('selection:changed');
     });
 
     EventBus.on('card:drop', operation => this.moveCard(operation));
-
-    // 新建书签
-    EventBus.on('bookmark:create', ({ parentId, title, url }) => {
-      this.createBookmark(parentId, title, url);
-    });
-
-    // 新建文件夹
-    EventBus.on('folder:create', ({ parentId, title }) => {
-      this.createFolder(parentId, title);
-    });
 
     // 初始加载（根节点 ID 启动时已由 Router 解析）
     return this.loadFolder(Router.getRootId());
@@ -120,6 +114,8 @@ class BookmarkGrid {
   async loadFolder(folderId) {
     const generation = ++this.loadGeneration;
     this.isLoading = true;
+    this.grid.inert = true;
+    this.grid.setAttribute('aria-busy', 'true');
     const created = [];
     try {
       if (folderId !== Router.getRootId() && !await BookmarkStore.getNode(folderId)) {
@@ -148,6 +144,7 @@ class BookmarkGrid {
         created.forEach(card => card.destroy());
         return;
       }
+      this.stateElement?.remove();
       const changingFolder = this.currentFolderId !== undefined && this.currentFolderId !== folderId;
       CardNavigation.cancelFolderEntrance(this.grid);
       this.dragController.cancel();
@@ -164,18 +161,31 @@ class BookmarkGrid {
         if (this.grid.children[index] !== card.element) {
           this.grid.insertBefore(card.element, this.grid.children[index] || null);
         }
+        card.setOrganizing?.(this.organizing);
         card.resolveSiteIconWhenVisible();
       }
-      this.renderCreateActions();
+      if (!children.length) this.renderState('这里还没有书签');
+      EventBus.emit('selection:changed');
       this.currentFolderId = folderId;
       this.dragController.animateLayout(previous);
       if (changingFolder) CardNavigation.enterFolder(this.grid);
     } catch (err) {
       created.forEach(card => card.destroy());
       console.error('loadFolder failed:', err);
-      if (generation === this.loadGeneration) this.dragController.showStatus('读取书签失败，请重试');
+      if (generation === this.loadGeneration) {
+        this.dragController.cancel();
+        this.cards.forEach(card => card.destroy());
+        this.cards.clear();
+        this.clearSelection();
+        this.currentFolderId = folderId;
+        this.renderState('暂时无法读取书签', true);
+      }
     } finally {
-      if (generation === this.loadGeneration) this.isLoading = false;
+      if (generation === this.loadGeneration) {
+        this.isLoading = false;
+        this.grid.inert = false;
+        this.grid.setAttribute('aria-busy', 'false');
+      }
     }
   }
 
@@ -219,56 +229,38 @@ class BookmarkGrid {
     }
   }
 
-  renderCreateActions() {
-    if (this.createActions) {
-      this.createActions.forEach(button => this.grid.appendChild(button));
-      return;
-    }
-    this.createActions = [];
-    const actions = [
-      { kind: 'bookmark', icon: 'bookmark-plus', label: '新建书签', event: 'toolbar:newBookmark' },
-      { kind: 'folder', icon: 'folder-plus', label: '新建文件夹', event: 'toolbar:newFolder' }
-    ];
-
-    for (const { kind, icon, label, event } of actions) {
+  renderState(message, retry = false) {
+    this.stateElement?.remove();
+    const state = document.createElement('div');
+    state.className = 'grid-state';
+    state.setAttribute('role', 'status');
+    const title = document.createElement('h2');
+    title.textContent = message;
+    state.appendChild(title);
+    if (retry) {
       const button = document.createElement('button');
-      button.type = 'button';
-      button.className = 'grid-create-card';
-      button.dataset.createKind = kind;
-      button.draggable = false;
-      button.innerHTML = `
-        <span class="grid-create-icon" aria-hidden="true">${iconSvg(icon)}</span>
-        <span class="grid-create-label">${label}</span>
-      `;
-      button.addEventListener('click', () => EventBus.emit(event));
-      this.grid.appendChild(button);
-      this.createActions.push(button);
+      button.type = 'button'; button.className = 'btn btn-secondary'; button.textContent = '重试';
+      button.addEventListener('click', () => this.refresh());
+      state.appendChild(button);
     }
+    this.stateElement = state;
+    this.grid.appendChild(state);
   }
 
-  async createBookmark(parentId, title, url) {
-    try {
-      const bookmark = await BookmarkStore.create(parentId, title, url);
-      await this.refresh();
-      return bookmark;
-    } catch (err) {
-      console.error('Failed to create bookmark:', err);
+  setOrganizing(active) {
+    if (active && !this.organizing && !this.dragController.session && !this.dragController.saving) {
+      this.dragController.clearMotion();
+      this.cards.forEach(card => card.setInteractionPaused?.(false));
     }
-  }
-
-  async createFolder(parentId, title) {
-    try {
-      const folder = await BookmarkStore.create(parentId, title);
-      await this.refresh();
-      return folder;
-    } catch (err) {
-      console.error('Failed to create folder:', err);
-    }
+    this.organizing = Boolean(active);
+    if (!active) this.clearSelection();
+    this.cards.forEach(card => card.setOrganizing?.(this.organizing));
+    EventBus.emit('selection:changed');
   }
 
   async deleteCard(id, isFolder) {
     const card = this.cards.get(id);
-    if (!card) return;
+    if (!card) return false;
 
     try {
       // 先确认写入成功；失败时卡片仍可操作。
@@ -279,10 +271,11 @@ class BookmarkGrid {
       this.cards.delete(id);
       this.selectedCards.delete(id);
       await this.refresh();
+      return true;
     } catch (err) {
       console.error('Delete failed:', err);
-      this.dragController.showStatus('删除失败，请重试');
       await this.refresh();
+      return false;
     } finally {
       this.pendingDeletes.delete(id);
     }
@@ -313,34 +306,26 @@ class BookmarkGrid {
     this.selectedCards.forEach(id => {
       const card = this.cards.get(id);
       if (card) {
-        card.selected = false;
+        card.setSelected ? card.setSelected(false) : (card.selected = false);
         card.element.classList.remove('selected');
       }
     });
     this.selectedCards.clear();
+    EventBus.emit('selection:changed');
   }
 
   selectAll() {
+    this.setOrganizing(true);
     this.cards.forEach((card, id) => {
-      if (!card.isFolder) {
-        card.selected = true;
-        card.element.classList.add('selected');
-        this.selectedCards.add(id);
-      }
+      card.setSelected ? card.setSelected(true) : (card.selected = true);
+      card.element.classList.add('selected');
+      this.selectedCards.add(id);
     });
+    EventBus.emit('selection:changed');
   }
 
   deleteSelected() {
-    this.selectedCards.forEach((id) => {
-      const card = this.cards.get(id);
-      if (card) {
-        EventBus.emit('card:requestDelete', {
-          id,
-          isFolder: card.isFolder,
-          title: card.data.title
-        });
-      }
-    });
+    EventBus.emit('selection:delete');
   }
 }
 

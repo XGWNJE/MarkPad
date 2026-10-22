@@ -5,6 +5,7 @@ import { createCustomIconRecord, isValidHexColor, normalizeIconScale } from '../
 import { backgroundCssValue, cloneIconBackground, getIconScale } from '../../core/icons/IconBackground.js';
 import { getLibraryIconById, searchLibraryIcons } from '../../core/icons/IconLibraryProvider.js';
 import { buildIconPrompt } from '../../core/icons/IconPrompt.js';
+import { resolveBookmarkIcon } from '../../core/icons/IconResolver.js';
 
 // A small DOM stand-in for state tests. Layout, clipping, and focus-ring rendering
 // are intentionally left to browser acceptance rather than simulated here.
@@ -74,6 +75,7 @@ export class Element extends BaseElement {
   }
   dispatch(name, details = {}) {
     if (name === 'click' && this.disabled) return;
+    this[`on${name}`]?.({ target: this, preventDefault() {}, ...details });
     for (const listener of this.listeners.get(name) || []) listener({ target: this, preventDefault() {}, ...details });
   }
   click() { this.dispatch('click'); }
@@ -93,14 +95,16 @@ export async function setupDialog(name, storeOverrides = {}, dependencyOverrides
     getElementById(id) { return body.querySelector(`#${id}`); },
     addEventListener() {}
   };
-  const trigger = document.createElement('button'); trigger.id = 'menu-trigger'; body.appendChild(trigger); trigger.focus();
+  const trigger = document.createElement('button'); trigger.id = 'more-trigger'; body.appendChild(trigger); trigger.focus();
   if (name !== 'IconStudio') {
     const dialog = document.createElement('div'); dialog.className = 'dialog hidden'; dialog.id = name === 'EditDialog' ? 'edit-dialog' : 'move-dialog';
-    dialog.innerHTML = `<div class="dialog-overlay"></div><div class="dialog-content"><div class="dialog-header"><h3 id="edit-dialog-title"></h3><button data-action="close"></button></div><div class="dialog-body">${name === 'EditDialog' ? '<div><input id="edit-title"></div><div><input id="edit-url"></div>' : '<div id="move-dialog-tree"></div>'}</div><div class="dialog-footer"><button data-action="cancel">取消</button><button id="${name === 'EditDialog' ? 'edit-dialog-confirm' : 'move-dialog-confirm'}">确认</button></div></div>`;
+    dialog.innerHTML = `<div class="dialog-overlay"></div><div class="dialog-content"><div class="dialog-header"><h3 id="edit-dialog-title"></h3><button data-action="close"></button></div><div class="dialog-body">${name === 'EditDialog' ? '<div><input id="edit-title"></div><div><input id="edit-url"></div>' : '<div id="move-dialog-tree"></div><select id="move-position"><option value="last">最后</option></select>'}</div><div class="dialog-footer"><button data-action="cancel">取消</button><button id="${name === 'EditDialog' ? 'edit-dialog-confirm' : 'move-dialog-confirm'}">确认</button></div></div>`;
     body.appendChild(dialog);
   }
   const writes = [];
   const store = {
+    async create(...args) { writes.push(['create', ...args]); },
+    async getChildren() { return []; },
     async update(...args) { writes.push(['update', ...args]); },
     async move(...args) { writes.push(['move', ...args]); },
     async getFolderTree() { return [{ id: 'root', title: '书签栏', children: [{ id: 'F', title: '文件夹' }] }]; },
@@ -112,7 +116,7 @@ export async function setupDialog(name, storeOverrides = {}, dependencyOverrides
   const context = vm.createContext({
     document, EventBus, BookmarkStore: store, Router: { getCurrent: () => ({ id: 'root' }) },
     iconSvg: () => '', getLibraryIconCandidates: () => ({ candidates: [] }),
-    getLibraryIconById, searchLibraryIcons, buildIconPrompt,
+    getLibraryIconById, searchLibraryIcons, buildIconPrompt, resolveBookmarkIcon,
     createCustomIconRecord, isValidHexColor, normalizeIconScale, backgroundCssValue, cloneIconBackground, getIconScale,
     readIconUpload: async () => ({ ok: true, kind: 'svg', data: '<svg></svg>' }),
     analyzeIconBackground: async () => ({ ok: true, result: { type: 'solid', color: '#445566' } }),

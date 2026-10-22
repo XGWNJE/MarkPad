@@ -1,82 +1,60 @@
 .breadcrumb {
-  flex: 0 1 auto;
-  width: fit-content;
   display: flex;
   align-items: center;
-  justify-content: flex-start;
-  gap: var(--space-1);
+  gap: 3px;
   min-width: 0;
-  max-width: min(62vw, 720px);
-  min-height: 34px;
-  padding: 0;
-  background: transparent;
-  border: 1px solid transparent;
-  border-radius: var(--radius-pill);
-  z-index: 50;
-  opacity: 0;
-  transition:
-    opacity var(--transition-base),
-    width var(--transition-base),
-    max-width var(--transition-base);
-  overflow: hidden;
-}
-
-.breadcrumb.visible {
-  opacity: 1;
-}
-
-.breadcrumb.visible:hover,
-.breadcrumb:focus-within {
-  opacity: 1;
+  flex: 1;
 }
 
 .breadcrumb-item {
-  max-width: min(220px, 30vw);
+  flex: none;
+  min-width: 44px;
   min-height: 44px;
-  display: inline-flex;
-  align-items: center;
-  padding: 0 var(--space-2);
-  border-radius: var(--radius-pill);
-  color: var(--text-secondary);
-  font-size: var(--font-size-base);
-  line-height: var(--ui-line-height);
-  cursor: pointer;
+  padding: 8px 9px;
+  border-radius: 12px;
   white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  transition:
-    background var(--transition-fast),
-    color var(--transition-fast);
+  color: var(--text-secondary);
+  font-size: 15px;
 }
 
-.breadcrumb-item:hover {
-  background: color-mix(in srgb, var(--color-bg-soft) 72%, transparent);
-  color: var(--text-primary);
+.breadcrumb-item:hover,
+.path-trigger:hover {
+  background: var(--color-bg-soft);
 }
 
 .breadcrumb-item.active {
-  background: transparent;
   color: var(--text-primary);
-  font-size: var(--font-size-md);
-  font-weight: var(--ui-heading-weight);
-  cursor: default;
+  font-size: 16px;
+  font-weight: 600;
+  min-width: 44px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  flex: 0 1 auto;
 }
 
 .breadcrumb-separator {
+  flex: none;
   color: var(--text-secondary);
-  font-size: var(--font-size-xs);
-  flex-shrink: 0;
-  user-select: none;
 }
 
-@media (max-width: 768px) {
-  .breadcrumb {
-    max-width: calc(100vw - 124px);
-    min-height: 32px;
-  }
+.breadcrumb-separator .app-icon {
+  width: 14px;
+  height: 14px;
+}
 
-  .breadcrumb-item {
-    max-width: 34vw;
-    padding: 0 var(--space-2);
-  }
+.path-trigger {
+  flex: none;
+  min-width: 44px;
+  min-height: 44px;
+  border-radius: 12px;
+  display: grid;
+  place-items: center;
+}
+
+.breadcrumb-measure {
+  position: fixed;
+  visibility: hidden;
+  pointer-events: none;
+  width: max-content;
+  white-space: nowrap;
 }

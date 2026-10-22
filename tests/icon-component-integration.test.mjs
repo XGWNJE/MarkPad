@@ -27,7 +27,7 @@ test('website icons use an isolated image element and are not injected as remote
 test('icon content fills the card by default in both rendering paths', async () => {
   const cardCss = await read('css/modules/card.css');
 
-  assert.match(cardCss, /\.card-icon svg \{[^}]*width: 100%;[^}]*height: 100%;[^}]*\}/);
+  assert.match(cardCss, /\.card-icon svg,\s*\.card-icon-image \{[^}]*width: 100%;[^}]*height: 100%;[^}]*\}/);
   assert.match(cardCss, /\.card-icon-image \{[^}]*width: 100%;[^}]*height: 100%;[^}]*object-fit: contain;[^}]*\}/);
   // 缩放 100% 即填满；默认文件夹图标是应用自身的线性图形，保持原来的比例。
   assert.match(cardCss, /\.card-icon\.folder-default \.card-folder-svg \{[^}]*width: 56%;[^}]*\}/);
@@ -38,9 +38,9 @@ test('IconStudio offers only curated candidates and original-file upload control
 
   assert.match(source, /getLibraryIconCandidates/);
   assert.match(source, /readIconUpload/);
-  assert.match(source, /保留原样/);
-  assert.match(source, /自动融合/);
-  assert.match(source, /屏幕取色/);
+  assert.match(source, /data-background-mode="raw"/);
+  assert.match(source, /data-background-mode="auto"/);
+  assert.match(source, /取色/);
   assert.doesNotMatch(source, /IconSourceProvider|iconfont|Iconify|canvas/);
 });
 
@@ -68,10 +68,10 @@ test('icon studio persists scale and card rendering applies it without changing 
   assert.match(studio, /scale: this\.iconScale/);
   assert.match(studio, /scale: this\.iconScale \}/);
   assert.match(card, /--icon-content-scale/);
-  assert.match(cardCss, /transform:\s*scale\(var\(--icon-content-scale, 1\)\);/);
+  assert.match(cardCss, /transform:\s*scale\(var\(--icon-content-scale, ?1\)\);/);
 });
 
-test('background editor previews the actual card and does not use a native color input as its primary control', async () => {
+test('background editor previews the actual card and uses one native color control with precise HEX input', async () => {
   const studio = await read('components/IconStudio.js');
   const css = await read('css/modules/icon-studio.css');
 
@@ -80,9 +80,9 @@ test('background editor previews the actual card and does not use a native color
   assert.match(studio, /analyzeIconBackground/);
   assert.match(studio, /BookmarkStore\.getCustomIcon\(bookmark\.id\)/);
   assert.match(studio, /customEditing/);
-  assert.doesNotMatch(studio, /type="color"/);
-  assert.match(css, /\.icon-hue-wheel/);
-  assert.match(css, /\.icon-sv-plane/);
+  assert.match(studio, /type="color"/);
+  assert.match(css, /\.icon-color-native/);
+  assert.match(css, /\.icon-color-hex/);
 });
 
 test('BookmarkGrid starts website-icon visibility observation only after each card is mounted', async () => {
@@ -115,7 +115,7 @@ test('website icon cache keeps downloaded bytes permanently and retries failures
   assert.match(card, /BookmarkStore\.clearSiteIcon\(this\.data\.url\)/);
 });
 
-test('a website icon that cannot be displayed falls back to the text surface and is not re-downloaded', async () => {
+test('a website icon that cannot be displayed keeps its title and is not re-downloaded', async () => {
   const card = await read('components/BookmarkCard.js');
 
   assert.match(card, /image\.addEventListener\('error'/);

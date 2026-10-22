@@ -1,0 +1,62 @@
+.help-document {
+  display: flex;
+  flex-direction: column;
+}
+
+.help-document .toolbar-row {
+  justify-content: flex-start;
+}
+
+.help-back {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 44px;
+  color: var(--text-secondary);
+  font-size: 15px;
+  text-decoration: none;
+}
+
+.help-scroll {
+  flex: 1;
+  min-height: 0;
+  overflow: auto;
+  padding: 46px clamp(20px, 4vw, 48px) 80px;
+  scroll-padding-top: 24px;
+}
+
+.help-page {
+  max-width: 700px;
+  margin: 0 auto;
+  user-select: text;
+}
+
+.help-page h1 {
+  font-size: 30px;
+  font-weight: 600;
+  margin: 10px 0 8px;
+}
+
+.help-page h2 {
+  font-size: 18px;
+  font-weight: 600;
+  margin: 32px 0 12px;
+}
+
+.help-page p {
+  font-size: 14px;
+  color: var(--text-secondary);
+  line-height: 1.8;
+  margin: 12px 0;
+}
+
+.help-page table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+
+.help-page td {
+  padding: 12px 8px;
+  border-bottom: 1px solid var(--color-border);
+}

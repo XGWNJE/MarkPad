@@ -1,253 +1,554 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="zh-CN">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>MarkPad</title>
-  <!-- 标签页使用高对比的 16px 专用图标，避免完整应用图标缩小后细节丢失。 -->
-  <link rel="icon" type="image/svg+xml" sizes="any" href="icons/tab-icon.svg">
-  <link rel="icon" type="image/png" sizes="48x48" href="icons/icon48.png">
-  <!-- 在首次绘制前定好 data-theme，避免深色模式闪一下亮色；细节见 theme-init.js -->
-  <script src="theme-init.js"></script>
-  <link rel="stylesheet" href="css/main.css">
-</head>
-<body>
-  <div id="app" class="page-enter-pending">
-    <!-- 顶部工具栏 -->
-    <header id="toolbar" class="toolbar">
-      <nav id="breadcrumb" class="breadcrumb">
-        <span class="breadcrumb-item" data-id="1">书签栏</span>
-      </nav>
-
-      <div class="toolbar-section toolbar-utility-actions">
-        <button id="menu-trigger" class="toolbar-btn toolbar-icon-btn menu-trigger" type="button" aria-label="设置" aria-controls="menu-panel" aria-haspopup="dialog" aria-expanded="false" title="设置">
-          <span class="toolbar-icon" data-icon="settings"></span>
-        </button>
-      </div>
-    </header>
-
-    <!-- 书签内容区（卡片网格） -->
-    <main id="content" class="content">
-      <!-- 网格滚动区 -->
-      <div class="grid-scroll">
-        <div class="grid-scroll-inner">
-          <div id="bookmark-grid" class="bookmark-grid"></div>
-        </div>
-      </div>
-    </main>
-
-    <!-- 拖拽：左侧移动面板 -->
-    <div id="drag-move-panel" class="drag-side-panel drag-move-panel">
-      <div class="drag-panel-header">移动到…</div>
-      <div id="drag-folder-tree" class="drag-folder-tree"></div>
-    </div>
-
-    <!-- 拖拽：右侧删除区域 -->
-    <div id="drag-delete-zone" class="drag-delete-zone">
-      <div class="drag-panel-header">删除书签</div>
-      <div class="drag-delete-content">
-        <div class="drag-delete-icon" data-icon="trash"></div>
-        <div class="drag-delete-label">松手后确认删除</div>
-      </div>
-    </div>
-
-    <!-- 头部工具面板 -->
-    <div id="menu-panel" class="menu-panel" role="dialog" aria-labelledby="settings-title" inert aria-hidden="true">
-      <div class="menu-panel-header">
-        <div id="settings-title" class="menu-panel-title">设置</div>
-        <button id="settings-close" class="menu-panel-close" type="button" aria-label="关闭设置"><span data-icon="x"></span></button>
-      </div>
-      <div id="settings-tabs" class="menu-tabs" role="tablist" aria-label="设置分类">
-        <button id="settings-tab-appearance" class="menu-tab" type="button" role="tab" aria-controls="settings-pane-appearance" aria-selected="true" tabindex="0">外观</button>
-        <button id="settings-tab-text" class="menu-tab" type="button" role="tab" aria-controls="settings-pane-text" aria-selected="false" tabindex="-1">文字</button>
-        <button id="settings-tab-behavior" class="menu-tab" type="button" role="tab" aria-controls="settings-pane-behavior" aria-selected="false" tabindex="-1">操作</button>
-      </div>
-      <div id="settings-content" class="menu-panel-content">
-        <div id="settings-pane-appearance" class="menu-tab-panel" role="tabpanel" aria-labelledby="settings-tab-appearance">
-          <div class="menu-section menu-section-major">
-            <div class="menu-section-heading">
-              <div class="menu-section-label">主题</div>
-              <p>浅色和深色两种配色，深色统一使用中性深灰。</p>
-            </div>
-            <div class="menu-toggle-group" id="theme-group">
-              <button class="menu-toggle-btn" type="button" data-value="light" id="theme-light">浅色</button>
-              <button class="menu-toggle-btn" type="button" data-value="dark" id="theme-dark">深色</button>
-            </div>
-          </div>
-          <div class="menu-section menu-section-major">
-            <div class="menu-section-heading">
-              <div class="menu-section-label">图标风格</div>
-              <p>切换整套内置图标；上传的自定义图标优先保留。</p>
-            </div>
-            <div class="menu-toggle-group" id="icon-style-group" role="group" aria-label="内置图标风格">
-              <button class="menu-toggle-btn" type="button" data-value="clay">品牌软陶</button>
-              <button class="menu-toggle-btn" type="button" data-value="flat">彩色扁平</button>
-            </div>
-          </div>
-          <div class="menu-section menu-section-major">
-            <div class="menu-section-heading">
-              <div class="menu-section-label">书签卡片</div>
-              <p>控制卡片尺寸、圆角与间距；文字排版在「文字」页签调整。</p>
-            </div>
-            <div class="menu-range-stack">
-                <label class="menu-range-control">
-                  <span>卡片尺寸 <strong id="card-size-value">84px</strong></span>
-                  <input type="range" id="card-size" min="80" max="200" step="1" value="84">
-                  <span class="menu-range-scale"><small>紧凑</small><small>宽松</small></span>
-                </label>
-                <label class="menu-range-control">
-                  <span>卡片圆角 <strong id="card-radius-value">10%</strong></span>
-                  <input type="range" id="card-radius" min="0" max="50" step="1" value="10">
-                  <span class="menu-range-scale"><small>直角</small><small>圆润</small></span>
-                </label>
-                <label class="menu-range-control">
-                  <span>卡片间距 <strong id="card-gap-value">52px</strong></span>
-                  <input type="range" id="card-gap" min="8" max="64" step="4" value="52">
-                  <span class="menu-range-scale"><small>紧凑</small><small>舒展</small></span>
-                </label>
-            </div>
-          </div>
-          <div class="menu-section menu-section-major">
-            <div class="menu-section-heading">
-              <div class="menu-section-label">顶部栏</div>
-              <p>调整导航和工具按钮背后的衬底强度。</p>
-            </div>
-            <div class="menu-range-stack">
-              <label class="menu-range-control">
-                <span>顶部栏背景强度 <strong id="header-opacity-value">94%</strong></span>
-                <input type="range" id="header-opacity" min="55" max="100" step="1" value="94">
-                <span class="menu-range-scale"><small>更通透</small><small>更清晰</small></span>
-              </label>
-            </div>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>MarkPad</title>
+    <link
+      rel="icon"
+      type="image/svg+xml"
+      sizes="any"
+      href="icons/tab-icon.svg"
+    />
+    <link rel="icon" type="image/png" sizes="48x48" href="icons/icon48.png" />
+    <script src="theme-init.js"></script>
+    <link rel="stylesheet" href="css/main.css" />
+  </head>
+  <body>
+    <div id="app" class="page-enter-pending">
+      <header class="toolbar visible" id="toolbar">
+        <div class="toolbar-row">
+          <nav id="breadcrumb" class="breadcrumb" aria-label="文件夹路径"></nav>
+          <div class="toolbar-section toolbar-utility-actions">
+            <button
+              id="new-trigger"
+              type="button"
+              class="toolbar-btn toolbar-icon-btn"
+              aria-label="新建"
+              aria-haspopup="menu"
+              aria-expanded="false"
+              title="新建"
+            >
+              <span data-icon="plus"></span>
+            </button>
+            <button
+              id="organize-trigger"
+              type="button"
+              class="toolbar-btn toolbar-icon-btn"
+              aria-label="整理书签"
+              title="整理书签"
+            >
+              <span data-icon="square-check"></span>
+            </button>
+            <button
+              id="more-trigger"
+              type="button"
+              class="toolbar-btn toolbar-icon-btn"
+              aria-label="更多"
+              aria-haspopup="menu"
+              aria-expanded="false"
+              title="更多"
+            >
+              <span data-icon="ellipsis"></span>
+            </button>
           </div>
         </div>
-        <div id="settings-pane-text" class="menu-tab-panel" role="tabpanel" aria-labelledby="settings-tab-text" hidden>
-          <div class="menu-section menu-section-major">
-            <div class="menu-section-heading">
-              <div class="menu-section-label">文字</div>
-              <p>字体应用于整个页面；字号调整卡片文字，字距只调整标题。</p>
-            </div>
-            <div class="menu-range-stack">
-              <label class="menu-select-control">
-                <span>字体</span>
-                <select id="card-font-family">
-                  <option value="system">系统清晰</option>
-                  <option value="pingfang">苹方</option>
-                  <option value="yahei">微软雅黑</option>
-                  <option value="noto">思源黑体</option>
-                  <option value="serif">思源宋体</option>
-                </select>
-              </label>
-              <label class="menu-range-control">
-                <span>标题字号 <strong id="card-title-size-value">16px</strong></span>
-                <input type="range" id="card-title-size" min="14" max="20" step="1" value="16">
-                <span class="menu-range-scale"><small>紧凑</small><small>醒目</small></span>
-              </label>
-              <label class="menu-range-control">
-                <span>标题字距 <strong id="card-title-tracking-value">0.01em</strong></span>
-                <input type="range" id="card-title-tracking" min="-2" max="8" step="1" value="1">
-                <span class="menu-range-scale"><small>紧凑</small><small>舒展</small></span>
-              </label>
-            </div>
+        <div id="selection-bar" class="selection-bar" hidden>
+          <span id="selection-count">已选 0 项</span>
+          <div class="selection-actions">
+            <button
+              id="action-rename"
+              type="button"
+              class="toolbar-btn toolbar-icon-btn"
+              aria-label="重命名"
+              title="重命名"
+            >
+              <span data-icon="pencil"></span>
+            </button>
+            <button
+              id="action-move"
+              type="button"
+              class="toolbar-btn toolbar-icon-btn"
+              aria-label="移动或排序"
+              title="移动或排序"
+            >
+              <span data-icon="folder-input"></span>
+            </button>
+            <button
+              id="action-icon"
+              type="button"
+              class="toolbar-btn toolbar-icon-btn"
+              aria-label="图标"
+              title="图标"
+            >
+              <span data-icon="image"></span>
+            </button>
+            <button
+              id="action-delete"
+              type="button"
+              class="toolbar-btn toolbar-icon-btn danger"
+              aria-label="删除"
+              title="删除"
+            >
+              <span data-icon="trash"></span>
+            </button>
+            <button
+              id="action-more"
+              type="button"
+              class="toolbar-btn toolbar-icon-btn"
+              aria-label="更多整理操作"
+              aria-haspopup="menu"
+              aria-expanded="false"
+              title="更多整理操作"
+            >
+              <span data-icon="ellipsis"></span>
+            </button>
           </div>
-        </div>
-        <div id="settings-pane-behavior" class="menu-tab-panel" role="tabpanel" aria-labelledby="settings-tab-behavior" hidden>
-          <div class="menu-section">
-            <div class="menu-section-label">打开行为</div>
-            <div class="menu-toggle-group" id="open-mode-group">
-              <button class="menu-toggle-btn" type="button" data-value="new" id="open-mode-new">新标签页</button>
-              <button class="menu-toggle-btn" type="button" data-value="current" id="open-mode-current">当前页</button>
-            </div>
-          </div>
-          <div class="menu-section">
-            <div class="menu-section-label">快捷键</div>
-            <div class="shortcuts-list">
-              <div class="shortcut-item"><kbd>N</kbd> 新建书签</div>
-              <div class="shortcut-item"><kbd>Shift+N</kbd> 新建文件夹</div>
-              <div class="shortcut-item"><kbd>Enter</kbd> 打开选中项</div>
-              <div class="shortcut-item"><kbd>←</kbd><kbd>→</kbd><kbd>↑</kbd><kbd>↓</kbd> 导航</div>
-              <div class="shortcut-item"><kbd>Backspace</kbd> 返回上级</div>
-              <div class="shortcut-item"><kbd>Delete</kbd> 删除选中项</div>
-              <div class="shortcut-item"><kbd>F2</kbd> 编辑选中项</div>
-              <div class="shortcut-item"><kbd>Ctrl+Click</kbd> 多选</div>
-              <div class="shortcut-item"><kbd>=</kbd> / <kbd>-</kbd> 放大 / 缩小卡片</div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- 编辑书签弹窗 -->
-    <div id="edit-dialog" class="dialog hidden">
-      <div class="dialog-overlay"></div>
-      <div class="dialog-content">
-        <div class="dialog-header">
-          <h3 id="edit-dialog-title">新建书签</h3>
-          <button class="dialog-close" data-action="close" aria-label="关闭">
-            <span data-icon="x"></span>
+          <button id="organize-done" type="button" class="text-button">
+            完成
           </button>
         </div>
-        <div class="dialog-body">
-          <div class="form-group">
-            <label for="edit-title">标题</label>
-            <input type="text" id="edit-title" class="form-input" placeholder="输入书签标题" autocomplete="off">
+      </header>
+      <main class="content">
+        <div class="grid-scroll" id="grid-scroll">
+          <div class="grid-scroll-inner">
+            <div
+              class="bookmark-grid"
+              id="bookmark-grid"
+              aria-label="书签"
+            ></div>
           </div>
-          <div class="form-group">
-            <label for="edit-url">网址</label>
-            <input type="url" id="edit-url" class="form-input" placeholder="https://example.com" autocomplete="off">
+        </div>
+      </main>
+      <aside id="drag-move-panel" class="drag-move-panel" aria-label="移动书签">
+        <div class="drag-panel-header">
+          <span class="drag-panel-symbol" data-icon="folder-input"></span>
+          <span>移动到</span>
+        </div>
+        <div id="drag-folder-tree" class="drag-folder-tree"></div>
+      </aside>
+      <aside
+        id="drag-delete-zone"
+        class="drag-delete-zone"
+        aria-label="删除投放区"
+      >
+        <div class="drag-delete-content">
+          <span class="drag-delete-icon" data-icon="trash"></span>
+          <div class="drag-delete-copy">
+            <span class="drag-delete-title">删除</span>
+            <span class="drag-delete-label">松手后确认</span>
           </div>
         </div>
-        <div class="dialog-footer">
-          <button class="btn btn-secondary" data-action="cancel">取消</button>
-          <button class="btn btn-primary" id="edit-dialog-confirm">确认</button>
+      </aside>
+      <div
+        id="menu-panel"
+        class="dialog hidden"
+        inert
+        aria-hidden="true"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="settings-title"
+      >
+        <div class="dialog-overlay"></div>
+        <div class="dialog-content menu-panel-content-shell">
+          <div class="dialog-header">
+            <h3 id="settings-title">设置</h3>
+            <button
+              class="dialog-close"
+              type="button"
+              id="settings-close"
+              aria-label="关闭设置"
+            >
+              <span data-icon="x"></span>
+            </button>
+          </div>
+          <div
+            class="menu-tabs"
+            id="settings-tabs"
+            role="tablist"
+            aria-label="设置分类"
+          >
+            <button
+              type="button"
+              class="menu-tab"
+              role="tab"
+              id="settings-tab-appearance"
+              aria-selected="true"
+              aria-controls="settings-pane-appearance"
+              tabindex="0"
+            >
+              外观
+            </button>
+            <button
+              type="button"
+              class="menu-tab"
+              role="tab"
+              id="settings-tab-text"
+              aria-selected="false"
+              aria-controls="settings-pane-text"
+              tabindex="-1"
+            >
+              文字
+            </button>
+            <button
+              type="button"
+              class="menu-tab"
+              role="tab"
+              id="settings-tab-behavior"
+              aria-selected="false"
+              aria-controls="settings-pane-behavior"
+              tabindex="-1"
+            >
+              操作
+            </button>
+          </div>
+          <div class="menu-panel-content" id="settings-content">
+            <div
+              id="settings-pane-appearance"
+              class="menu-tab-panel"
+              role="tabpanel"
+              aria-labelledby="settings-tab-appearance"
+            >
+              <div class="menu-section">
+                <div class="menu-section-label">主题</div>
+                <div class="menu-toggle-group" id="theme-group">
+                  <button
+                    class="menu-toggle-btn"
+                    type="button"
+                    id="theme-light"
+                    data-value="light"
+                  >
+                    浅色
+                  </button>
+                  <button
+                    class="menu-toggle-btn"
+                    type="button"
+                    id="theme-dark"
+                    data-value="dark"
+                  >
+                    深色
+                  </button>
+                </div>
+              </div>
+              <div class="menu-section">
+                <div class="menu-section-label">图标</div>
+                <div class="menu-toggle-group" id="icon-style-group">
+                  <button
+                    class="menu-toggle-btn"
+                    type="button"
+                    id="icon-style-clay"
+                    data-value="clay"
+                  >
+                    品牌软陶
+                  </button>
+                  <button
+                    class="menu-toggle-btn"
+                    type="button"
+                    id="icon-style-flat"
+                    data-value="flat"
+                  >
+                    彩色扁平
+                  </button>
+                </div>
+              </div>
+              <div class="menu-section">
+                <label class="menu-range-control">
+                  <span>
+                    卡片尺寸
+                    <strong id="card-size-value">88px</strong>
+                  </span>
+                  <input
+                    type="range"
+                    id="card-size"
+                    min="80"
+                    max="200"
+                    step="1"
+                    value="88"
+                  />
+                </label>
+                <label class="menu-range-control">
+                  <span>
+                    圆角
+                    <strong id="card-radius-value">32%</strong>
+                  </span>
+                  <input
+                    type="range"
+                    id="card-radius"
+                    min="0"
+                    max="50"
+                    step="1"
+                    value="32"
+                  />
+                </label>
+                <label class="menu-range-control">
+                  <span>
+                    间距
+                    <strong id="card-gap-value">28px</strong>
+                  </span>
+                  <input
+                    type="range"
+                    id="card-gap"
+                    min="8"
+                    max="64"
+                    step="4"
+                    value="28"
+                  />
+                </label>
+              </div>
+              <details class="menu-section more-appearance">
+                <summary>
+                  更多外观
+                  <span data-icon="chevron-right"></span>
+                </summary>
+                <label class="menu-range-control">
+                  <span>
+                    顶部栏背景
+                    <strong id="header-opacity-value">94%</strong>
+                  </span>
+                  <input
+                    type="range"
+                    id="header-opacity"
+                    min="55"
+                    max="100"
+                    step="1"
+                    value="94"
+                  />
+                </label>
+              </details>
+            </div>
+            <div
+              id="settings-pane-text"
+              class="menu-tab-panel"
+              role="tabpanel"
+              aria-labelledby="settings-tab-text"
+              hidden
+            >
+              <div class="menu-section">
+                <label class="menu-select-control">
+                  <span>字体</span>
+                  <select id="card-font-family">
+                    <option value="system">系统清晰</option>
+                    <option value="pingfang">苹方</option>
+                    <option value="yahei">微软雅黑</option>
+                    <option value="noto">思源黑体</option>
+                    <option value="serif">思源宋体</option>
+                  </select>
+                </label>
+                <label class="menu-range-control">
+                  <span>
+                    标题字号
+                    <strong id="card-title-size-value">14px</strong>
+                  </span>
+                  <input
+                    type="range"
+                    id="card-title-size"
+                    min="14"
+                    max="20"
+                    step="1"
+                    value="14"
+                  />
+                </label>
+                <label class="menu-range-control">
+                  <span>
+                    标题字距
+                    <strong id="card-title-tracking-value">0em</strong>
+                  </span>
+                  <input
+                    type="range"
+                    id="card-title-tracking"
+                    min="-2"
+                    max="8"
+                    step="1"
+                    value="0"
+                  />
+                </label>
+              </div>
+            </div>
+            <div
+              id="settings-pane-behavior"
+              class="menu-tab-panel"
+              role="tabpanel"
+              aria-labelledby="settings-tab-behavior"
+              hidden
+            >
+              <div class="menu-section">
+                <div class="menu-section-label">打开书签</div>
+                <div class="menu-toggle-group" id="open-mode-group">
+                  <button
+                    class="menu-toggle-btn"
+                    type="button"
+                    id="open-mode-current"
+                    data-value="current"
+                  >
+                    当前页
+                  </button>
+                  <button
+                    class="menu-toggle-btn"
+                    type="button"
+                    id="open-mode-new"
+                    data-value="new"
+                  >
+                    后台新标签页
+                  </button>
+                </div>
+              </div>
+              <a class="help-link" href="help.html#shortcuts">
+                <span data-icon="circle-question-mark"></span>
+                查看快捷键
+                <span data-icon="chevron-right"></span>
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div
+        id="edit-dialog"
+        class="dialog hidden"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="edit-dialog-title"
+      >
+        <div class="dialog-overlay"></div>
+        <div class="dialog-content">
+          <div class="dialog-header">
+            <h3 id="edit-dialog-title">新建书签</h3>
+            <button
+              class="dialog-close"
+              type="button"
+              data-action="close"
+              aria-label="关闭"
+            >
+              <span data-icon="x"></span>
+            </button>
+          </div>
+          <div class="dialog-body">
+            <div class="form-group">
+              <label for="edit-title">名称</label>
+              <input
+                type="text"
+                id="edit-title"
+                class="form-input"
+                autocomplete="off"
+              />
+            </div>
+            <div class="form-group">
+              <label for="edit-url">网址</label>
+              <input
+                type="url"
+                id="edit-url"
+                class="form-input"
+                placeholder="https://example.com"
+                autocomplete="off"
+              />
+            </div>
+          </div>
+          <div class="dialog-footer">
+            <button
+              type="button"
+              class="btn btn-secondary"
+              data-action="cancel"
+            >
+              取消
+            </button>
+            <button
+              type="button"
+              class="btn btn-primary"
+              id="edit-dialog-confirm"
+            >
+              创建
+            </button>
+          </div>
+        </div>
+      </div>
+      <div
+        id="move-dialog"
+        class="dialog hidden"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="move-dialog-title"
+      >
+        <div class="dialog-overlay"></div>
+        <div class="dialog-content">
+          <div class="dialog-header">
+            <h3 id="move-dialog-title">移动与排序</h3>
+            <button
+              class="dialog-close"
+              type="button"
+              data-action="close"
+              aria-label="关闭"
+            >
+              <span data-icon="x"></span>
+            </button>
+          </div>
+          <div class="dialog-body">
+            <div id="move-dialog-tree" class="folder-tree"></div>
+            <label class="form-group">
+              <span>放置位置</span>
+              <select id="move-position" class="form-input">
+                <option value="last">放在最后</option>
+                <option value="first">放在最前</option>
+              </select>
+            </label>
+          </div>
+          <div class="dialog-footer">
+            <button
+              type="button"
+              class="btn btn-secondary"
+              data-action="cancel"
+            >
+              取消
+            </button>
+            <button
+              type="button"
+              class="btn btn-primary"
+              id="move-dialog-confirm"
+            >
+              移动
+            </button>
+          </div>
+        </div>
+      </div>
+      <div
+        id="delete-confirm-dialog"
+        class="dialog hidden"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="delete-confirm-dialog-title"
+      >
+        <div class="dialog-overlay"></div>
+        <div class="dialog-content">
+          <div class="dialog-header">
+            <h3 id="delete-confirm-dialog-title">确认删除</h3>
+            <button
+              class="dialog-close"
+              type="button"
+              data-action="close"
+              aria-label="关闭"
+            >
+              <span data-icon="x"></span>
+            </button>
+          </div>
+          <div class="dialog-body"><p id="delete-confirm-message"></p></div>
+          <div class="dialog-footer">
+            <button
+              type="button"
+              class="btn btn-secondary"
+              data-action="cancel"
+            >
+              取消
+            </button>
+            <button
+              type="button"
+              class="btn btn-danger"
+              id="delete-confirm-btn"
+            >
+              删除
+            </button>
+          </div>
         </div>
       </div>
     </div>
-
-    <!-- 移动书签弹窗 -->
-    <div id="move-dialog" class="dialog hidden">
-      <div class="dialog-overlay"></div>
-      <div class="dialog-content">
-        <div class="dialog-header">
-          <h3>移动到…</h3>
-          <button class="dialog-close" data-action="close" aria-label="关闭">
-            <span data-icon="x"></span>
-          </button>
-        </div>
-        <div class="dialog-body">
-          <div id="move-dialog-tree" class="folder-tree"></div>
-        </div>
-        <div class="dialog-footer">
-          <button class="btn btn-secondary" data-action="cancel">取消</button>
-          <button class="btn btn-primary" id="move-dialog-confirm">确认</button>
-        </div>
-      </div>
-    </div>
-
-    <!-- 删除确认弹窗 -->
-    <div id="delete-confirm-dialog" class="dialog hidden">
-      <div class="dialog-overlay"></div>
-      <div class="dialog-content">
-        <div class="dialog-header">
-          <h3>确认删除</h3>
-          <button class="dialog-close" data-action="close" aria-label="关闭">
-            <span data-icon="x"></span>
-          </button>
-        </div>
-        <div class="dialog-body">
-          <p id="delete-confirm-message">确定要删除吗？</p>
-        </div>
-        <div class="dialog-footer">
-          <button class="btn btn-secondary" data-action="cancel">取消</button>
-          <button class="btn btn-danger" id="delete-confirm-btn">删除</button>
-        </div>
-      </div>
-    </div>
-
-  </div>
-
-  <!-- gsap 的 UMD 发行版必须在严格模式的模块之前用经典脚本加载，详见 vendor/gsap.js -->
-  <script src="vendor/gsap.min.js"></script>
-  <script type="module" src="main.js"></script>
-</body>
+    <script src="vendor/gsap.min.js"></script>
+    <script type="module" src="main.js"></script>
+  </body>
 </html>

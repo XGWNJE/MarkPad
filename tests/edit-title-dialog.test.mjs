@@ -88,8 +88,8 @@ test('a late rename completion leaves a newly opened dialog and its busy state i
   assert.equal(dialog.classList.contains('hidden'), true);
 });
 
-test('create validation uses the status area and preserves the existing event payload', async () => {
-  const { instance: editor, find, dialog, events } = await setupDialog('EditDialog');
+test('create validation uses the status area and awaits the store and refreshes only after persistence', async () => {
+  const { instance: editor, find, dialog, events, writes } = await setupDialog('EditDialog');
   editor.showNew();
   await editor.confirm();
   assert.equal(events.length, 0);
@@ -102,10 +102,22 @@ test('create validation uses the status area and preserves the existing event pa
   assert.equal(find('#edit-dialog-confirm').textContent, '创建');
   find('#edit-url').value = 'example.test'; find('#edit-url').dispatch('input');
   await editor.confirm();
-  assert.equal(events[0][0], 'bookmark:create');
-  assert.equal(JSON.stringify(events[0][1]), JSON.stringify({ parentId: 'root', title: '网址', url: 'https://example.test/' }));
+  assert.deepEqual(writes[0], ['create','root','网址','https://example.test/']);
+  assert.equal(events[0][0],'grid:refresh');
   assert.equal(dialog.classList.contains('hidden'), true);
   editor.showNewFolder(); find('#edit-title').value = '新文件夹'; await editor.confirm();
-  assert.equal(events[1][0], 'folder:create');
-  assert.equal(JSON.stringify(events[1][1]), JSON.stringify({ parentId: 'root', title: '新文件夹' }));
+  assert.deepEqual(writes[1], ['create','root','新文件夹',undefined]);
+});
+
+test('creation failure preserves inputs and ignores duplicate submission before a retry', async () => {
+  const gate=deferred(), calls=[];
+  const {instance,find,dialog,store,events}=await setupDialog('EditDialog',{create(...args){calls.push(args);return gate.promise;}});
+  instance.showNew(); find('#edit-title').value='保留输入'; find('#edit-url').value='https://example.test/';
+  const pending=instance.confirm(); await instance.confirm(); assert.equal(calls.length,1);
+  assert.equal(events.length,0); gate.reject(Error('write denied')); await pending;
+  assert.equal(dialog.classList.contains('hidden'),false); assert.equal(find('#edit-title').value,'保留输入');
+  assert.equal(find('#edit-url').value,'https://example.test/'); assert.match(find('.dialog-status').textContent,/重试/);
+  store.create=async(...args)=>calls.push(args); await instance.confirm();
+  assert.equal(calls.length,2); assert.equal(events.filter(([name])=>name==='grid:refresh').length,1);
+  assert.equal(dialog.classList.contains('hidden'),true);
 });

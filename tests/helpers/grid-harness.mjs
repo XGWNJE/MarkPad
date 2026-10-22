@@ -81,7 +81,7 @@ export class Element {
   getBoundingClientRect() { const index = this.parentElement?.children.indexOf(this) || 0; return { left: index * 140, top: 0, width: 120, height: 120, right: index * 140 + 120, bottom: 120 }; }
   addEventListener(name, listener) { if (!this.listeners.has(name)) this.listeners.set(name, new Set()); this.listeners.get(name).add(listener); }
   removeEventListener(name, listener) { this.listeners.get(name)?.delete(listener); }
-  click() { for (const listener of this.listeners.get('click') || []) listener({ target: this }); }
+  click() { const event={ target:this, preventDefault() {}, stopPropagation() {} }; this.onclick?.(event); for (const listener of this.listeners.get('click') || []) listener(event); }
   focus() { this.focusCount = (this.focusCount || 0) + 1; }
 }
 
@@ -223,6 +223,7 @@ export async function setupGrid({ folders = defaultFolders(), rootId = 'root', e
   }
   class GridDragController {
     constructor(owner) { this.owner = owner; }
+    clearMotion() {}
     capturePositions() { return new Map(); }
     animateLayout() {}
     showStatus(message) { status.textContent = message; }
@@ -264,7 +265,7 @@ export async function setupGrid({ folders = defaultFolders(), rootId = 'root', e
   return {
     instance, grid, model, lifecycle, errors, emitted, status, EventBus, settle,
     order: () => grid.children.filter(child => child.classList.contains('bookmark-card')).map(child => child.dataset.id),
-    fullOrder: () => grid.children.map(child => child.dataset.id || child.dataset.createKind),
+    fullOrder: () => grid.children.filter(child=>child.dataset.id || child.dataset.createKind).map(child => child.dataset.id || child.dataset.createKind),
     async navigate(id) { currentId = id; await instance.loadFolder(id); },
     startNavigate(id) { currentId = id; return instance.loadFolder(id); }
   };

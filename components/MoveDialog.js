@@ -10,6 +10,8 @@ class MoveDialog {
     this.dialog = document.getElementById('move-dialog');
     this.treeContainer = document.getElementById('move-dialog-tree');
     this.confirmBtn = document.getElementById('move-dialog-confirm');
+    this.position = document.getElementById('move-position');
+    this.positionRequest = 0;
     this.currentId = null;
     this.selectedTargetId = null;
     this.currentParentId = null;
@@ -54,13 +56,14 @@ class MoveDialog {
     });
 
     // 监听右键菜单"移动到..."事件
-    EventBus.on('card:move', ({ id, returnFocus }) => this.show(id, returnFocus));
+    EventBus.on('card:move', ({ id, ids, returnFocus }) => this.show(ids || id, returnFocus));
   }
 
   async show(id, returnFocus) {
     const request = ++this.showRequest;
     this.returnFocus = returnFocus || document.activeElement;
-    this.currentId = id;
+    this.currentIds = [].concat(id);
+    this.currentId = this.currentIds[0];
     this.selectedTargetId = null;
     this.currentParentId = null;
     this.setBusy(false);
@@ -74,17 +77,16 @@ class MoveDialog {
     // 获取文件夹树
     try {
       const [folders, source] = await Promise.all([
-        BookmarkStore.getFolderTree(id), BookmarkStore.getNode(id)
+        BookmarkStore.getFolderTree(), BookmarkStore.getNode(this.currentId)
       ]);
       if (request !== this.showRequest) return;
       if (!source) throw new Error('Bookmark no longer exists');
       this.currentParentId = source.parentId;
+      this.selectedTargetId = this.currentParentId;
 
       this.treeContainer.innerHTML = '';
       this.renderFolderTree(folders, this.treeContainer, 0);
-      const available = this.treeContainer.querySelector('.folder-tree-item:not([disabled])');
-      this.setStatus(available ? '选择目标文件夹。' : '没有其他可用的目标文件夹。');
-      available?.focus();
+      await this.loadPositions();
     } catch (error) {
       if (request !== this.showRequest) return;
       this.setStatus('文件夹读取失败，请关闭后重试。', true);
@@ -96,6 +98,7 @@ class MoveDialog {
 
   renderFolderTree(folders, container, depth) {
     folders.forEach(folder => {
+      if (this.currentIds.includes(folder.id)) return;
       const item = document.createElement('button');
       item.type = 'button';
       item.className = 'folder-tree-item';
@@ -104,10 +107,10 @@ class MoveDialog {
       item.setAttribute('data-id', folder.id);
       item.setAttribute('aria-pressed', 'false');
       const isCurrent = folder.id === this.currentParentId;
-      item.disabled = isCurrent;
       if (isCurrent) {
         item.setAttribute('data-current', 'true');
-        item.setAttribute('aria-disabled', 'true');
+        item.classList.add('selected');
+        item.setAttribute('aria-pressed', 'true');
       }
 
       const icon = document.createElement('span');
@@ -128,7 +131,7 @@ class MoveDialog {
       }
 
       item.addEventListener('click', () => {
-        if (this.isSaving || isCurrent) return;
+        if (this.isSaving) return;
         this.treeContainer.querySelectorAll('.folder-tree-item').forEach(el => {
           el.classList.remove('selected');
           el.setAttribute('aria-pressed', 'false');
@@ -136,8 +139,7 @@ class MoveDialog {
         item.classList.add('selected');
         item.setAttribute('aria-pressed', 'true');
         this.selectedTargetId = folder.id;
-        this.confirmBtn.disabled = false;
-        this.setStatus('');
+        void this.loadPositions();
       });
 
       container.appendChild(item);
@@ -148,17 +150,46 @@ class MoveDialog {
     });
   }
 
+  async loadPositions() {
+    const request = ++this.positionRequest, session = this.showRequest;
+    this.confirmBtn.disabled = true;
+    this.position.disabled = true;
+    try {
+      const children = await BookmarkStore.getChildren(this.selectedTargetId);
+      if (request !== this.positionRequest || session !== this.showRequest) return;
+      this.position.innerHTML = '';
+      for (const [value, title] of [['last','放在最后'],['first','放在最前'], ...children.filter(node => !this.currentIds.includes(node.id)).map(node => [node.id, `${node.title} 之前`])]) {
+        const option = document.createElement('option'); option.value=value; option.textContent=title; this.position.appendChild(option);
+      }
+      this.position.value='last'; this.position.disabled=false; this.confirmBtn.disabled=false; this.setStatus('');
+    } catch {
+      if (request === this.positionRequest && session === this.showRequest) this.setStatus('读取放置位置失败，请重新选择目录重试。', true);
+    }
+  }
+
   async confirm() {
-    if (!this.selectedTargetId || this.selectedTargetId === this.currentParentId || this.isSaving) return;
+    if (!this.selectedTargetId || this.isSaving || this.confirmBtn.disabled) return;
     const request = this.showRequest;
+    const ids = [...this.currentIds], target = this.selectedTargetId, position = this.position.value;
     this.setBusy(true);
     this.setStatus('正在移动…');
     try {
-      await BookmarkStore.move(this.currentId, this.selectedTargetId);
+      const children = position === 'first' ? await BookmarkStore.getChildren(target) : [];
+      const beforeId = position === 'first' ? children.find(node => !ids.includes(node.id))?.id : position === 'last' ? null : position;
+      for (const id of ids) {
+        if (request !== this.showRequest) return;
+        const before = beforeId ? await BookmarkStore.getNode(beforeId) : null;
+        if (beforeId && (!before || before.parentId !== target)) throw Error('Position no longer exists');
+        if (before) await BookmarkStore.move(id, target, before.index);
+        else await BookmarkStore.move(id, target);
+        if (request === this.showRequest) this.currentIds = this.currentIds.filter(item => item !== id);
+      }
+      EventBus.emit('grid:refresh');
+      EventBus.emit('grid:organize', false);
       if (request === this.showRequest) this.hide();
     } catch (error) {
       if (request === this.showRequest) {
-        this.setStatus('移动失败，请重试。', true);
+        this.setStatus(this.currentIds.length < ids.length ? `部分项目已移动，剩余 ${this.currentIds.length} 项，请重试。` : '移动失败，请重试。', true);
       }
       console.error('Failed to move bookmark:', error);
     } finally {
@@ -171,8 +202,9 @@ class MoveDialog {
     this.confirmBtn.disabled = busy || !this.selectedTargetId;
     this.confirmBtn.setAttribute('aria-busy', String(busy));
     this.treeContainer.querySelectorAll('.folder-tree-item').forEach(item => {
-      item.disabled = busy || item.dataset.current === 'true';
+      item.disabled = busy;
     });
+    this.position.disabled = busy;
   }
 
   setStatus(message, isError = false) {
@@ -189,8 +221,8 @@ class MoveDialog {
     this.setBusy(false);
     this.setStatus('');
     this.treeContainer.setAttribute('aria-busy', 'false');
-    if (this.returnFocus?.isConnected && !this.returnFocus.closest?.('[inert], .hidden')) this.returnFocus.focus();
-    else document.getElementById('menu-trigger')?.focus();
+    if (this.returnFocus?.isConnected && !this.returnFocus.disabled && this.returnFocus.tabIndex !== -1 && !this.returnFocus.closest?.('[inert], [hidden], .hidden')) this.returnFocus.focus();
+    else document.getElementById('more-trigger')?.focus();
     this.returnFocus = null;
   }
 }

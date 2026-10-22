@@ -1,15 +1,16 @@
 .drag-move-panel,
 .drag-delete-zone {
   position: fixed;
-  top: calc(var(--toolbar-height) + var(--drag-panel-inset));
-  bottom: var(--drag-panel-inset);
+  top: calc(var(--toolbar-height) + (100dvh - var(--toolbar-height)) / 2);
   max-width: calc(100vw - var(--drag-panel-inset) * 2);
+  max-height: var(--drag-panel-room);
   display: flex;
   flex-direction: column;
-  background: var(--color-surface);
+  background: var(--drag-panel-surface);
   border: 1px solid var(--color-border);
-  border-radius: var(--radius-lg);
+  border-radius: var(--drag-panel-radius);
   box-shadow: var(--shadow-popover);
+  backdrop-filter: blur(16px);
   overflow: hidden;
   z-index: 500;
   opacity: 0;
@@ -18,25 +19,28 @@
     transform var(--overlay-popover-duration) var(--ease-lumen),
     opacity var(--overlay-popover-duration) var(--ease-lumen),
     visibility var(--overlay-popover-duration) var(--ease-lumen),
-    background var(--transition-fast);
+    background var(--transition-fast),
+    border-color var(--transition-fast);
   pointer-events: none;
 }
 
 .drag-move-panel {
   left: var(--drag-panel-inset);
-  width: 260px;
-  transform: translateX(calc(-1 * var(--overlay-enter-offset)));
+  width: var(--drag-move-width);
+  max-height: min(var(--drag-move-max-height), var(--drag-panel-room));
+  transform: translate(calc(-1 * var(--overlay-enter-offset)), -50%);
 }
 
 .drag-delete-zone {
   right: var(--drag-panel-inset);
-  width: 240px;
-  transform: translateX(var(--overlay-enter-offset));
+  width: var(--drag-delete-width);
+  height: min(var(--drag-delete-height), var(--drag-panel-room));
+  transform: translate(var(--overlay-enter-offset), -50%);
 }
 
 .drag-move-panel.visible,
 .drag-delete-zone.visible {
-  transform: translateX(0);
+  transform: translate(0, -50%);
   opacity: 1;
   visibility: visible;
   pointer-events: auto;
@@ -44,64 +48,100 @@
 
 .drag-panel-header {
   flex-shrink: 0;
-  padding: var(--space-4) var(--space-5);
-  border-bottom: 1px solid var(--color-border);
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-4) var(--space-5) var(--space-3);
   color: var(--text-primary);
-  font-size: var(--menu-font-size);
+  font-size: var(--font-size-md);
   font-weight: var(--ui-heading-weight);
 }
 
+.drag-panel-symbol {
+  width: 32px;
+  height: 32px;
+  flex: 0 0 32px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--color-bg-soft);
+  border-radius: var(--radius-sm);
+  color: var(--text-secondary);
+}
+
+.drag-panel-symbol .app-icon {
+  width: var(--ui-icon-size);
+  height: var(--ui-icon-size);
+}
+
 .drag-folder-tree {
-  flex: 1;
+  flex: 0 1 auto;
   min-height: 0;
   overflow-y: auto;
   overflow-x: hidden;
-  padding: var(--space-2);
+  overscroll-behavior: contain;
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-border-strong) transparent;
+  padding: var(--space-1) var(--space-2) var(--space-3);
 }
 
 .drag-folder-item {
-  min-height: 44px;
+  min-height: 48px;
   display: flex;
   align-items: center;
   gap: var(--space-2);
-  padding: 0 var(--space-3);
-  padding-inline-start: min(calc(var(--space-4) + var(--drag-folder-depth, 0) * var(--space-4)), calc(100% - 112px));
+  margin-block: 2px;
+  padding: var(--space-1) var(--space-3);
+  padding-inline-start: min(calc(var(--space-3) + var(--drag-folder-depth, 0) * 14px), calc(100% - 112px));
   border-radius: var(--radius-md);
   color: var(--text-secondary);
-  cursor: pointer;
+  cursor: default;
   font-size: var(--menu-font-size);
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
   user-select: none;
   transition:
     background var(--transition-fast),
+    box-shadow var(--transition-fast),
     color var(--transition-fast);
 }
 
-.drag-folder-item:hover {
+.drag-folder-root {
+  color: var(--text-primary);
+  font-weight: var(--ui-heading-weight);
+}
+
+.drag-folder-item:hover,
+.drag-folder-item.drag-target {
   background: var(--color-bg-soft);
   color: var(--text-primary);
 }
 
 .drag-folder-item.drag-target {
+  box-shadow: inset 0 0 0 1px var(--color-border-strong);
+}
+
+.drag-folder-item .folder-icon {
+  width: 30px;
+  height: 30px;
+  flex: 0 0 30px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-sm);
+  background: var(--color-surface-muted);
+  color: var(--text-secondary);
+  transition:
+    background var(--transition-fast),
+    color var(--transition-fast);
+}
+
+.drag-folder-item.drag-target .folder-icon {
   background: var(--color-action);
   color: var(--color-action-text);
 }
 
-.drag-folder-item .folder-icon {
-  width: 22px;
-  height: 22px;
-  flex: 0 0 22px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  opacity: 0.7;
-}
-
 .drag-folder-item .folder-icon .app-icon {
-  width: 16px;
-  height: 16px;
+  width: var(--ui-icon-size);
+  height: var(--ui-icon-size);
 }
 
 .drag-folder-item .folder-name {
@@ -109,9 +149,11 @@
   min-width: 0;
   overflow: hidden;
   text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .drag-panel-status {
+  min-height: 48px;
   padding: var(--space-3) var(--space-4);
   color: var(--text-secondary);
   font-size: var(--font-size-sm);
@@ -123,44 +165,77 @@
 
 .drag-delete-content {
   flex: 1;
+  min-height: 0;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: var(--space-3);
-  padding: var(--space-5);
-}
-
-.drag-delete-zone.over {
-  background: color-mix(in srgb, var(--danger) 5%, var(--color-surface));
+  gap: clamp(8px, 2vh, 20px);
+  padding: clamp(8px, 2vh, 20px);
+  overflow-y: auto;
 }
 
 .drag-delete-icon {
-  width: 44px;
-  height: 44px;
+  width: clamp(36px, 8vh, 64px);
+  height: clamp(36px, 8vh, 64px);
+  flex-shrink: 0;
   display: flex;
   align-items: center;
   justify-content: center;
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-pill);
-  background: var(--color-surface-muted);
+  border-radius: var(--radius-lg);
+  background: var(--color-bg-soft);
   color: var(--danger);
   transition:
-    background var(--transition-fast);
+    background var(--transition-fast),
+    color var(--transition-fast),
+    transform var(--transition-fast);
 }
 
 .drag-delete-icon .app-icon {
-  width: 20px;
-  height: 20px;
+  width: min(var(--ui-icon-display-size), 70%);
+  height: auto;
+  aspect-ratio: 1;
 }
 
-.drag-delete-zone.over .drag-delete-icon {
-  background: color-mix(in srgb, var(--danger) 8%, var(--color-surface));
+.drag-delete-copy {
+  display: grid;
+  gap: var(--space-1);
+  text-align: center;
+}
+
+.drag-delete-title {
+  color: var(--text-primary);
+  font-size: var(--font-size-md);
+  font-weight: var(--ui-heading-weight);
 }
 
 .drag-delete-label {
+  color: var(--text-secondary);
+  font-size: var(--menu-caption-size);
+}
+
+.drag-delete-zone.over {
+  background: color-mix(in srgb, var(--danger) 8%, var(--color-surface));
+  border-color: color-mix(in srgb, var(--danger) 40%, var(--color-border));
+}
+
+.drag-delete-zone.over .drag-delete-icon {
+  background: var(--danger);
+  color: var(--color-danger-text);
+  transform: translateY(-2px);
+}
+
+.drag-delete-zone.over .drag-delete-title,
+.drag-delete-zone.over .drag-delete-label {
   color: var(--danger);
-  font-size: var(--font-size-sm);
-  font-weight: var(--ui-heading-weight);
-  text-align: center;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .drag-move-panel,
+  .drag-delete-zone,
+  .drag-folder-item,
+  .drag-folder-item .folder-icon,
+  .drag-delete-icon {
+    transition: none;
+  }
 }

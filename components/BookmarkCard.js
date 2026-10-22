@@ -78,27 +78,7 @@ function applyIconModelToElement(el, model, options = {}) {
   el.style.setProperty('--icon-content-scale', String(scale));
 }
 
-/**
- * 触屏没有 hover，无法靠 :hover 展开卡片文字。
- * 这里只维护“当前被点开的卡片”这一份状态，document 监听只注册一次，避免每张卡片各挂一个。
- */
-let revealedCard = null;
-let revealDismisserBound = false;
 let activeMenuOwner = null;
-
-function bindRevealDismisser() {
-  if (revealDismisserBound) return;
-  revealDismisserBound = true;
-  document.addEventListener(
-    'pointerdown',
-    (event) => {
-      if (revealedCard && !revealedCard.element.contains(event.target)) {
-        revealedCard.hideText();
-      }
-    },
-    true
-  );
-}
 
 class BookmarkCard {
   constructor(data, container, options = {}) {
@@ -113,8 +93,6 @@ class BookmarkCard {
     this.longPressStart = null;
     this.suppressNextClick = false;
     this.effects = null;
-    this.lastPointerType = null;
-    this.textRevealed = false;
     this.siteIconModel = null;
     this.siteBackgroundPreview = null;
     this.siteIconRetried = false;
@@ -131,7 +109,10 @@ class BookmarkCard {
   }
 
   async render() {
-    this.element = document.createElement('div');
+    this.element = document.createElement(this.isFolder ? 'button' : 'a');
+    if (this.isFolder) this.element.type = 'button';
+    else this.element.setAttribute('href', this.data.url);
+    this.element.setAttribute('aria-label', this.data.title || (this.isFolder ? '文件夹' : '书签'));
     this.element.className = 'bookmark-card';
     this.element.setAttribute('tabindex', '0');
     this.element.setAttribute('data-id', this.data.id);
@@ -167,10 +148,6 @@ class BookmarkCard {
 
     iconWrapper.appendChild(icon);
 
-    // 底部渐变
-    const gradient = document.createElement('div');
-    gradient.className = 'card-gradient';
-
     // 信息
     const info = document.createElement('div');
     info.className = 'card-info';
@@ -195,9 +172,14 @@ class BookmarkCard {
     const surface = document.createElement('div');
     surface.className = 'card-surface';
     surface.appendChild(iconWrapper);
-    surface.appendChild(gradient);
-    surface.appendChild(info);
     this.element.appendChild(surface);
+    this.element.appendChild(info);
+    const mark = document.createElement('span');
+    mark.className = 'selection-mark';
+    mark.setAttribute('aria-hidden', 'true');
+    mark.innerHTML = iconSvg('check');
+    this.element.appendChild(mark);
+    if (this.element.classList.contains('iconless')) icon.innerHTML = iconSvg('bookmark');
 
     this.bindEvents();
     this.effects = CardEffects.attach(this.element);
@@ -207,6 +189,10 @@ class BookmarkCard {
 
   setIconAvailable(available) {
     this.element.classList.toggle('iconless', !available);
+    if (!available) {
+      const icon = this.element.querySelector('.card-icon');
+      if (icon) icon.innerHTML = iconSvg('bookmark');
+    }
   }
 
   resolveSiteIconWhenVisible() {
@@ -308,7 +294,6 @@ class BookmarkCard {
     CardNavigation.cancel(this);
     this.cancelLongPress();
     this.closeContextMenu();
-    this.hideText();
     this.siteIconObserver?.disconnect();
     this.siteIconObserver = null;
     this.eventAbortController?.abort();
@@ -348,8 +333,9 @@ class BookmarkCard {
         e.stopPropagation();
         return;
       }
-      if (this.revealTextOnTap()) return;
-      if (e.ctrlKey || e.metaKey) {
+      e.preventDefault();
+      if (this.organizing || e.ctrlKey || e.metaKey) {
+        EventBus.emit('grid:organize', true);
         this.toggleSelect();
       } else {
         this.open();
@@ -378,10 +364,15 @@ class BookmarkCard {
     // 键盘
     this.element.addEventListener('keydown', (e) => {
       if (this.destroyed || this.interactionPaused || this.opening) return;
-      if (e.key === 'Enter') {
+      if (e.key === 'Enter' || e.key === ' ') {
         e.preventDefault();
-        this.open();
+        this.element.click();
       } else if (e.key === 'Delete') {
+        if (this.organizing) {
+          e.preventDefault();
+          EventBus.emit('selection:delete');
+          return;
+        }
         EventBus.emit('card:requestDelete', {
           id: this.data.id,
           isFolder: this.isFolder,
@@ -406,7 +397,6 @@ class BookmarkCard {
     this.element.addEventListener('pointerdown', (e) => {
       // 上一次长按可能以取消结束，没有产生要抑制的 click。
       this.suppressNextClick = false;
-      this.lastPointerType = e.pointerType;
       this.startLongPress(e);
     }, listenerOptions);
     this.element.addEventListener('pointermove', (e) => this.handleLongPressMove(e), listenerOptions);
@@ -429,34 +419,6 @@ class BookmarkCard {
       this.suppressNextClick = true;
       this.showContextMenu(e.clientX, e.clientY);
     }, 550);
-  }
-
-  // ========== 卡片文字展开（悬停 / 键盘聚焦 / 触屏点按） ==========
-
-  /**
-   * 触屏和手写笔没有悬停：第一次点按先把标题展开，再点一次才执行打开或多选。
-   * 鼠标路径由 card.css 的 :hover / :focus-visible 负责，这里不做拦截。
-   * @returns {boolean} 是否消费了这次点击
-   */
-  revealTextOnTap() {
-    if (this.textRevealed) return false;
-    if (this.lastPointerType !== 'touch' && this.lastPointerType !== 'pen') return false;
-    this.revealText();
-    return true;
-  }
-
-  revealText() {
-    if (revealedCard && revealedCard !== this) revealedCard.hideText();
-    bindRevealDismisser();
-    revealedCard = this;
-    this.textRevealed = true;
-    this.element.classList.add('text-revealed');
-  }
-
-  hideText() {
-    if (revealedCard === this) revealedCard = null;
-    this.textRevealed = false;
-    this.element?.classList.remove('text-revealed');
   }
 
   handleLongPressMove(e) {
@@ -507,9 +469,25 @@ class BookmarkCard {
     }
   }
 
+  setOrganizing(active) {
+    this.organizing = active;
+    if (active) {
+      this.element.setAttribute('role', 'button');
+      this.element.setAttribute('aria-pressed', String(this.selected));
+    } else {
+      this.element.removeAttribute('role');
+      this.element.removeAttribute('aria-pressed');
+    }
+  }
+
+  setSelected(selected) {
+    this.selected = selected;
+    this.element.classList.toggle('selected', selected);
+    if (this.organizing) this.element.setAttribute('aria-pressed', String(selected));
+  }
+
   toggleSelect() {
-    this.selected = !this.selected;
-    this.element.classList.toggle('selected', this.selected);
+    this.setSelected(!this.selected);
     EventBus.emit('card:select', {
       id: this.data.id,
       selected: this.selected
@@ -535,6 +513,8 @@ class BookmarkCard {
     const titleEl = this.element.querySelector('.card-title');
     titleEl.textContent = this.data.title;
     titleEl.title = this.data.title;
+    this.element.setAttribute('aria-label', this.data.title || (this.isFolder ? '文件夹' : '书签'));
+    if (!this.isFolder) this.element.setAttribute('href', this.data.url);
 
     const metaEl = this.element.querySelector('.card-meta');
     if (this.isFolder) {
@@ -591,19 +571,19 @@ class BookmarkCard {
     const items = [
       {
         label: '重命名…',
-        icon: 'bookmark',
+        icon: 'pencil',
         shortcut: 'F2',
         action: () => this.startEdit()
       },
       {
-        label: '移动到…',
-        icon: 'folder',
+        label: '移动与排序…',
+        icon: 'folder-input',
         action: () => EventBus.emit('card:move', { id: this.data.id, returnFocus: this.element })
       },
       { type: 'separator' },
       {
         label: hasCustomIcon ? '编辑图标…' : '选择或上传图标…',
-        icon: 'grid',
+        icon: 'image',
         action: () => EventBus.emit('iconStudio:open', {
           bookmark: this.data,
           returnFocus: this.element
@@ -614,21 +594,21 @@ class BookmarkCard {
     if (hasCustomIcon) {
       items.push({
         label: this.isFolder ? '恢复默认文件夹图标' : '恢复默认图标',
-        icon: 'grid',
+        icon: 'rotate-ccw',
         action: () => this.removeCustomIcon()
       });
     } else if (!this.isFolder) {
       if (this.siteIconModel) {
         items.push({
           label: '调整网站图标…',
-          icon: 'grid',
+          icon: 'sliders-horizontal',
           action: () => EventBus.emit('iconStudio:openSiteBackground', { bookmark: this.data, returnFocus: this.element })
         });
       }
       if (canFetchWebsiteIcon) {
         items.push({
           label: '重新获取网站图标',
-          icon: 'grid',
+          icon: 'refresh-cw',
           action: () => this.refreshWebsiteIcon()
         });
       }
@@ -798,7 +778,6 @@ class BookmarkCard {
       }
     } else {
       const fallbackIcon = iconData || resolveBookmarkIcon(this.data, { storage: BookmarkStore });
-      this.setIconAvailable(Boolean(fallbackIcon));
       if (iconData) {
         if (isSvgRaw(iconData)) {
           applySvgToElement(iconEl, iconData);
@@ -808,11 +787,12 @@ class BookmarkCard {
       } else {
         applyIconModelToElement(iconEl, fallbackIcon);
       }
+      this.setIconAvailable(Boolean(fallbackIcon));
     }
   }
 
   /**
-   * 本地字节也解不出来时不留破图：无论第几次失败都退回文字面，并把该地址降级为
+   * 本地字节也解不出来时保留标题、清除坏图，并把该地址降级为
    * 带退避的失败记录，避免每个新标签页重复下载同一份坏数据。
    */
   handleSiteIconDisplayError(iconData) {
@@ -820,9 +800,9 @@ class BookmarkCard {
     // 迟到的旧图片错误不能影响当前显示的图标。
     if (this.siteIconModel?.value !== iconData.value) return;
     this.siteIconModel = null;
-    this.setIconAvailable(false);
     const iconEl = this.element?.querySelector('.card-icon');
     if (iconEl) applyIconModelToElement(iconEl, null);
+    this.setIconAvailable(false);
     if (this.siteIconRetried) return;
     this.siteIconRetried = true;
     BookmarkStore.markSiteIconDisplayFailure(this.data.url, iconData.value);

@@ -172,17 +172,14 @@ test('background API rejection immediately releases busy state', async () => {
   assert.equal(h.animations.length, 0);
 });
 
-test('the first touch reveals text and only the second touch enters navigation', async () => {
+test('one touch enters navigation without a reveal step', async () => {
   const h = await setupNavigation(); const card = await h.makeBookmarkCard(); card.bindEvents();
   const tap = () => {
     h.element.fire('pointerdown', { pointerType: 'touch', clientX: 80, clientY: 80 });
     h.element.fire('pointerup'); h.element.fire('click');
   };
   tap();
-  assert.equal(card.textRevealed, true);
-  assert.equal(h.calls.length, 0);
   assert.equal(h.animations.length, 0);
-  tap();
   assert.deepEqual(h.calls, [['create', { url: 'https://a.example/', active: false }]]);
   assert.equal(card.opening, true);
   assert.equal(h.animations.length, 0);
@@ -194,10 +191,17 @@ test('Ctrl-click selects a card without invoking tabs or navigation animations',
   const h = await setupNavigation(); const card = await h.makeBookmarkCard(); card.bindEvents();
   h.element.fire('click', { ctrlKey: true });
   assert.equal(card.selected, true);
-  assert.equal(h.events[0][0], 'card:select');
+  assert.equal(h.events.find(([name])=>name==='card:select')[0], 'card:select');
   assert.equal(h.calls.length, 0);
   assert.equal(h.animations.length, 0);
   assert.equal(card.opening, false);
+});
+
+test('Delete on an organizing card requests the selected batch instead of that card alone', async () => {
+  const h=await setupNavigation();const card=await h.makeBookmarkCard();card.bindEvents();card.setOrganizing(true);
+  h.element.fire('keydown',{key:'Delete'});
+  assert.equal(h.events.filter(([name])=>name==='selection:delete').length,1);
+  assert.equal(h.events.some(([name])=>name==='card:requestDelete'),false);
 });
 
 test('folder opening navigates immediately and grid entrance runs only for a committed directory change', async () => {
