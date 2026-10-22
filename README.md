@@ -9,7 +9,7 @@
 
 [预览](#界面预览) · [功能](#功能) · [安装](#安装) · [使用](#使用) · [快捷键](#快捷键) · [路线规划](#路线规划) · [项目结构](#项目结构) · [验证](#验证) · [权限与数据](#权限与数据)
 
-[![版本：0.4.3](https://img.shields.io/badge/version-0.4.3-2da44e)](manifest.json) [![平台：桌面版 Chrome](https://img.shields.io/badge/platform-Chrome-0969da)](#安装) [![扩展格式：Manifest V3](https://img.shields.io/badge/Manifest-V3-8250df)](manifest.json) [![CI](https://github.com/XGWNJE/MarkPad/actions/workflows/ci.yml/badge.svg)](https://github.com/XGWNJE/MarkPad/actions/workflows/ci.yml)
+[![版本：0.5.0](https://img.shields.io/badge/version-0.5.0-2da44e)](manifest.json) [![平台：桌面版 Chrome](https://img.shields.io/badge/platform-Chrome-0969da)](#安装) [![扩展格式：Manifest V3](https://img.shields.io/badge/Manifest-V3-8250df)](manifest.json) [![CI](https://github.com/XGWNJE/MarkPad/actions/workflows/ci.yml/badge.svg)](https://github.com/XGWNJE/MarkPad/actions/workflows/ci.yml)
 
 </div>
 
@@ -40,7 +40,7 @@
 - **触控操作**：点按展开卡片文字，长按打开操作菜单；也支持鼠标和键盘。
 - **调整外观**：切换浅色／深色、品牌软陶／彩色扁平图标，调整卡片与文字；上传图标并调整背景与缩放。
 
-当前版本：`0.4.3`，以 [manifest.json](manifest.json) 为准。
+当前版本：`0.5.0`，以 [manifest.json](manifest.json) 为准。
 
 ## 安装
 

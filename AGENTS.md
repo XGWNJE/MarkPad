@@ -6,7 +6,7 @@ MarkPad 的 Agent 协作入口。先遵循用户全局规则，再遵循本文�
 
 - MarkPad 是面向鼠标和触控操作的桌面 Chrome 新标签页书签面板，直接使用 Chrome 原生书签。
 - 扩展采用 Manifest V3、原生 JavaScript 模块和 CSS，无构建步骤；运行资源随仓库提供。
-- `manifest.json` 的 `version` 是安装版本号来源，使用 `major.minor.patch` 格式；README 的当前版本与徽章必须一致。
+- `manifest.json` 的 `version` 是安装版本号来源，使用 `major.minor.patch` 格式；有意义更新完成时按[版本策略](docs/engineering-guide.md#版本策略)自动升版，同步 README 当前版本与徽章。
 
 ## 工作边界
 
